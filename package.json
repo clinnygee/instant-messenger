@@ -1,0 +1,26 @@
+{
+  "name": "instant-messenger",
+  "version": "1.0.0",
+  "description": "Instant Messaging App that allows groups",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "Messaging",
+    "Instant",
+    "Groups",
+    "React",
+    "Sequelize",
+    "Node",
+    "Express"
+  ],
+  "author": "Clinnygee",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "sequelize": "^5.21.5",
+    "sqlite3": "^4.1.1"
+  }
+}

@@ -1,0 +1,21 @@
+user
+---------
+_id
+name: String
+password: String
+conversations - []
+friends - []
+
+conversations
+-------------
+_conversation_id
+conversation_name: String
+users - FK
+messages - []
+
+
+messages
+-----------
+read - bool
+message - string
+timestamp - DT
