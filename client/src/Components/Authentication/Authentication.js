@@ -1,5 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import styled from 'styled-components';
+import {registerUser, logInUser} from '../../API';
+import {UserContext} from '../../context';
 
 const AuthWrapper = styled.div`
     width: 100vw;
@@ -67,6 +69,9 @@ const FormSubmit = styled.input`
 
 const Authentication = (props) => {
     const [register, setRegister] = useState(false);
+    const context = useContext(UserContext);
+
+    console.log(context);
 
     const toggleForm = () => {
         setRegister(!register);
@@ -82,7 +87,10 @@ const Authentication = (props) => {
                 Instant-Messenger
             </AuthHeader>
             <FormWrapper>
-                {register ? <AuthenticationForm header={'Register'} toggleText={'Already Registered? Log In'} toggleForm={toggleForm}/> : <AuthenticationForm header={'Log In'} toggleText={'Not Registered? Create an Account!'} toggleForm={toggleForm}/>}
+                {register ? 
+                <AuthenticationForm header={'Register'} toggleText={'Already Registered? Log In'} toggleForm={toggleForm} apiCall={registerUser}/> 
+                :
+                 <AuthenticationForm header={'Log In'} toggleText={'Not Registered? Create an Account!'} toggleForm={toggleForm} apiCall={logInUser}/>}
                 
             </FormWrapper>
             
@@ -93,6 +101,7 @@ const Authentication = (props) => {
 const AuthenticationForm = (props) => {
     const [password, setPassword] = useState('');
     const [username, setUsername] = useState('');
+    const context = useContext(UserContext);
 
     const updateUsername = (e) => {
         setUsername(e.target.value);
@@ -105,8 +114,14 @@ const AuthenticationForm = (props) => {
         console.log(password);
     }
 
-    const onSubmit = (e) => {
+    const  onSubmit = async (e) => {
         e.preventDefault();
+        context.changeAuthenticating();
+        const response = await props.apiCall({username: username, password: password});
+
+        console.log(response);
+        context.handleAuthentication(response);
+        // registerUser({username: username, password: password});
     };
 
     const toggle = () => {
