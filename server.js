@@ -1,5 +1,9 @@
 const Sequelize = require('sequelize');
 const express = require('express');
+const app = express();
+
+const expressWs = require('express-ws')(app);
+
 const path = require('path');
 
 const bodyParser = require('body-parser');
@@ -14,7 +18,7 @@ const saltRounds = 10;
 require('dotenv').config();
 
 
-const app = express();
+
 const port = (process.env.PORT || 8080);
 
 
@@ -50,6 +54,10 @@ conn.sync({force: true});
 //     console.log(__dirname + '/client/build/index.html');
 //     res.sendFile(__dirname + '/client/build/index.html');
 // });
+
+const clients = {};
+
+console.log(expressWs);
 
 app.post('/login', (req,res) => {
     const {username, password} = req.body;
@@ -96,7 +104,20 @@ app.post('/register', (req, res) => {
 
 
     res.status(200).send('Hit the Register route');
-})
+});
+
+app.ws('/connection', (ws, req) => {
+    console.log('new WS connection');
+
+    console.log(ws)
+    ws.on('open' , () => {
+        console.log('ws connection open')
+    })
+    ws.on('message', (msg) => {
+        console.log(msg);
+        ws.send(msg);
+    })
+});
 
 app.listen(port);
 

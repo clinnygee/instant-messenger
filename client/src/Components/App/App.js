@@ -4,6 +4,7 @@ import Authentication from '../Authentication'
 import People from '../People';
 import Conversations from '../Conversations';
 import {UserProvider, UserConsumer} from '../../context';
+import Container from '../Container';
 
 const GlobalStyle = createGlobalStyle`
   html, body, div, span, applet, object, iframe,
@@ -46,7 +47,7 @@ function App() {
         value => (
           <AppWrapper>
             <GlobalStyle />
-            {value.authenticated ? <Conversations /> : <Authentication />}
+            {value.authenticated ? <Container /> : <Authentication />}
             {/* <Conversations context={value}/> */}
             {/* <People /> */}
           </AppWrapper>
