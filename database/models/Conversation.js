@@ -4,11 +4,14 @@ const { Op } = Sequelize;
 
 const Conversation = conn.define('conversation', {
 
+},{
+  freezeTableName: true
 });
 
 Conversation.findOrCreateConversation = function(user1Id, user2Id) {
     // attempt to find a conversation that's associated with the user IDs passed in.
-    return Conversation.find({
+    console.log('in Conversation')
+    return Conversation.findOne({
       where: {
         user1Id: {
           [Op.or]: [user1Id, user2Id]
@@ -37,5 +40,20 @@ Conversation.findOrCreateConversation = function(user1Id, user2Id) {
         }
       });
   };
+
+Conversation.findAllConversations = (userId) => {
+  return Conversation.findAll({
+    where: {
+      [Op.or]: [{user1Id: userId}, {user2Id: userId}]
+    },
+    include: [conn.models.message],
+
+    order: [[conn.models.message, 'createdAt', 'DESC']]
+  }).then(conversations => {
+    if(conversations){
+      return conversations
+    }
+  })
+}
 
 module.exports = Conversation;

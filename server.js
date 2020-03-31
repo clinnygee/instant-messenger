@@ -2,13 +2,17 @@ const Sequelize = require('sequelize');
 const express = require('express');
 const app = express();
 
-const expressWs = require('express-ws')(app);
+const server = require('http').Server(app);
+
+const io = require('socket.io')(server);
 
 const path = require('path');
 
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
+
 const jwt = require('jsonwebtoken');
+const withAuth = require('./middleware/auth');
 
 const bcrypt = require('bcrypt');
 const secret = (process.env.SECRET || 'instant-messenger');
@@ -30,34 +34,19 @@ app.use(cookieParser());
 
 app.use(bodyParser.json());
 
+const {Op} = Sequelize;
+
 const conn = require('./database').conn;
 const {User, Conversation, Message} = require('./database').models;
-conn.sync({force: true});
-// const sequelize = new Sequelize(
-//     'postgres://clinnygee:cCxG0DxZ@127.0.0.1:5432/instant-messenger'
-// );
+// conn.sync({logging: false, force: true});
+conn.sync({logging: false});
 
-// const User = sequelize.import('./database/models/user');
+console.log(Conversation)
 
-// User.sync({force: true});
+const seedDb = require('./database/seeders/seed');
+seedDb();
 
-// sequelize
-//     .authenticate()
-//     .then(() => {
-//         console.log('Connection to DB has been estsablished successfully');
-//     })
-//     .catch(err => {
-//         console.log('unable to connect to the database: ', err);
-//     });
 
-// app.get('/', (req, res) => {
-//     console.log(__dirname + '/client/build/index.html');
-//     res.sendFile(__dirname + '/client/build/index.html');
-// });
-
-const clients = {};
-
-console.log(expressWs);
 
 app.post('/login', (req,res) => {
     const {username, password} = req.body;
@@ -79,7 +68,7 @@ app.post('/login', (req,res) => {
                 
             })
         }
-    })
+    });
 });
 
 app.post('/register', (req, res) => {
@@ -96,7 +85,7 @@ app.post('/register', (req, res) => {
         }).then((user) => {
             console.log(user);
         })
-    })
+    });
 
     // User.create({username: username}).then(user => {
     //     console.log('Users auto generated ID:', user.id);
@@ -106,18 +95,92 @@ app.post('/register', (req, res) => {
     res.status(200).send('Hit the Register route');
 });
 
-app.ws('/connection', (ws, req) => {
-    console.log('new WS connection');
+app.get('/conversations',withAuth, (req, res) => {
+    // console.log(req.headers.authorization);
+    console.log('username: ------------------------------------')
+    console.log(req.username);
 
-    console.log(ws)
-    ws.on('open' , () => {
-        console.log('ws connection open')
+    User.findOne({where: {username: req.username}}).then(user => {
+        if(!user){
+            res.status(400).send('User not found')
+        }else{
+            Conversation.findAllConversations(user.id).then(conversations => res.json(conversations))
+            // console.log(user);
+            // Conversation.findAll({where: {
+            //     [Op.or]: [{user1Id: user.id}, {user2Id: user.id}]
+            // }}).then(conversations => {
+            //     Message.findAll({where})
+            // });
+            Conversation.find
+        }
     })
-    ws.on('message', (msg) => {
-        console.log(msg);
-        ws.send(msg);
-    })
-});
+})
 
-app.listen(port);
+const clients = {};
+
+const connection = io
+    .of('/connection')
+    .on('connection', (socket) => {
+        // add socket to the list of clients
+        // console.log('this is "socket"')
+        // console.log(socket)
+        socket.emit('a message', {
+            that: 'only',
+            '/chat': 'will get'
+        });
+        // first, add message to the DB,
+        // then, find if the reciever of the message is a connected client,
+        // if so, send the message to them
+        socket.on('message', msg => {
+
+            let message = JSON.parse(msg);
+
+            User.findOne({where: {username: socket.username}}).then(user1 => {
+                User.findOne({where:{ username: message.receiver}}).then(user2 => {
+                    Message.createMessage(message.text, user1.dataValues, user2.dataValues).then(msg => {
+                        console.log(msg);
+                    })
+                })
+            })
+            
+            console.log(msg);
+
+            // add to the db
+
+
+            // if successfully added to db, emit('response')
+            // so that user knows it was delivered
+
+        });
+        // add socket to the list of clients
+        // socket is stored with username: socket as the pair
+        socket.on('user-details', details => {
+            clients[`${details}`] = socket;
+            // console.log(`this is CLIENTS object`)
+            // console.log(clients);
+            // console.log(`this is clients[details]`)
+            // console.log(clients[`${details}`]);
+            socket.username = `${details}`;
+            // console.log(socket.username);
+        });
+        // find the socket in the list of clients and remove it
+        socket.on('disconnect', () => {
+            delete clients[socket.username];
+            
+            console.log(clients)
+            
+        });
+        // this send a message to EVERYONE on the connections.
+        connection.emit('a message', {
+            everyone: 'in',
+            '/chat': 'will get'
+        })
+    })
+    // connection.on('message', msg => {
+    //     console.log(msg)
+    // });
+
+    // console.log(io);
+
+server.listen(port);
 

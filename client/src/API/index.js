@@ -1,3 +1,3 @@
-import {registerUser, logInUser} from './api';
+import {registerUser, logInUser, fetchConversationData} from './api';
 
-export {registerUser, logInUser} 
+export {registerUser, logInUser, fetchConversationData} 

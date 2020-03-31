@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import styled from 'styled-components';
+import {UserContext} from '../../context';
 
 import Chat from './Chats.view';
 
@@ -114,6 +115,21 @@ const ConversationList = styled.div`
 `
 
 const Chats = props => {
+    const context = useContext(UserContext);
+
+    const chatCreator = (conversations) => {
+        let chats = conversations.map(conversation => {
+            return <Chat conversationTitle={conversation.id} conversationPreview={conversation.messages[0].text}/>
+        });
+
+        return chats;
+    };
+
+    console.log(context.conversationData);
+
+    const Chats = context.conversationData.length > 0 ? chatCreator(context.conversationData) : null;
+
+    console.log(Chats)
 
     return (
         <ConversationListContainer mobile={props.mobile}>
@@ -133,7 +149,7 @@ const Chats = props => {
                 </SearchForm>
             </SearchBar> */}
             <ConversationList>
-                <Chat open={true}/>
+                {/* <Chat open={true}/>
                 <Chat />
                 <Chat />
                 <Chat />
@@ -154,7 +170,8 @@ const Chats = props => {
                 <Chat />
                 <Chat />
                 <Chat />
-                <Chat />
+                <Chat /> */}
+                {Chats}
             </ConversationList>
         </ConversationListContainer>
     )

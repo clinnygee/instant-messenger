@@ -9,20 +9,25 @@ const Message = conn.define('message', {
         defaultValue: Sequelize.UUIDV4,
         primaryKey: true
     }
+},{
+    freezeTableName: true,
 });
 
-Message.createMessage = (text, sender, reciever) => {
+Message.createMessage = (text, sender, receiver) => {
     return Promise.all([
         Message.create({
             text,
             user: {
                 _id: sender.id,
-                name: sender.name,
+                username: sender.username,
             }
         }),
+        
         conn.models.conversation.findOrCreateConversation(sender.id, receiver.id)
     ])
         .then(([message, conversation]) => message.setConversation(conversation))
-}
+};
+
+console.log(conn.models);
 
 module.exports = Message;

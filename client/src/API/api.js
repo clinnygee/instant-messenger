@@ -18,4 +18,16 @@ export const logInUser = (data) => {
             'Content-Type': 'application/json',
         }
     })
+};
+
+export const fetchConversationData = (username, token) => {
+    return fetch('/conversations', {
+        method: 'get',
+        
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token} ${username}`,
+        }
+    })
 }

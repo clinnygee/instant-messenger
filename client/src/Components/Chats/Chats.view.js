@@ -47,10 +47,10 @@ const Chat = (props) => {
             <ConversationImage />
             <ConversationContent>
                 <ConversationHeader>
-                    Gym Rats
+                    {props.conversationTitle}
                 </ConversationHeader>
                 <ConversationPreview>
-                    Hey boys.. Sunday
+                    {props.conversationPreview}
                 </ConversationPreview>
             </ConversationContent>
         </ConversationContainer>

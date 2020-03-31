@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken');
 
-const secret = (process.env.SECRET || 'expense-tracker');
+const secret = (process.env.SECRET || 'instant-messenger');
 
 // Everything that comes through this middlewares req.username will be = to the username. duh
 
@@ -15,7 +15,11 @@ const withAuth = (req, res, next) => {
     // req.headers['x-access-token'] ||
     // req.cookies.token;
 
+    // comes through in the form of authorization: bearer ${token} ${username}
+
     const token = req.headers.authorization ? req.headers.authorization.split(" ")[1] : null;
+
+    const username = req.header.authorization ? req.header.authorization.split(' ')[2] : null;
 
 
     // const _token = token.split("=");

@@ -120,7 +120,7 @@ const AuthenticationForm = (props) => {
         const response = await props.apiCall({username: username, password: password});
 
         console.log(response);
-        context.handleAuthentication(response);
+        context.handleAuthentication(response, username);
         // registerUser({username: username, password: password});
     };
 

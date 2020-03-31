@@ -238,6 +238,7 @@ const MessageCreate = props => {
     };
 
     const submit = () => {
+        console.log('submitting message');
         props.onSubmit(message);
     }
 
