@@ -28,10 +28,10 @@ const seedDb = async () => {
 
     // User.createUser('Clinnygee', 'clinton2', 10)
     // User.create()
-    Message.findAll({where: {user: {id: 3}}}).then(message => {
-        console.log('------------------------------------')
-        console.log(message);
-    })
+    // Message.findAll({where: {user: {id: 3}}}).then(message => {
+    //     console.log('------------------------------------')
+    //     console.log(message);
+    // })
 }
 
 module.exports = seedDb;

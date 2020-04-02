@@ -118,18 +118,19 @@ const Chats = props => {
     const context = useContext(UserContext);
 
     const chatCreator = (conversations) => {
+        const username = context.username;
         let chats = conversations.map(conversation => {
-            return <Chat conversationTitle={conversation.id} conversationPreview={conversation.messages[0].text}/>
+            return (
+            <Chat conversationTitle={conversation.user1Username === username ? conversation.user2Username : conversation.user1Username} 
+            conversationPreview={conversation.messages[0].text }
+            onSelect={props.onSelect}
+            />)
         });
 
         return chats;
     };
 
-    console.log(context.conversationData);
-
     const Chats = context.conversationData.length > 0 ? chatCreator(context.conversationData) : null;
-
-    console.log(Chats)
 
     return (
         <ConversationListContainer mobile={props.mobile}>
@@ -143,34 +144,7 @@ const Chats = props => {
                     <FontAwesomeIcon icon={faPen} />
                 </ChatLink>
             </Header>
-            {/* <SearchBar>
-                <SearchForm>
-                    <SearchInput placeholder={`Search For Conversation...`}/>
-                </SearchForm>
-            </SearchBar> */}
-            <ConversationList>
-                {/* <Chat open={true}/>
-                <Chat />
-                <Chat />
-                <Chat />
-                <Chat />
-                <Chat />
-                <Chat />
-                <Chat />
-                <Chat />
-                <Chat />
-                <Chat />
-                <Chat />
-                <Chat />
-                <Chat />
-                <Chat />
-                <Chat />
-                <Chat />
-                <Chat />
-                <Chat />
-                <Chat />
-                <Chat />
-                <Chat /> */}
+            <ConversationList>                
                 {Chats}
             </ConversationList>
         </ConversationListContainer>

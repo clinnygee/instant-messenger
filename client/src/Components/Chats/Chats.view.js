@@ -41,9 +41,13 @@ const ConversationPreview = styled.p`
 
 const Chat = (props) => {
 
+    const onSelect = () => {
+        props.onSelect(props.conversationTitle)
+    }
+
 
     return (
-        <ConversationContainer open={props.open}>
+        <ConversationContainer open={props.open} onClick={onSelect}>
             <ConversationImage />
             <ConversationContent>
                 <ConversationHeader>

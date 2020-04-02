@@ -3,6 +3,7 @@ const conn = require('./connection/conn');
 const Conversation = require('./models/Conversation');
 const Message = require('./models/Message');
 const User = require('./models/User');
+const Reaction = require('./models/Reaction');
 
 console.log('setting up relations')
 console.log('--------------------------------------------------')
@@ -11,6 +12,8 @@ User.hasMany(Conversation);
 Conversation.belongsTo(User, {as: 'user1'});
 Conversation.belongsTo(User, {as: 'user2'});
 Message.belongsTo(Conversation);
+Reaction.belongsTo(Message);
+
 Conversation.hasMany(Message);
 console.log('follow is User')
 console.log(User);
@@ -20,6 +23,7 @@ module.exports = {
     models: {
         Conversation,
         User,
-        Message
+        Message, 
+        Reaction
     }
 }

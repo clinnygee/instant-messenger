@@ -1,4 +1,4 @@
-import React, {useState, useContext} from 'react';
+import React, {useState, useContext, useEffect} from 'react';
 import styled from 'styled-components';
 import Message from './Message.view';
 import {UserContext} from '../../context';
@@ -26,6 +26,8 @@ const ChatContainer = styled.div`
     height: calc(100% - 200px);
     width: 100%;
     overflow-y: scroll;
+    display: flex;
+    flex-direction: column-reverse;
 `
 
 
@@ -83,19 +85,72 @@ const SearchInput = styled.input`
     }
 `
 const Conversation = props => {
+
     const [receiver, setReceiver] = useState(null);
     const context = useContext(UserContext);
+    const [messages, setMessages] = useState(null);
 
     console.log(context)
 
     const updateReceiver = (name) => {
-        setReceiver(name)
+
+        setReceiver(name);
+        findConversationMessages(name);
     };
 
     const sendMessage = (message) => {
         context.sendWsMessage(receiver, message)
     };
 
+    const findConversationMessages = (receiverUsername) => {
+
+        console.log(context.conversationData);
+        console.log(receiver)
+        const conversation = context.conversationData.find(conversation => {
+            return (conversation.user1Username === receiverUsername || conversation.user2Username === receiverUsername)
+        });
+
+        if(conversation) {
+            console.log(conversation.messages)
+            setMessages(conversation.messages);
+        }
+
+        
+
+        
+    };
+
+    const createMessages = () => {
+        return messages.map((message) => {
+            return <Message content={message.text} user={message.user.username != receiver ? true : false}/>
+        })
+    }
+
+    useEffect(() => {
+        console.log('calling useEffect in Conversation')
+        if(receiver === null && props.receiver){
+            setReceiver(props.receiver);
+            findConversationMessages(props.receiver);
+        } 
+        // else if (receiver){
+        //     findConversationMessages(receiver)
+        // }
+        
+
+        return () => {
+            // setReceiver(null);
+            // setMessages(null);
+        }
+    }, []);
+
+    // if(props.receiver){
+    //     setReceiver(props.receiver);
+    // }
+
+    // findConversationMessages();
+
+    
+    const messagesDisplay = messages ? createMessages() : null;
 
     return (
         <ConversationContainer>
@@ -109,10 +164,7 @@ const Conversation = props => {
                 
             </Header>
             <ChatContainer>
-                <Message content={'This is a test message. This is a test message. This is a test message. This is a test message. This is a test message. This is a test message. This is a test message. This is a test message. This is a test message. This is a test message.This is a test message.'} user={false}/>
-                <Message content={'This is a test message. This is a test message. This is a test message. This is a test message. This is a test message. This is a test message. This is a test message. This is a test message. This is a test message. This is a test message.This is a test message.'} user={false}/>
-                <Message content={'This is a test message. This is a test message. This is a test message. This is a test message. This is a test message. This is a test message. This is a test message. This is a test message. This is a test message. This is a test message.This is a test message.'} user={true}/>
-                <Message content={'This is a test message. This is a test message. This is a test message. This is a test message. This is a test message. This is a test message. This is a test message. This is a test message. This is a test message. This is a test message.This is a test message.'} user={false}/>
+                {/* <Message content={'This is a test message. This is a test message. This is a test message. This is a test message. This is a test message. This is a test message. This is a test message. This is a test message. This is a test message. This is a test message.This is a test message.'} user={false}/>
                 <Message content={'This is a test message. This is a test message. This is a test message. This is a test message. This is a test message. This is a test message. This is a test message. This is a test message. This is a test message. This is a test message.This is a test message.'} user={false}/>
                 <Message content={'This is a test message. This is a test message. This is a test message. This is a test message. This is a test message. This is a test message. This is a test message. This is a test message. This is a test message. This is a test message.This is a test message.'} user={true}/>
                 <Message content={'This is a test message. This is a test message. This is a test message. This is a test message. This is a test message. This is a test message. This is a test message. This is a test message. This is a test message. This is a test message.This is a test message.'} user={false}/>
@@ -123,11 +175,15 @@ const Conversation = props => {
                 <Message content={'This is a test message. This is a test message. This is a test message. This is a test message. This is a test message. This is a test message. This is a test message. This is a test message. This is a test message. This is a test message.This is a test message.'} user={true}/>
                 <Message content={'This is a test message. This is a test message. This is a test message. This is a test message. This is a test message. This is a test message. This is a test message. This is a test message. This is a test message. This is a test message.This is a test message.'} user={false}/>
                 <Message content={'This is a test message. This is a test message. This is a test message. This is a test message. This is a test message. This is a test message. This is a test message. This is a test message. This is a test message. This is a test message.This is a test message.'} user={false}/>
-                <Message content={'This is a test message. This is a test message. This is a test message. This is a test message. This is a test message. This is a test message. This is a test message. This is a test message. This is a test message. This is a test message.This is a test message.'} user={false}/>
                 <Message content={'This is a test message. This is a test message. This is a test message. This is a test message. This is a test message. This is a test message. This is a test message. This is a test message. This is a test message. This is a test message.This is a test message.'} user={true}/>
                 <Message content={'This is a test message. This is a test message. This is a test message. This is a test message. This is a test message. This is a test message. This is a test message. This is a test message. This is a test message. This is a test message.This is a test message.'} user={false}/>
                 <Message content={'This is a test message. This is a test message. This is a test message. This is a test message. This is a test message. This is a test message. This is a test message. This is a test message. This is a test message. This is a test message.This is a test message.'} user={false}/>
                 <Message content={'This is a test message. This is a test message. This is a test message. This is a test message. This is a test message. This is a test message. This is a test message. This is a test message. This is a test message. This is a test message.This is a test message.'} user={false}/>
+                <Message content={'This is a test message. This is a test message. This is a test message. This is a test message. This is a test message. This is a test message. This is a test message. This is a test message. This is a test message. This is a test message.This is a test message.'} user={true}/>
+                <Message content={'This is a test message. This is a test message. This is a test message. This is a test message. This is a test message. This is a test message. This is a test message. This is a test message. This is a test message. This is a test message.This is a test message.'} user={false}/>
+                <Message content={'This is a test message. This is a test message. This is a test message. This is a test message. This is a test message. This is a test message. This is a test message. This is a test message. This is a test message. This is a test message.This is a test message.'} user={false}/>
+                <Message content={'This is a test message. This is a test message. This is a test message. This is a test message. This is a test message. This is a test message. This is a test message. This is a test message. This is a test message. This is a test message.This is a test message.'} user={false}/> */}
+                {messagesDisplay}
             </ChatContainer>
             {/* <MessageSubmitContainer>
                 <IconContainer>

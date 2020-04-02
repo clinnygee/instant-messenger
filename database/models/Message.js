@@ -2,7 +2,7 @@ const conn = require('../connection/conn');
 const { Sequelize } = conn;
 
 const Message = conn.define('message', {
-    text: Sequelize.STRING,
+    text: Sequelize.STRING(1500),
     user: Sequelize.JSON,
     _id: {
         type: Sequelize.UUID,
@@ -23,7 +23,7 @@ Message.createMessage = (text, sender, receiver) => {
             }
         }),
         
-        conn.models.conversation.findOrCreateConversation(sender.id, receiver.id)
+        conn.models.conversation.findOrCreateConversation(sender, receiver)
     ])
         .then(([message, conversation]) => message.setConversation(conversation))
 };

@@ -37,14 +37,14 @@ app.use(bodyParser.json());
 const {Op} = Sequelize;
 
 const conn = require('./database').conn;
-const {User, Conversation, Message} = require('./database').models;
+const {User, Conversation, Message, Reaction} = require('./database').models;
 // conn.sync({logging: false, force: true});
 conn.sync({logging: false});
 
 console.log(Conversation)
 
 const seedDb = require('./database/seeders/seed');
-seedDb();
+// seedDb();
 
 
 
@@ -114,7 +114,17 @@ app.get('/conversations',withAuth, (req, res) => {
             Conversation.find
         }
     })
-})
+});
+
+const getKeyByValue = (object, value) => {
+    // return Object.keys(object.find(key => {object[key] === value}))
+    if(object.hasOwnProperty(value) ){
+        return object[value];
+    } else {
+        return null;
+    }
+    
+};
 
 const clients = {};
 
@@ -134,10 +144,18 @@ const connection = io
         socket.on('message', msg => {
 
             let message = JSON.parse(msg);
-
+            // add message to the db
             User.findOne({where: {username: socket.username}}).then(user1 => {
                 User.findOne({where:{ username: message.receiver}}).then(user2 => {
                     Message.createMessage(message.text, user1.dataValues, user2.dataValues).then(msg => {
+                        socket.emit('message',  JSON.stringify(msg));
+                        // find if message recipient is cept in the clients object,
+                        // and send the message to them
+                        let receiver = getKeyByValue(clients, message.receiver);
+
+                        if(receiver){
+                            receiver.emit('message', JSON.stringify(msg));
+                        }
                         console.log(msg);
                     })
                 })
@@ -145,13 +163,25 @@ const connection = io
             
             console.log(msg);
 
-            // add to the db
+            
 
 
             // if successfully added to db, emit('response')
             // so that user knows it was delivered
 
         });
+        // a reaction is recieved in a JSON message containing and array with [0] as the message, [1] as the message
+        socket.on('reaction', reaction => {
+
+        });
+
+        socket.on('typing', conversation => {
+
+        });
+
+        socket.on('stop-typing', conversation => {
+            
+        })
         // add socket to the list of clients
         // socket is stored with username: socket as the pair
         socket.on('user-details', details => {

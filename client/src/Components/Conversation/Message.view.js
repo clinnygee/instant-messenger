@@ -4,7 +4,8 @@ import styled from 'styled-components';
 
 const MessageContainer = styled.div`
     width: 100%;
-    min-height: 68px;
+    
+    height: auto;
     display: flex;
     flex-direction: row;
     justify-content: ${({user}) => user ? 'flex-end': 'flex-start'};

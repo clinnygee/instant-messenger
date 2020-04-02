@@ -62,6 +62,7 @@ const MobileWrapper = styled.div`
 const MobileView = (props) => {
     const [conversationsDisplay, setConversationsDisplay] = useState(true);
     const [messageDisplay, setMessageDisplay] = useState(false);
+    const [receiver, setReceiver] = useState(null);
 
     const toggleDisplay = () => {
         setMessageDisplay(false);
@@ -72,10 +73,15 @@ const MobileView = (props) => {
         setMessageDisplay(true);
     };
 
+    const selectMessageReceiver = (username) => {
+        setReceiver(username);
+        setMessageDisplay(true);
+    }
+
     const chatsDisplayRender = () => {
         return (
             <React.Fragment>
-                {conversationsDisplay ? <Chats mobile={true} createMessage={displayMessage}/> : <People mobile={true}/>}
+                {conversationsDisplay ? <Chats onSelect={selectMessageReceiver} mobile={true} createMessage={displayMessage}/> : <People mobile={true}/>}
                 <MobileNav conversationsDisplay={conversationsDisplay} toggleDisplay={toggleDisplay}/>
             </React.Fragment>
             
@@ -83,10 +89,18 @@ const MobileView = (props) => {
             )
     };
 
+    useEffect(() => {
+        return () => {
+            console.log('Container is unmounting')
+            setReceiver(null);
+        }
+    })
+
     const conversationsDisplayRender = () => {
+        
         return (
             <React.Fragment>
-                <Conversation />
+                <Conversation receiver={receiver}/>
                 <MobileNav conversationsDisplay={conversationsDisplay} toggleDisplay={toggleDisplay}/>
             </React.Fragment>
         )

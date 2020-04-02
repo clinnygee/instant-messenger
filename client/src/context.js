@@ -74,7 +74,23 @@ export class UserProvider extends React.Component {
         });
         // before this is called, we need username in state.
         
-            socket.emit('user-details', `${this.state.username}`)
+        socket.emit('user-details', `${this.state.username}`);
+
+        socket.on('message', msg => {
+            console.log(msg);
+            const newMessage = JSON.parse(msg);
+            console.log(this.conversationData)
+            const conversationToUpdate = this.state.conversationData.find((conversation) => {
+                return conversation._id === newMessage.conversationId;
+            });
+            if(conversationToUpdate){
+                conversationToUpdate.messages.unshift(newMessage);
+                this.setState({conversationData: this.state.conversationData})
+            }
+
+            console.log(conversationToUpdate)
+            console.log(this.state.conversationData);
+        })
         
 
         this.setState({client: socket});
