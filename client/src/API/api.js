@@ -30,4 +30,37 @@ export const fetchConversationData = (username, token) => {
             'Authorization': `Bearer ${token} ${username}`,
         }
     })
-}
+};
+
+export const makeFriendRequest = (name, token, username) => {
+    return fetch(`/friends/add/${name}`, {
+        method: 'post',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+        }
+    })
+};
+
+export const acceptFriendRequest = (id, token) => {
+    return fetch(`/friends/accept/${id}`, {
+        method: 'post',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`, 
+        }
+    })
+};
+
+export const fetchFriendsData = token => {
+    return fetch('/friends', {
+        method: 'get',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+        }
+    })
+};

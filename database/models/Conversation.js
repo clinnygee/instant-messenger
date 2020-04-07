@@ -51,13 +51,16 @@ Conversation.findOrCreateConversation = function(user1, user2) {
         }
       });
   };
+  // 
 
 Conversation.findAllConversations = (userId) => {
   return Conversation.findAll({
     where: {
       [Op.or]: [{user1Id: userId}, {user2Id: userId}]
     },
-    include: [conn.models.message],
+    // include: [conn.models.message],
+    include: [{model: conn.models.message,
+              include: conn.models.reaction}],
 
     order: [[conn.models.message, 'createdAt', 'DESC']]
   }).then(conversations => {

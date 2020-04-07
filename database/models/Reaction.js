@@ -1,7 +1,7 @@
 const conn = require('../connection/conn');
-const {Op} = require('sequelize');
+const {Sequelize} = conn;
 
-const Reacton = conn.define('reaction', {
+const Reaction = conn.define('reaction', {
     reaction: Sequelize.STRING,
     user: Sequelize.JSON,
     _id: {
@@ -13,18 +13,20 @@ const Reacton = conn.define('reaction', {
     freezeTableName: true,
 });
 
-Reaction.createReaction = (reaction, message, sender) => {
+Reaction.createReaction = (reaction, messageId, sender) => {
     return Promise.all([
-        Reaction.createReaction({
+        Reaction.create({
             reaction,
             user: {
                 _id: sender.id,
                 username: sender.username,
             }
         }),
-        conn.models.message.findAll({where: {_id: message._id}})
+        conn.models.message.findOne({where: {_id: messageId}})
     ]).then(([reaction, message]) => {
-        reaction.setMessage(message)
+        console.log(reaction);
+        console.log(message);
+        return reaction.setMessage(message)
     })
 };
 

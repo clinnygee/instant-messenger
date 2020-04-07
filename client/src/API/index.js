@@ -1,3 +1,3 @@
-import {registerUser, logInUser, fetchConversationData} from './api';
+import {registerUser, logInUser, fetchConversationData, makeFriendRequest, fetchFriendsData, acceptFriendRequest} from './api';
 
-export {registerUser, logInUser, fetchConversationData} 
+export {registerUser, logInUser, fetchConversationData, makeFriendRequest, fetchFriendsData, acceptFriendRequest} 

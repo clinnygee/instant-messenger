@@ -37,11 +37,11 @@ app.use(bodyParser.json());
 const {Op} = Sequelize;
 
 const conn = require('./database').conn;
-const {User, Conversation, Message, Reaction} = require('./database').models;
+const {User, Conversation, Message, Reaction, Friendship, FriendRequest} = require('./database').models;
 // conn.sync({logging: false, force: true});
 conn.sync({logging: false});
 
-console.log(Conversation)
+// console.log(Conversation)
 
 const seedDb = require('./database/seeders/seed');
 // seedDb();
@@ -87,9 +87,9 @@ app.post('/register', (req, res) => {
         })
     });
 
-    // User.create({username: username}).then(user => {
-    //     console.log('Users auto generated ID:', user.id);
-    // })
+    
+    // add logic here to create first friendship, send some messages in it etc.
+    // The messages should explain how the app works
 
 
     res.status(200).send('Hit the Register route');
@@ -111,7 +111,7 @@ app.get('/conversations',withAuth, (req, res) => {
             // }}).then(conversations => {
             //     Message.findAll({where})
             // });
-            Conversation.find
+            // Conversation.find
         }
     })
 });
@@ -172,7 +172,16 @@ const connection = io
         });
         // a reaction is recieved in a JSON message containing and array with [0] as the message, [1] as the message
         socket.on('reaction', reaction => {
+            console.log(reaction);
+            const reactionObject = JSON.parse(reaction);
 
+            User.findOne({where: {username: reactionObject.user}}).then(user => {
+                Reaction.createReaction(reactionObject.reaction, reactionObject.messageId, user).then(reaction => {
+                    console.log(reaction);
+                    socket.emit('reaction', JSON.stringify(reaction));
+                })
+            })
+            // Reaction.createReaction(reactionObject.reaction, reactionObject.messageId, reactionObject.user)
         });
 
         socket.on('typing', conversation => {
@@ -180,7 +189,7 @@ const connection = io
         });
 
         socket.on('stop-typing', conversation => {
-            
+
         })
         // add socket to the list of clients
         // socket is stored with username: socket as the pair
@@ -211,6 +220,50 @@ const connection = io
     // });
 
     // console.log(io);
+// get ALL friends data, friendships, friendRequests
+app.get('/friends', withAuth, (req, res) => {
+    // find all friends, include: posts
+    // find all friend requests
+    // User.findOne({where: {username: req.username,}}).then(user => {
+    //     FriendRequest.findAllRequests(user.id).then(requests => {
+    //         console.log(requests);
+    //         res.json(requests);
+    //     })
+    // });
+
+    User.findOne(
+        {where: {username: req.username},
+        include: [{model: FriendRequest, foreignKey: 'Requestee'}, {model: Friendship}]}).then(userData => {
+            res.json(userData)
+        });
+
+});
+
+app.post('/friends/add/:id', withAuth, (req, res) => {
+    console.log(req.username);
+    User.findOne({where: {username: req.username}}).then(requester => {
+        User.findOne({where: {username: req.params.id}}).then(requestee => {
+            FriendRequest.findOrCreateRequest(requester, requestee).then(request => {
+                console.log(request);
+                res.status(200).send();
+            })
+        })
+    })
+});
+
+app.post('/friends/delete/:id', (req, res) => {
+
+});
+
+app.post('/friends/accept/:id', withAuth, (req, res) => {
+    console.log(req.params);
+    
+    FriendRequest.findOne({where: {id: req.params.id}}).then(request => {
+        FriendRequest.accept(request).then(friendship => {
+            res.json(friendship)
+        })
+    })
+})
 
 server.listen(port);
 

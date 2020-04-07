@@ -1,7 +1,7 @@
 import React, {createContext} from 'react';
 import {w3cwebsocket as W3CWebSocket} from 'websocket'
 import openSocket from 'socket.io-client';
-import {fetchConversationData} from './API'
+import {fetchConversationData, makeFriendRequest} from './API'
 
 export const UserContext = createContext({
     username: '',
@@ -17,6 +17,8 @@ export const UserContext = createContext({
     handleAuthentication: () => {},
     initializeWsClient: () => {},
     sendWsMessage: () => {},
+    sendWsReaction: () => {},
+    sendFriendRequest: () => {},
 });
 
 export class UserProvider extends React.Component {
@@ -51,7 +53,7 @@ export class UserProvider extends React.Component {
             this.getConversationData();
         });
         this.changeAuthenticated();
-    }
+    };
 
     changeAuthenticated = () => {
         this.setState({authenticated: !this.state.authenticated});
@@ -90,6 +92,11 @@ export class UserProvider extends React.Component {
 
             console.log(conversationToUpdate)
             console.log(this.state.conversationData);
+        });
+
+        socket.on('reaction', reaction => {
+            let reactionObject = JSON.parse(reaction);
+            console.log(reactionObject);
         })
         
 
@@ -108,6 +115,22 @@ export class UserProvider extends React.Component {
         this.state.client.emit('message', JSON.stringify(msg));
     };
 
+    sendWsReaction = (messageId, reaction) => {
+        const Reaction = {
+            messageId: messageId,
+            reaction: reaction,
+            user: this.state.username,
+        };
+
+        this.state.client.emit('reaction', JSON.stringify(Reaction));
+    };
+
+    sendFriendRequest = (user) => {
+        makeFriendRequest(user, this.state.jwt).then(res => {
+            console.log(res);
+        })
+    }
+
     state = {
         username: '',
         authenticated: false,
@@ -122,6 +145,8 @@ export class UserProvider extends React.Component {
         handleAuthentication: this.handleAuthentication,
         initializeWsClient: this.initializeWsClient,
         sendWsMessage: this.sendWsMessage,
+        sendWsReaction: this.sendWsReaction,
+        sendFriendRequest: this.sendFriendRequest,
     }
 
     render(){
