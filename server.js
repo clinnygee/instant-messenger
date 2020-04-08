@@ -233,7 +233,7 @@ app.get('/friends', withAuth, (req, res) => {
 
     User.findOne(
         {where: {username: req.username},
-        include: [{model: FriendRequest, foreignKey: 'Requestee'}, {model: Friendship}]}).then(userData => {
+        include: [{model: FriendRequest, foreignKey: 'Requestee', include: [{model: User, as: 'requestee'}]}]}).then(userData => {
             res.json(userData)
         });
 

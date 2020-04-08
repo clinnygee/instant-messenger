@@ -136,9 +136,14 @@ const AddFriend = (props) => {
         props.onFriendRequest(name);
     }
 
-    const friendRequests = props.requests.map(request => {
-        return <FriendRequest id={request.id} acceptRequest={props.acceptRequest} />
-    });
+    let friendRequests = null;
+    if(props.requests.length > 0){
+        friendRequests = props.requests.map(request => {
+            return <FriendRequest id={request.id} acceptRequest={props.acceptRequest} />
+        });
+    }
+
+    
 
     console.log(friendRequests);
 
