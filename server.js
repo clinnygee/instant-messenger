@@ -38,13 +38,13 @@ const {Op} = Sequelize;
 
 const conn = require('./database').conn;
 const {User, Conversation, Message, Reaction, Friendship, FriendRequest} = require('./database').models;
-// conn.sync({logging: false, force: true});
-conn.sync({logging: false});
+conn.sync({logging: false, force: true});
+// conn.sync({logging: false});
 
 // console.log(Conversation)
 
 const seedDb = require('./database/seeders/seed');
-// seedDb();
+seedDb();
 
 
 
@@ -233,9 +233,33 @@ app.get('/friends', withAuth, (req, res) => {
 
     User.findOne(
         {where: {username: req.username},
-        include: [{model: FriendRequest, foreignKey: 'Requestee', include: [{model: User, as: 'requestee'}]}]}).then(userData => {
+        include: [
+            {model: FriendRequest, as: 'friendrequests',
+            include:[
+                {model: User,
+                 }
+            ]}]})
+            .then(userData => {
             res.json(userData)
         });
+
+    // User.findOne(
+    //     {where: {username: req.username}}
+    //     )
+    //     .then(user => {
+    //     FriendRequest.findAll(
+    //         {where: {userId: user.id}, include: [
+    //         {model: User,
+    //         where: {
+    //             id: {
+    //                 [Op.col]: `friendrequest.friendrequestId`
+    //             }
+    //         }}
+    //     ]})}).then(friendrequests => {
+    //         console.log(user);
+    //         console.log(friendrequests)
+    //     });
+    // });
 
 });
 
@@ -263,7 +287,29 @@ app.post('/friends/accept/:id', withAuth, (req, res) => {
             res.json(friendship)
         })
     })
+});
+
+app.get('posts', withAuth, (req,res) => {
+
+});
+
+app.post('posts/create', withAuth, (req, res) => {
+
+});
+
+app.delete('/posts/:id', withAuth, (req,res) => {
+
+});
+
+app.put('/posts/:id', withAuth, (req, res) => {
+
 })
+
+app.post('/posts/:id/comments', withAuth, (req,res) => {
+
+});
+
+app.post
 
 server.listen(port);
 
