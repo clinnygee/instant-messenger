@@ -14,8 +14,9 @@ User.hasMany(Conversation);
 // User.hasMany(Friendship, {foreignKey: 'User1'});
 // User.hasMany(Friendship, {foreignKey: 'User2'});
 // User.hasMany(FriendRequest, {foreignKey: 'Requestee'});
-User.belongsToMany(User, {as: 'friend', through: Friendship});
+User.belongsToMany(User, {as: 'friends', through: Friendship});
 User.hasMany(Friendship);
+
 User.belongsToMany(User, {as:'friendrequests', through: FriendRequest});
 User.hasMany(FriendRequest);
 

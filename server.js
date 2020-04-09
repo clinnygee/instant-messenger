@@ -38,13 +38,13 @@ const {Op} = Sequelize;
 
 const conn = require('./database').conn;
 const {User, Conversation, Message, Reaction, Friendship, FriendRequest} = require('./database').models;
-conn.sync({logging: false, force: true});
-// conn.sync({logging: false});
+// conn.sync({logging: false, force: true});
+conn.sync({logging: false});
 
 // console.log(Conversation)
 
 const seedDb = require('./database/seeders/seed');
-seedDb();
+// seedDb();
 
 
 
@@ -236,9 +236,25 @@ app.get('/friends', withAuth, (req, res) => {
         include: [
             {model: FriendRequest, as: 'friendrequests',
             include:[
-                {model: User,
-                 }
-            ]}]})
+                {
+                    model: User,
+                    attributes: {exclude: ['password']}
+                }
+            ]},
+            {
+                model: Friendship,
+                include: [
+                    {
+                        model: User,
+                        attributes: {exclude: ['password']}
+                    }
+                ]
+                // as: 'friends',
+                // include:[ {
+                //     model: User,
+                // }]
+            }
+            ]})
             .then(userData => {
             res.json(userData)
         });
