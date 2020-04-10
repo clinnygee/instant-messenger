@@ -95,6 +95,55 @@ app.post('/register', (req, res) => {
     res.status(200).send('Hit the Register route');
 });
 
+const multer = require('multer');
+const multerS3 = require('multer-s3');
+const aws = require('aws-sdk');
+
+aws.config.update({
+    // Your SECRET ACCESS KEY from AWS should go here,
+    // Never share it!
+    // Setup Env Variable, e.g: process.env.SECRET_ACCESS_KEY
+    secretAccessKey: "DGC1r+H0Q/kFHw4k0UL8dUkVAu1SClewsYivOxDs",
+    // Not working key, Your ACCESS KEY ID from AWS should go here,
+    // Never share it!
+    // Setup Env Variable, e.g: process.env.ACCESS_KEY_ID
+    accessKeyId: "AKIAJRMK5GPYEE2I6I6Q",
+    region: 'ap-southeast-2' // region of your bucket
+});
+
+const s3 = new aws.S3();
+
+const upload = multer({
+    storage: multerS3({
+        s3:s3,
+        bucket: 'instant-messenger',
+        acl: 'public-read',
+        metadata: (req, fil, cb) => {
+            cb(null, {fileName: file.fieldname});
+        },
+        key: (req, file, cb) => {
+            cb(null, Date.now().toString())
+        }
+    })
+});
+
+const singleUpload = upload.single('image');
+
+app.post('/settings/file', withAuth, (req, res) => {
+    singleUpload(req, res, (err, some) => {
+        if(err){
+            console.log(err.message);
+        };
+        
+        User.findOne({where: {username: req.username}}).then(user => {
+            user.profileImgUrl = req.file.location;
+            user.save().then(res.status(200).send());
+        })
+    });
+
+
+});
+
 app.get('/conversations',withAuth, (req, res) => {
     // console.log(req.headers.authorization);
     console.log('username: ------------------------------------')

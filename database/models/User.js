@@ -13,6 +13,11 @@ const User = conn.define('user', {
         type:Sequelize.STRING,
         allowNull: false, 
     }, 
+    profileImgUrl: {
+        type: Sequelize.STRING,
+        allowNull: false,
+        defaultValue: 'https://picsum.photos/100',
+    }
 }, {
     freezeTableName: true,
 });
