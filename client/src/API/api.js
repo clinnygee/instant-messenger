@@ -64,3 +64,16 @@ export const fetchFriendsData = token => {
         }
     })
 };
+
+export const uploadProfilePhoto = (token, formData) => {
+
+    return fetch('/profile/image', {
+        method: 'POST',
+        headers: {
+            // 'Accept': 'application/json',
+            // 'Content-type': 'multipart/form-data',
+            'Authorization': `Bearer ${token}`
+        },
+        body: formData,
+    })
+}

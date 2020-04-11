@@ -1,3 +1,3 @@
-import Conversation from './Conversation';
+import ConversationDisplay from './Conversation';
 
-export default Conversation;
+export default ConversationDisplay;

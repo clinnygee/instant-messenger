@@ -1,12 +1,13 @@
 import React, {useState, useEffect, useContext} from 'react';
+import {BrowserRouter as Router, Route, Switch, Link, Redirect} from 'react-router-dom';
 import styled from 'styled-components';
 import Conversations from '../Conversations';
 import People from '../People';
-import Chats from '../Chats';
-import Conversation from '../Conversation';
+import Profile from '../Routes/Profile';
+import ConversationDisplay from '../Conversation';
 import {AppWrapper} from '../Styled/styled-components';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import {faComments, faUserFriends} from '@fortawesome/free-solid-svg-icons';
+import {faComments, faUserFriends, faAddressCard} from '@fortawesome/free-solid-svg-icons';
 
 
 
@@ -45,7 +46,9 @@ const Container = (props) => {
 
     return (
         <AppWrapper>
-            {mobileView ? <MobileView screenWidth={screenWidth}/> : <DesktopView />}
+            <Router>
+                <View screenWidth={screenWidth}/> 
+            </Router>            
         </AppWrapper>           
         
     )
@@ -59,7 +62,7 @@ const MobileWrapper = styled.div`
     flex-direction: column;
 `
 
-const MobileView = (props) => {
+const View = (props) => {
     const [conversationsDisplay, setConversationsDisplay] = useState(true);
     const [messageDisplay, setMessageDisplay] = useState(false);
     const [receiver, setReceiver] = useState(null);
@@ -78,42 +81,31 @@ const MobileView = (props) => {
         setMessageDisplay(true);
     }
 
-    const chatsDisplayRender = () => {
-        return (
-            <React.Fragment>
-                {conversationsDisplay ? <Chats onSelect={selectMessageReceiver} mobile={true} createMessage={displayMessage}/> : <People mobile={true}/>}
-                <MobileNav conversationsDisplay={conversationsDisplay} toggleDisplay={toggleDisplay}/>
-            </React.Fragment>
-            
-            
-            )
-    };
+    
 
     useEffect(() => {
         return () => {
             console.log('Container is unmounting')
-            setReceiver(null);
+            
         }
     })
 
-    const conversationsDisplayRender = () => {
-        
-        return (
-            <React.Fragment>
-                <Conversation receiver={receiver}/>
-                <MobileNav conversationsDisplay={conversationsDisplay} toggleDisplay={toggleDisplay}/>
-            </React.Fragment>
-        )
-    }
+   
     return (
         
         <MobileWrapper>
-            {messageDisplay ?
-                conversationsDisplayRender()
-                :
-                chatsDisplayRender()             
-                
-            }
+            <Switch>
+                <Route path='/conversations'>
+                    <ConversationDisplay />
+                </Route>
+                <Route path='/friends'>
+                    <People mobile={true}/>
+                </Route>
+                <Route path='/profile'>
+                    <Profile />
+                </Route>
+            </Switch>
+            <Nav />
         </MobileWrapper>
             
         
@@ -138,16 +130,27 @@ const NavItem = styled.div`
     color: ${({active}) => active ? 'black' : 'rgb(220,222,225)'}
 `
 
-const MobileNav = props => {
+const Nav = props => {
 
     return(
         <NavWrapper>
-            <NavItem active={props.conversationsDisplay} onClick={props.toggleDisplay} screenWidth={props.screenWidth}>
-                <FontAwesomeIcon icon={faComments} />
-            </NavItem>
-            <NavItem active={!props.conversationsDisplay} onClick={props.toggleDisplay}>
-                <FontAwesomeIcon icon={faUserFriends} />
-            </NavItem>
+            <Link to='/conversations'>
+                <NavItem active={props.conversationsDisplay} onClick={props.toggleDisplay} screenWidth={props.screenWidth}>
+                    <FontAwesomeIcon icon={faComments} />
+                </NavItem>
+            </Link>
+            
+            <Link to='friends'>
+                <NavItem active={!props.conversationsDisplay} onClick={props.toggleDisplay}>
+                    <FontAwesomeIcon icon={faUserFriends} />
+                </NavItem>
+            </Link>
+            <Link to='profile'>
+                <NavItem>
+                    <FontAwesomeIcon icon={faAddressCard} />
+                </NavItem>
+            </Link>
+            
         </NavWrapper>
     )
 }

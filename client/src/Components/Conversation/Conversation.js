@@ -1,12 +1,13 @@
 import React, {useState, useContext, useEffect} from 'react';
 import styled from 'styled-components';
 import Message from './Message.view';
+import Chats from '../Chats';
 import {UserContext} from '../../context';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faPaperPlane} from '@fortawesome/free-solid-svg-icons';
 
 
-const ConversationContainer = styled.div`
+const _ConversationContainer = styled.div`
     width: 100%;
     height: 85%;
 `
@@ -52,7 +53,7 @@ const ConversationImage = styled.div`
     width: 100px;
     height: 100px;
     clip-path: circle(40%);
-    background-image: url(https://picsum.photos/100)
+    background-image: url(https://instant-messenger.s3-ap-southeast-2.amazonaws.com/1586585138915.jpeg)
 `
 
 const ConversationHeader = styled.h1`
@@ -84,6 +85,50 @@ const SearchInput = styled.input`
         outline: none;
     }
 `
+
+// This needs to be a container component, which will either display all of your conversations,
+// or will allow you to send a new message to a new recipient.
+// Show Chats by default, unless a reciever is selected
+
+const ConversationContainer = props => {
+    const [conversationsDisplay, setConversationsDisplay] = useState(true);
+    const [messageDisplay, setMessageDisplay] = useState(false);
+    const [receiver, setReceiver] = useState(null);
+
+    const displayMessage = () => {
+        setMessageDisplay(true);
+    };
+
+    const selectMessageReceiver = (username) => {
+        setReceiver(username);
+        setMessageDisplay(true);
+    };
+
+    const chatsDisplayRender = () => {
+        return (
+            
+                 <Chats onSelect={selectMessageReceiver} mobile={true} createMessage={displayMessage}/> 
+            
+            
+            
+            )
+    };
+    const conversationsDisplayRender = () => {
+        
+        return (            
+                <Conversation receiver={receiver}/>                
+        )
+    };
+
+    return (
+        <React.Fragment>
+            {messageDisplay ? conversationsDisplayRender() : chatsDisplayRender()}
+        </React.Fragment>
+        
+    )
+
+
+}
 const Conversation = props => {
 
     const [receiver, setReceiver] = useState(null);
@@ -139,11 +184,13 @@ const Conversation = props => {
         
     }, []);
 
+
+
     
     const messagesDisplay = messages ? createMessages() : null;
 
     return (
-        <ConversationContainer>
+        <_ConversationContainer>
             <Header>
                 {receiver ? 
                     <Recipient receiver={receiver} />
@@ -156,24 +203,10 @@ const Conversation = props => {
             <ChatContainer>
                 {messagesDisplay}
             </ChatContainer>
-            {/* <MessageSubmitContainer>
-                <IconContainer>
-                </IconContainer>
-                <IconContainer>
-                </IconContainer>
-                <SearchForm height={`75px`}>
-                    <SearchInput placeholder={'Message..'}>
-                    </SearchInput>
-                </SearchForm>
-                <IconContainer>
-                </IconContainer>
-                <IconContainer>
-                </IconContainer>
-            </MessageSubmitContainer> */}
             <MessageCreate onSubmit={sendMessage}/>
             
             
-        </ConversationContainer>
+        </_ConversationContainer>
     )
 };
 
@@ -284,4 +317,4 @@ const MessageCreate = props => {
     )
 }
 
-export default Conversation;
+export default ConversationContainer;

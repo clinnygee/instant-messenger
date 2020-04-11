@@ -21,6 +21,9 @@ const saltRounds = 10;
 
 require('dotenv').config();
 
+console.log(process.env.SECRET_ACCESS_KEY);
+console.log(process.env.ACCESS_KEY_ID);
+
 
 
 const port = (process.env.PORT || 8080);
@@ -44,7 +47,7 @@ conn.sync({logging: false});
 // console.log(Conversation)
 
 const seedDb = require('./database/seeders/seed');
-// seedDb();
+seedDb();
 
 
 
@@ -55,6 +58,7 @@ app.post('/login', (req,res) => {
         if(!user){
             res.status(400).send('User does not exist, Please sign up.')
         } else {
+            console.log(user);
             bcrypt.compare(password, user.password, (err, result) => {
                 if(err){
                     res.status(400).send('Incorrect Password')
@@ -99,47 +103,63 @@ const multer = require('multer');
 const multerS3 = require('multer-s3');
 const aws = require('aws-sdk');
 
+
 aws.config.update({
     // Your SECRET ACCESS KEY from AWS should go here,
     // Never share it!
     // Setup Env Variable, e.g: process.env.SECRET_ACCESS_KEY
-    secretAccessKey: "DGC1r+H0Q/kFHw4k0UL8dUkVAu1SClewsYivOxDs",
+    secretAccessKey: process.env.SECRET_ACCESS_KEY,
     // Not working key, Your ACCESS KEY ID from AWS should go here,
     // Never share it!
     // Setup Env Variable, e.g: process.env.ACCESS_KEY_ID
-    accessKeyId: "AKIAJRMK5GPYEE2I6I6Q",
-    region: 'ap-southeast-2' // region of your bucket
+    accessKeyId: process.env.ACCESS_KEY_ID,
+    region: 'us-east-1' // region of your bucket
 });
 
 const s3 = new aws.S3();
 
+
 const upload = multer({
     storage: multerS3({
-        s3:s3,
-        bucket: 'instant-messenger',
+        s3: s3,
         acl: 'public-read',
-        metadata: (req, fil, cb) => {
-            cb(null, {fileName: file.fieldname});
-        },
+        // contentType: 'image/png',
+        bucket: 'instant-messenger',
+        
+        // metadata: (req, file, cb) => {
+        //     cb(null, {fileName: file.fieldname});
+        // },
         key: (req, file, cb) => {
-            cb(null, Date.now().toString())
+            console.log(file);
+            cb(null, Date.now().toString()+'.jpeg')
         }
     })
 });
 
-const singleUpload = upload.single('image');
+// const singleUpload = upload.single('profile-image');
 
-app.post('/settings/file', withAuth, (req, res) => {
-    singleUpload(req, res, (err, some) => {
-        if(err){
-            console.log(err.message);
-        };
+app.post('/profile/image', withAuth, upload.array('profile-image', 1),   (req, res) => {
+    // console.log(req);
+    console.log(req.body)
+    // console.log(req.file.name);
+
+    // singleUpload(req, res, function(err, some) {
+    //     if (err) {
+    //       return res.status(422).send({errors: [{title: 'Image Upload Error', detail: err.message}] });
+    //     }
+    
+    //     return res.json({'imageUrl': req.file.location});
+    //   });
+    // singleUpload(req, res, (err, some) => {
+    //     if(err){
+    //         console.log(err.message);
+    //     };
         
-        User.findOne({where: {username: req.username}}).then(user => {
-            user.profileImgUrl = req.file.location;
-            user.save().then(res.status(200).send());
-        })
-    });
+    //     User.findOne({where: {username: req.username}}).then(user => {
+    //         user.profileImgUrl = req.file.location;
+    //         user.save().then(res.status(200).send());
+    //     })
+    // });
 
 
 });
