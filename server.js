@@ -40,7 +40,7 @@ app.use(bodyParser.json());
 const {Op} = Sequelize;
 
 const conn = require('./database').conn;
-const {User, Conversation, Message, Reaction, Friendship, FriendRequest} = require('./database').models;
+const {User, Conversation, Message, Reaction, Friendship, FriendRequest, Post, Comment} = require('./database').models;
 // conn.sync({logging: false, force: true});
 conn.sync({logging: false});
 
@@ -136,32 +136,27 @@ const upload = multer({
     })
 });
 
-// const singleUpload = upload.single('profile-image');
+const singleUpload = upload.single('profile-image');
 
-app.post('/profile/image', withAuth, upload.array('profile-image', 1),   (req, res) => {
+app.post('/profile/image', withAuth,    (req, res) => {
     // console.log(req);
     console.log(req.body)
     // console.log(req.file.name);
 
-    // singleUpload(req, res, function(err, some) {
-    //     if (err) {
-    //       return res.status(422).send({errors: [{title: 'Image Upload Error', detail: err.message}] });
-    //     }
-    
-    //     return res.json({'imageUrl': req.file.location});
-    //   });
-    // singleUpload(req, res, (err, some) => {
-    //     if(err){
-    //         console.log(err.message);
-    //     };
-        
-    //     User.findOne({where: {username: req.username}}).then(user => {
-    //         user.profileImgUrl = req.file.location;
-    //         user.save().then(res.status(200).send());
-    //     })
-    // });
+    singleUpload(req, res, function(err, some) {
+        if (err) {
+          return res.status(422).send({errors: [{title: 'Image Upload Error', detail: err.message}] });
+        }   
 
-
+        User.findOne({where: {username: req.username}}).then(user => {
+            user.update({
+                profileImgUrl: req.file.location
+            }).then(user => {
+                res.json(user);
+            })
+            // 
+        });        
+      });
 });
 
 app.get('/conversations',withAuth, (req, res) => {
@@ -380,21 +375,41 @@ app.get('posts', withAuth, (req,res) => {
 
 app.post('posts/create', withAuth, (req, res) => {
 
+
+    singleUpload(req, res, function(err, some) {
+        if (err) {
+          return res.status(422).send({errors: [{title: 'Image Upload Error', detail: err.message}] });
+        }   
+
+        User.findOne({where: {username: req.username}}).then(user => {
+
+            Post.create({contentUrl: req.file.location, text: req.body.text}).then(post => {
+                post.setUser(user);
+            })
+            
+        });        
+      });
 });
 
 app.delete('/posts/:id', withAuth, (req,res) => {
-
+    // call Post.delete() which will return an error if if req.username !=
 });
 
 app.put('/posts/:id', withAuth, (req, res) => {
-
+    // for editing post
 })
 
 app.post('/posts/:id/comments', withAuth, (req,res) => {
 
 });
 
-app.post
+app.delete('/posts/:id/comment/:commentId', (req,res) => {
+    
+})
+
+app.put('/posts/:id/comment/:commentId', (req, res) => {
+
+})
 
 server.listen(port);
 

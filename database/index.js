@@ -6,11 +6,19 @@ const User = require('./models/User');
 const Reaction = require('./models/Reaction');
 const Friendship = require('./models/Friendship');
 const FriendRequest = require('./models/FriendRequest');
+const Post = require('./models/Post');
+const Comment = require('./models/Comment');
 
 console.log('setting up relations')
 console.log('--------------------------------------------------')
 
 User.hasMany(Conversation);
+User.hasMany(Post);
+Post.belongsTo(User, {foreignKey: 'userId'});
+Post.hasMany(Comment);
+Comment.belongsTo(Post, {foreignKey: 'postId'});
+User.hasMany(Comment);
+Comment.belongsTo(User, {foreignKey: 'userId'});
 // User.hasMany(Friendship, {foreignKey: 'User1'});
 // User.hasMany(Friendship, {foreignKey: 'User2'});
 // User.hasMany(FriendRequest, {foreignKey: 'Requestee'});

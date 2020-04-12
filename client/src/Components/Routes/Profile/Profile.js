@@ -19,7 +19,9 @@ const Profile = props => {
         })
         console.log(formData);
         uploadProfilePhoto(context.jwt, formData).then(res => {
-
+            res.json().then(parsedJson => {
+                console.log(parsedJson);
+            })
         })
     };
 
