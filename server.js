@@ -369,22 +369,33 @@ app.post('/friends/accept/:id', withAuth, (req, res) => {
     })
 });
 
-app.get('posts', withAuth, (req,res) => {
-
+app.get('/feed', withAuth, (req,res) => {
+    Post.findAll({include: [
+        {
+            model: User,
+        }
+    ]}).then(posts => {
+        console.log(posts);
+        res.json(posts);
+    })
 });
 
-app.post('posts/create', withAuth, (req, res) => {
+const postPhotoUpload = upload.single('post-image');
 
+app.post('/feed/create', withAuth, (req, res) => {
+    console.log('Hit /feed/create')
 
-    singleUpload(req, res, function(err, some) {
+    postPhotoUpload(req, res, function(err, some) {
         if (err) {
           return res.status(422).send({errors: [{title: 'Image Upload Error', detail: err.message}] });
-        }   
+        }
 
         User.findOne({where: {username: req.username}}).then(user => {
-
-            Post.create({contentUrl: req.file.location, text: req.body.text}).then(post => {
+            const obj = JSON.parse(JSON.stringify(req.body));
+            console.log(obj);
+            Post.create({contentUrl: req.file.location, text: obj['post-body']}).then(post => {
                 post.setUser(user);
+                res.status(200).send('Success!');
             })
             
         });        

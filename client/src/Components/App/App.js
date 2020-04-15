@@ -1,8 +1,7 @@
 import React from 'react';
 import styled, {createGlobalStyle} from 'styled-components';
 import Authentication from '../Authentication'
-import People from '../People';
-import Conversations from '../Conversations';
+
 import {UserProvider, UserConsumer} from '../../context';
 import Container from '../Container';
 

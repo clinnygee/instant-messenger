@@ -20,19 +20,19 @@ export const logInUser = (data) => {
     })
 };
 
-export const fetchConversationData = (username, token) => {
+export const fetchConversationData = ( token) => {
     return fetch('/conversations', {
         method: 'get',
         
         headers: {
             'Accept': 'application/json',
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token} ${username}`,
+            'Authorization': `Bearer ${token} `,
         }
     })
 };
 
-export const makeFriendRequest = (name, token, username) => {
+export const makeFriendRequest = (name, token) => {
     return fetch(`/friends/add/${name}`, {
         method: 'post',
         headers: {
@@ -75,5 +75,26 @@ export const uploadProfilePhoto = (token, formData) => {
             'Authorization': `Bearer ${token}`
         },
         body: formData,
+    })
+};
+
+export const uploadNewPost = (token, formData) => {
+    return fetch('/feed/create', {
+        method: 'POST',
+        headers: {
+            'Authorization': `Bearer ${token}`
+        },
+        body: formData,
+    })
+};
+
+export const getAllPosts = (token) => {
+    return fetch('/feed', {
+        method: 'GET',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+        },
     })
 }

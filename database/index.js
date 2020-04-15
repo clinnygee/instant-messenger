@@ -60,5 +60,7 @@ module.exports = {
         Reaction,
         Friendship,
         FriendRequest,
+        Post,
+        Comment,
     }
 }

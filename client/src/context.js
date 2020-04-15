@@ -41,12 +41,13 @@ export class UserProvider extends React.Component {
     };
 
     getConversationData = () => {
-        fetchConversationData(this.state.username, this.state.jwt)
+        fetchConversationData( this.state.jwt)
         .then(res => res.json())
         .then(parsedJSON => this.setState({conversationData: parsedJSON}));
     };
 
     setJwt = (jwt) => {
+        console.log(jwt);
         sessionStorage.setItem('instant-messenger-jwt', jwt.token);
         console.log(jwt)
         this.setState({jwt: jwt.token}, () => {
@@ -129,6 +130,15 @@ export class UserProvider extends React.Component {
         makeFriendRequest(user, this.state.jwt).then(res => {
             console.log(res);
         })
+    };
+
+    componentDidMount = () => {
+        // let onLoadJwt = sessionStorage.getItem('instant-messenger-jwt');
+
+        // if(onLoadJwt){
+        //     console.log(onLoadJwt);
+        //     this.setJwt(onLoadJwt);
+        // }
     }
 
     state = {

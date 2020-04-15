@@ -2,13 +2,15 @@ import React, {useState, useEffect, useContext} from 'react';
 import {BrowserRouter as Router, Route, Switch, Link, Redirect} from 'react-router-dom';
 import styled from 'styled-components';
 import Feed from '../Routes/Feed'
-import Conversations from '../Conversations';
+
 import People from '../People';
 import Profile from '../Routes/Profile';
 import ConversationDisplay from '../Conversation';
 import {AppWrapper} from '../Styled/styled-components';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faComments, faUserFriends, faAddressCard, faHome} from '@fortawesome/free-solid-svg-icons';
+
+
 
 
 
@@ -67,6 +69,7 @@ const View = (props) => {
     const [conversationsDisplay, setConversationsDisplay] = useState(true);
     const [messageDisplay, setMessageDisplay] = useState(false);
     const [receiver, setReceiver] = useState(null);
+    // const context = useContext(UserContext);
 
     const toggleDisplay = () => {
         setMessageDisplay(false);
@@ -97,6 +100,9 @@ const View = (props) => {
         <MobileWrapper>
             <Switch>
                 <Route exact path='/'>
+                    <Redirect to='/feed' />
+                </Route>
+                <Route path='/feed'>
                     <Feed />
                 </Route>
                 <Route path='/conversations'>
@@ -166,15 +172,15 @@ const Nav = props => {
     )
 }
 
-const DesktopView = (props) => {
+// const DesktopView = (props) => {
 
-    return (
-        <React.Fragment>
-            <Conversations />
-            <People />
+//     return (
+//         <React.Fragment>
+//             <Conversations />
+//             <People />
             
-        </React.Fragment>
-    )
-}
+//         </React.Fragment>
+//     )
+// }
 
 export default Container;
