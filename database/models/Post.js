@@ -2,9 +2,9 @@ const conn = require('../connection/conn');
 const { Sequelize } = conn;
 const { Op } = Sequelize;
 
-const Post = Sequelize.define('post', {
+const Post = conn.define('post', {
     id: {
-        primaryKey: true;
+        primaryKey: true,
         type: Sequelize.UUID,
         defaultValue: Sequelize.UUIDV4,
     },

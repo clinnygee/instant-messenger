@@ -28,6 +28,9 @@ const GlobalStyle = createGlobalStyle`
     vertical-align: baseline;
     box-sizing: border-box;
   }
+  p{
+    rgb(38,38,38);
+  }
 `
 
 const AppWrapper = styled.div`

@@ -1,13 +1,14 @@
 import React, {useState, useEffect, useContext} from 'react';
 import {BrowserRouter as Router, Route, Switch, Link, Redirect} from 'react-router-dom';
 import styled from 'styled-components';
+import Feed from '../Routes/Feed'
 import Conversations from '../Conversations';
 import People from '../People';
 import Profile from '../Routes/Profile';
 import ConversationDisplay from '../Conversation';
 import {AppWrapper} from '../Styled/styled-components';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import {faComments, faUserFriends, faAddressCard} from '@fortawesome/free-solid-svg-icons';
+import {faComments, faUserFriends, faAddressCard, faHome} from '@fortawesome/free-solid-svg-icons';
 
 
 
@@ -95,6 +96,9 @@ const View = (props) => {
         
         <MobileWrapper>
             <Switch>
+                <Route exact path='/'>
+                    <Feed />
+                </Route>
                 <Route path='/conversations'>
                     <ConversationDisplay />
                 </Route>
@@ -114,7 +118,9 @@ const View = (props) => {
 
 const NavWrapper = styled.div`
     width: 100%;
-    height: 15%;
+    height: 50px;
+    position: absolute;
+    bottom: 0;
     box-shadow: 0px -1px 3px 0px rgba(117,116,117,0.5);
     display: flex;
     flex-direction: row;
@@ -126,7 +132,7 @@ const NavWrapper = styled.div`
 const NavItem = styled.div`
     height: 100%;
     width: 10%;
-    font-size: ${({screenWidth}) => screenWidth ? `${screenWidth / 20}px` : '50px'};
+    font-size: ${({screenWidth}) => screenWidth ? `${screenWidth / 20}px` : '25px'};
     color: ${({active}) => active ? 'black' : 'rgb(220,222,225)'}
 `
 
@@ -134,6 +140,11 @@ const Nav = props => {
 
     return(
         <NavWrapper>
+            <Link to='/'>
+                <NavItem >
+                    <FontAwesomeIcon icon={faHome} />
+                </NavItem>
+            </Link>
             <Link to='/conversations'>
                 <NavItem active={props.conversationsDisplay} onClick={props.toggleDisplay} screenWidth={props.screenWidth}>
                     <FontAwesomeIcon icon={faComments} />
