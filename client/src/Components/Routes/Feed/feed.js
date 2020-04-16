@@ -5,11 +5,13 @@ import { Route, Switch, Link, Redirect} from 'react-router-dom';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faHeart, faCameraRetro} from '@fortawesome/free-solid-svg-icons';
 
-import  { uploadNewPost, getAllPosts } from '../../../API';
+import  { uploadNewPost, getAllPosts, createPostComment } from '../../../API';
 
 
 const FeedContainer = styled.div`
     width: 100vw;
+    max-width: 600px;
+    margin: 0 auto;
     height: 100vh;
     display: flex;
     flex-direction: column;
@@ -18,9 +20,13 @@ const FeedContainer = styled.div`
     background: rgb(250,250,250);
     padding-top: 70px;
 
+    &::-webkit-scrollbar {
+        display: none;
+      }
+
 `
 const FeedNav = styled.nav`
-    width: 100%;
+    width: 100vw;
     height: 60px;
     display: flex;
     align-items: center;
@@ -60,15 +66,16 @@ const Feed = () => {
     
 
     return (
-        
-        <FeedContainer>
-            <FeedNav>
+        <React.Fragment>
+        <FeedNav>
                 <Link to={'/feed/create'}>
                     <NavItem fontSize={'50px'}>
                         <FontAwesomeIcon icon={faCameraRetro}/>
                     </NavItem>
                 </Link>                
-            </FeedNav>
+        </FeedNav>
+        <FeedContainer>
+            
             <Switch>
                 <Route exact path='/feed'>
                     {DisplayPosts}
@@ -79,6 +86,7 @@ const Feed = () => {
             </Switch>
             
         </FeedContainer>
+        </React.Fragment>
     );
 };
 
@@ -198,6 +206,28 @@ const Time = styled.time`
 
 const Post = props => {
 
+    const [submittable, setSubmittable] = useState(false);
+    const [comment, setComment] = useState(null);
+    const context = useContext(UserContext);
+
+    const handleCommentInput = (e) => {
+        setComment(e.target.value);
+        checkSubmittable();
+    };
+
+    const checkSubmittable = () => {
+        (comment && comment.length > 0) ? setSubmittable(true) : setSubmittable(false); 
+    };
+
+    const handleCommentSubmit = () => {
+        e.preventDefault();
+        createPostComment(context.jwt, comment, props.key).then(res => {
+            console.log(res);
+        })
+    }
+
+    // this component will handle POST requests to the server at /posts/comment/create
+
     console.log(props);
     return (
         <PostContainer>
@@ -228,10 +258,10 @@ const Post = props => {
             
             <PostComment>
                 <PostCommentForm>
-                    <PostCommentInput placeholder='Add a comment..' />
+                    <PostCommentInput placeholder='Add a comment..' onChange={handleCommentInput}/>
 
                     
-                    <PostCommentButton type='submit' >POST</PostCommentButton>
+                    <PostCommentButton type='submit' disabled={!submittable} active={submittable} onClick={handleCommentSubmit}>POST</PostCommentButton>
                 </PostCommentForm>
             </PostComment>
            

@@ -411,7 +411,17 @@ app.put('/posts/:id', withAuth, (req, res) => {
 })
 
 app.post('/posts/:id/comments', withAuth, (req,res) => {
-
+    console.log('hit /posts/:id/comments');
+    User.findOne({where: {username: req.username}}).then(user => {
+        Post.findOne({where: {id: req.params.id}}).then(post => {
+            Comment.create({text: req.body}).then(comment => {
+                comment.setPost(post);
+                comment.setUser(user);
+                // res.status(200).send('Comment Added Successfully!')
+            })
+        })
+    })
+    
 });
 
 app.delete('/posts/:id/comment/:commentId', (req,res) => {
@@ -420,6 +430,10 @@ app.delete('/posts/:id/comment/:commentId', (req,res) => {
 
 app.put('/posts/:id/comment/:commentId', (req, res) => {
 
+});
+
+app.get('/', (req, res) => {
+    res.sendFile()
 })
 
 server.listen(port);

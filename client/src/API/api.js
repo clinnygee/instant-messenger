@@ -97,4 +97,14 @@ export const getAllPosts = (token) => {
             'Authorization': `Bearer ${token}`
         },
     })
+};
+
+export const createPostComment = (token, comment, postId) => {
+    return fetch(`/posts/${postId}/comment`, {
+        method: 'POST',
+        headers: {
+            'Authorization': `Bearer ${token}`,
+        },
+        body: comment,
+    })
 }

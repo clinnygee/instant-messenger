@@ -26,6 +26,8 @@ const ConversationSecondary = styled.p`
 const ChatContainer = styled.div`
     height: calc(100% - 200px);
     width: 100%;
+    max-width: 600px;
+    margin: 0 auto;
     overflow-y: scroll;
     display: flex;
     flex-direction: column-reverse;

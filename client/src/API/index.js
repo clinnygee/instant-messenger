@@ -1,3 +1,3 @@
-import {registerUser, logInUser, fetchConversationData, uploadProfilePhoto, makeFriendRequest, fetchFriendsData, acceptFriendRequest, uploadNewPost, getAllPosts} from './api';
+import {registerUser, logInUser, fetchConversationData, uploadProfilePhoto, makeFriendRequest, fetchFriendsData, acceptFriendRequest, uploadNewPost, getAllPosts, createPostComment} from './api';
 
-export {registerUser, logInUser, fetchConversationData, uploadProfilePhoto,  makeFriendRequest, fetchFriendsData, acceptFriendRequest, uploadNewPost, getAllPosts} 
+export {registerUser, logInUser, fetchConversationData, uploadProfilePhoto,  makeFriendRequest, fetchFriendsData, acceptFriendRequest, uploadNewPost, getAllPosts, createPostComment} 

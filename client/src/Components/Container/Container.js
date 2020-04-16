@@ -157,12 +157,12 @@ const Nav = props => {
                 </NavItem>
             </Link>
             
-            <Link to='friends'>
+            <Link to='/friends'>
                 <NavItem active={!props.conversationsDisplay} onClick={props.toggleDisplay}>
                     <FontAwesomeIcon icon={faUserFriends} />
                 </NavItem>
             </Link>
-            <Link to='profile'>
+            <Link to='/profile'>
                 <NavItem>
                     <FontAwesomeIcon icon={faAddressCard} />
                 </NavItem>
