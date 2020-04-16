@@ -100,11 +100,25 @@ export const getAllPosts = (token) => {
 };
 
 export const createPostComment = (token, comment, postId) => {
-    return fetch(`/posts/${postId}/comment`, {
+    console.log(JSON.stringify(comment));
+    return fetch(`/posts/${postId}/comments`, {
+        method: 'POST',
+        body: JSON.stringify(comment),
+        headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+        },
+        
+    })
+};
+
+export const changePostLike = (token, postId) => {
+
+    return fetch(`/posts/${postId}/like`, {
         method: 'POST',
         headers: {
             'Authorization': `Bearer ${token}`,
-        },
-        body: comment,
+            'Content-type': 'application/json',
+        }
     })
 }

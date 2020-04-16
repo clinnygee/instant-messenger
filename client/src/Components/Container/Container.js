@@ -1,5 +1,5 @@
 import React, {useState, useEffect, useContext} from 'react';
-import {BrowserRouter as Router, Route, Switch, Link, Redirect} from 'react-router-dom';
+import {BrowserRouter as Router, Route, Switch, Link, NavLink, Redirect} from 'react-router-dom';
 import styled from 'styled-components';
 import Feed from '../Routes/Feed'
 
@@ -139,34 +139,51 @@ const NavItem = styled.div`
     height: 100%;
     width: 10%;
     font-size: ${({screenWidth}) => screenWidth ? `${screenWidth / 20}px` : '25px'};
-    color: ${({active}) => active ? 'black' : 'rgb(220,222,225)'}
+    color:  'rgb(220,222,225)' !important;
+    
 `
 
 const Nav = props => {
 
     return(
         <NavWrapper>
-            <Link to='/'>
+            <NavLink to='/feed'
+                activeStyle={{
+                    color: 'black'
+                }}
+            >
                 <NavItem >
                     <FontAwesomeIcon icon={faHome} />
                 </NavItem>
-            </Link>
-            <Link to='/conversations'>
-                <NavItem active={props.conversationsDisplay} onClick={props.toggleDisplay} screenWidth={props.screenWidth}>
+            </NavLink>
+            <NavLink to='/conversations'
+                activeStyle={{
+                    color: 'black'
+                }}
+            >
+                <NavItem onClick={props.toggleDisplay} screenWidth={props.screenWidth}>
                     <FontAwesomeIcon icon={faComments} />
                 </NavItem>
-            </Link>
+            </NavLink>
             
-            <Link to='/friends'>
+            <NavLink to='/friends'
+                activeStyle={{
+                    color: 'black'
+                }}
+            >
                 <NavItem active={!props.conversationsDisplay} onClick={props.toggleDisplay}>
                     <FontAwesomeIcon icon={faUserFriends} />
                 </NavItem>
-            </Link>
-            <Link to='/profile'>
+            </NavLink>
+            <NavLink to='/profile'
+                activeStyle={{
+                    color: 'black'
+                }}
+            >
                 <NavItem>
                     <FontAwesomeIcon icon={faAddressCard} />
                 </NavItem>
-            </Link>
+            </NavLink>
             
         </NavWrapper>
     )

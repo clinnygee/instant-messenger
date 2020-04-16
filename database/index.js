@@ -8,6 +8,7 @@ const Friendship = require('./models/Friendship');
 const FriendRequest = require('./models/FriendRequest');
 const Post = require('./models/Post');
 const Comment = require('./models/Comment');
+const PostLike = require('./models/PostLike');
 
 console.log('setting up relations')
 console.log('--------------------------------------------------')
@@ -19,6 +20,11 @@ Post.hasMany(Comment);
 Comment.belongsTo(Post, {foreignKey: 'postId'});
 User.hasMany(Comment);
 Comment.belongsTo(User, {foreignKey: 'userId'});
+User.hasMany(PostLike);
+PostLike.belongsTo(User, {foreignKey: 'userId'});
+Post.hasMany(PostLike);
+PostLike.belongsTo(Post, {foreignKey: 'postId'});
+
 // User.hasMany(Friendship, {foreignKey: 'User1'});
 // User.hasMany(Friendship, {foreignKey: 'User2'});
 // User.hasMany(FriendRequest, {foreignKey: 'Requestee'});
@@ -62,5 +68,6 @@ module.exports = {
         FriendRequest,
         Post,
         Comment,
+        PostLike,
     }
 }

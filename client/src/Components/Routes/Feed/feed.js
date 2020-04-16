@@ -1,11 +1,11 @@
 import React, { useState, useContext, useEffect } from 'react';
 import styled from 'styled-components';
 import {UserContext} from '../../../context';
-import { Route, Switch, Link, Redirect} from 'react-router-dom';
+import { Route, Switch, Link, NavLink, Redirect} from 'react-router-dom';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faHeart, faCameraRetro} from '@fortawesome/free-solid-svg-icons';
 
-import  { uploadNewPost, getAllPosts, createPostComment } from '../../../API';
+import  { uploadNewPost, getAllPosts, createPostComment, changePostLike } from '../../../API';
 
 
 const FeedContainer = styled.div`
@@ -57,7 +57,10 @@ const Feed = () => {
 
     const createPosts = () => {
         return posts.map(post => {
-            return <Post key={post.id} imageUrl={post.contentUrl} text={post.text} created={post.createdAt} user={post.user}/>
+            return <Post key={post.id} id={post.id} imageUrl={post.contentUrl} 
+                        text={post.text} created={post.createdAt} user={post.user}
+                        comments={post.comments}    
+                    />
         })
     }
 
@@ -68,11 +71,15 @@ const Feed = () => {
     return (
         <React.Fragment>
         <FeedNav>
-                <Link to={'/feed/create'}>
+                <NavLink to={'/feed/create'}
+                    activeStyle={{
+                        color: 'black'
+                    }}
+                >
                     <NavItem fontSize={'50px'}>
                         <FontAwesomeIcon icon={faCameraRetro}/>
                     </NavItem>
-                </Link>                
+                </NavLink>                
         </FeedNav>
         <FeedContainer>
             
@@ -211,6 +218,7 @@ const Post = props => {
     const context = useContext(UserContext);
 
     const handleCommentInput = (e) => {
+        console.log(e.target.value);
         setComment(e.target.value);
         checkSubmittable();
     };
@@ -219,16 +227,34 @@ const Post = props => {
         (comment && comment.length > 0) ? setSubmittable(true) : setSubmittable(false); 
     };
 
-    const handleCommentSubmit = () => {
+    const handleCommentSubmit = (e) => {
         e.preventDefault();
-        createPostComment(context.jwt, comment, props.key).then(res => {
+        createPostComment(context.jwt, {text: comment}, props.id).then(res => {
             console.log(res);
+        })
+    };
+
+    const handlePostLike = e => {
+        changePostLike(context.jwt, props.id).then(res => {
+            console.log(res);
+        })
+    }
+
+    const createComments = () => {
+        return props.comments.map(comment => {
+            return <Comment 
+                username={comment.user.username}
+                userId={comment.user.id}
+                text={comment.text}
+            />
         })
     }
 
     // this component will handle POST requests to the server at /posts/comment/create
 
     console.log(props);
+
+    const comments = (props.comments && props.comments.length > 0) ? createComments() : null;
     return (
         <PostContainer>
             <PostHeader>
@@ -242,7 +268,7 @@ const Post = props => {
                 <PostImage src={props.imageUrl}/>
             </PostImageContainer>
             <ReactionContainer>
-                <NavItem>
+                <NavItem onClick={handlePostLike}>
                     <FontAwesomeIcon icon={faHeart} />
                 </NavItem>
             </ReactionContainer>
@@ -251,6 +277,7 @@ const Post = props => {
             </Reacts>
             <CommentContainer>
                 <Comment text={props.text} username={props.user.username}/>
+                {comments}
             </CommentContainer>
             <CommentContainer>
                 <Time>{props.created}</Time>

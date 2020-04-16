@@ -40,14 +40,14 @@ app.use(bodyParser.json());
 const {Op} = Sequelize;
 
 const conn = require('./database').conn;
-const {User, Conversation, Message, Reaction, Friendship, FriendRequest, Post, Comment} = require('./database').models;
+const {User, Conversation, Message, Reaction, Friendship, FriendRequest, Post, Comment, PostLike} = require('./database').models;
 // conn.sync({logging: false, force: true});
 conn.sync({logging: false});
 
 // console.log(Conversation)
 
-const seedDb = require('./database/seeders/seed');
-seedDb();
+// const seedDb = require('./database/seeders/seed');
+// seedDb();
 
 
 
@@ -373,6 +373,15 @@ app.get('/feed', withAuth, (req,res) => {
     Post.findAll({include: [
         {
             model: User,
+        },
+        {
+            model: Comment,
+            include: {
+                model: User,
+                attributes: {
+                    exclude: 'password'
+                }
+            }
         }
     ]}).then(posts => {
         console.log(posts);
@@ -412,9 +421,10 @@ app.put('/posts/:id', withAuth, (req, res) => {
 
 app.post('/posts/:id/comments', withAuth, (req,res) => {
     console.log('hit /posts/:id/comments');
+    console.log(req.body);
     User.findOne({where: {username: req.username}}).then(user => {
         Post.findOne({where: {id: req.params.id}}).then(post => {
-            Comment.create({text: req.body}).then(comment => {
+            Comment.create({text: req.body.text}).then(comment => {
                 comment.setPost(post);
                 comment.setUser(user);
                 // res.status(200).send('Comment Added Successfully!')
@@ -424,6 +434,16 @@ app.post('/posts/:id/comments', withAuth, (req,res) => {
     
 });
 
+app.post('/posts/:id/like', withAuth, (req,res) => {
+    User.findOne({where: {username: req.username}}).then(user => {
+        Post.findOne({where: {id: req.params.id}}).then(post => {
+            PostLike.createOrRemoveLike(user, post).then(postlike => {
+                console.log(postlike.json())
+            })
+        })
+    })
+})
+
 app.delete('/posts/:id/comment/:commentId', (req,res) => {
     
 })
@@ -432,9 +452,13 @@ app.put('/posts/:id/comment/:commentId', (req, res) => {
 
 });
 
-app.get('/', (req, res) => {
-    res.sendFile()
+app.get('/profile/:id', (req, res) => {
+
 })
+
+// app.get('/', (req, res) => {
+//     res.sendFile()
+// })
 
 server.listen(port);
 
