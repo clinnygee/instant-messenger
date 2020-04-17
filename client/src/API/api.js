@@ -121,4 +121,24 @@ export const changePostLike = (token, postId) => {
             'Content-type': 'application/json',
         }
     })
-}
+};
+
+export const getProfileData = (token, username) => {
+    return fetch(`/profile/${username}`, {
+        method: 'GET',
+        headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-type': 'application/json',
+        },
+    })
+};
+
+export const getSinglePost = (token, id) => {
+    return fetch(`/posts/${id}`, {
+        method: 'GET',
+        headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-type': 'application/json',
+        }
+    })
+};

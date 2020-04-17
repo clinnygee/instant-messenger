@@ -34,13 +34,24 @@ router.get('/:username', withAuth, (req, res) => {
         {
             where: {
                 username: req.params.username
+            }, attributes: {
+                exclude: 'password',
             },
-            include: {
+            include: [{
                 model: Post,
-                attributes: {
-                    exclude: 'password',
-                }
-            }})
+                
+            },
+            {
+                model: Friendship,
+                include: [
+                    {
+                        model: User,
+                        attributes: {exclude: ['password']}
+                    }
+                ]
+                
+            }
+            ]})
             .then(user => {
                 res.json(user);
     })

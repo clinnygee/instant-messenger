@@ -1,11 +1,11 @@
 import React, { useState, useContext, useEffect } from 'react';
 import styled from 'styled-components';
 import {UserContext} from '../../../context';
-import { Route, Switch, Link, NavLink, Redirect} from 'react-router-dom';
+import { Route, Switch, Link, NavLink, Redirect, useParams} from 'react-router-dom';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faHeart, faCameraRetro} from '@fortawesome/free-solid-svg-icons';
 
-import  { uploadNewPost, getAllPosts, createPostComment, changePostLike } from '../../../API';
+import  { uploadNewPost, getAllPosts, createPostComment, changePostLike, getSinglePost } from '../../../API';
 
 
 const FeedContainer = styled.div`
@@ -71,7 +71,7 @@ const Feed = () => {
     return (
         <React.Fragment>
         <FeedNav>
-                <NavLink to={'/feed/create'}
+                <NavLink to={'/posts/create'}
                     activeStyle={{
                         color: 'black'
                     }}
@@ -84,11 +84,14 @@ const Feed = () => {
         <FeedContainer>
             
             <Switch>
-                <Route exact path='/feed'>
+                <Route exact path='/posts'>
                     {DisplayPosts}
                 </Route>
-                <Route path='/feed/create'>
+                <Route path='/posts/create'>
                     <NewPost />
+                </Route>
+                <Route path='/posts/:id'>
+                    <PostSingle />
                 </Route>
             </Switch>
             
@@ -259,10 +262,12 @@ const Post = props => {
     return (
         <PostContainer>
             <PostHeader>
+                <Link to={`/profile/${props.user.username}`} >
                 <PostHeaderImage url={props.user.profileImgUrl}></PostHeaderImage>
                 <UserLink >
                     <ConversationHeader>{props.user.username}</ConversationHeader>
                 </UserLink>
+                </Link>
                 
             </PostHeader>
             <PostImageContainer>
@@ -361,6 +366,34 @@ const NewPost = props => {
                 <PostCommentButton type='submit' disabled={!submittable} active={submittable} onClick={onPostUpload}>POST</PostCommentButton>
             </PostCreateForm>
         </PostContainer>
+    )
+};
+
+const PostSingle = props => {
+    const {id} = useParams();
+    const [loaded, setLoaded] = useState(false);
+    const [post, setPost] = useState(null);
+    const context = useContext(UserContext);
+
+    useEffect(() => {
+        getSinglePost(context.jwt, id).then(res => {
+            res.json().then(post => {
+                setPost(post);
+                setLoaded(true);
+            })
+        })
+    }, [])
+    return (
+        <React.Fragment>
+        {loaded ? 
+            <Post 
+            key={post.id} id={post.id} imageUrl={post.contentUrl} 
+            text={post.text} created={post.createdAt} user={post.user}
+            comments={post.comments}
+        />
+        : <div>fetching...</div>
+        }
+        </React.Fragment>
     )
 }
 

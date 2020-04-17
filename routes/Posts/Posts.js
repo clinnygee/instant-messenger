@@ -49,6 +49,31 @@ router.post('/create', withAuth, (req, res) => {
       });
 });
 
+router.get('/:id', withAuth, (req, res) => {
+    Post.findOne(
+        {where: 
+            {
+                id: req.params.id
+            },
+            include: [
+                {
+                    model: User,
+                },
+                {
+                    model: Comment,
+                    include: {
+                        model: User,
+                        attributes: {
+                            exclude: 'password'
+                        }
+                    }
+                }
+            ]
+        }).then(post => {
+        res.json(post);
+    })
+})
+
 router.delete('/:id', withAuth, (req,res) => {
     // call Post.delete() which will return an error if if req.username !=
 });

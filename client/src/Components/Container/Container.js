@@ -100,9 +100,9 @@ const View = (props) => {
         <MobileWrapper>
             <Switch>
                 <Route exact path='/'>
-                    <Redirect to='/feed' />
+                    <Redirect to='/posts' />
                 </Route>
-                <Route path='/feed'>
+                <Route path='/posts'>
                     <Feed />
                 </Route>
                 <Route path='/conversations'>
@@ -147,7 +147,7 @@ const Nav = props => {
 
     return(
         <NavWrapper>
-            <NavLink to='/feed'
+            <NavLink to='/posts'
                 activeStyle={{
                     color: 'black'
                 }}
