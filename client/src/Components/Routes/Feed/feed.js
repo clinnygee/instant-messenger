@@ -124,7 +124,8 @@ const PostHeaderImage = styled.div`
     width: 30px;
     height: 30px;
     clip-path: circle(40%);
-    background-image: url(${({url}) => url ? `${url}` : 'https://picsum.photos/100'})    
+    background-image: url(${({url}) => url ? `${url}` : 'https://picsum.photos/100'});
+    background-size: 30px 30px;    
 `
 
 const PostImageContainer = styled.div`

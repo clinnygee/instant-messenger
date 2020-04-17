@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Route, Switch, Link, NavLink, Redirect} from 'react-router-dom';
 import {uploadProfilePhoto} from '../../../API';
 import { useContext } from 'react';
 import { UserContext } from '../../../context';

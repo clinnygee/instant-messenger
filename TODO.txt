@@ -1,0 +1,7 @@
+make a profile page, where you can view users profiles and send them a friend request.
+
+On Users profile page, they should be able to delete there posts.
+
+When they click on a post, it should take them to that posts page posts/:id
+
+here if user_id (which we now need to store somewhere === post.userId) they are shown the options to delete.

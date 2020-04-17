@@ -79,7 +79,7 @@ export const uploadProfilePhoto = (token, formData) => {
 };
 
 export const uploadNewPost = (token, formData) => {
-    return fetch('/feed/create', {
+    return fetch('/posts/create', {
         method: 'POST',
         headers: {
             'Authorization': `Bearer ${token}`
@@ -89,7 +89,7 @@ export const uploadNewPost = (token, formData) => {
 };
 
 export const getAllPosts = (token) => {
-    return fetch('/feed', {
+    return fetch('/posts', {
         method: 'GET',
         headers: {
             'Accept': 'application/json',

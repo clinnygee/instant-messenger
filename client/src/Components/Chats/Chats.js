@@ -31,6 +31,7 @@ const ConversationImage = styled.div`
     height: 100px;
     clip-path: circle(40%);
     background-image: url(https://picsum.photos/100)
+    background-size: 100px 100px;
 `
 
 const ConversationHeader = styled.h1`

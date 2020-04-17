@@ -28,6 +28,10 @@ console.log(process.env.ACCESS_KEY_ID);
 
 const port = (process.env.PORT || 8080);
 
+const PostsRouter = require('./routes/Posts/Posts');
+const ProfileRouter = require('./routes/Profile/Profile');
+const FriendsRouter = require('./routes/Friends/Friends');
+
 
 app.use(express.static(path.join(__dirname, '/client/build')));
 
@@ -36,6 +40,10 @@ app.use(bodyParser.urlencoded({extended: false,}));
 app.use(cookieParser());
 
 app.use(bodyParser.json());
+
+app.use('/posts', PostsRouter);
+app.use('/profile', ProfileRouter);
+app.use('/friends', FriendsRouter);
 
 const {Op} = Sequelize;
 
@@ -99,65 +107,7 @@ app.post('/register', (req, res) => {
     res.status(200).send('Hit the Register route');
 });
 
-const multer = require('multer');
-const multerS3 = require('multer-s3');
-const aws = require('aws-sdk');
 
-
-aws.config.update({
-    // Your SECRET ACCESS KEY from AWS should go here,
-    // Never share it!
-    // Setup Env Variable, e.g: process.env.SECRET_ACCESS_KEY
-    secretAccessKey: process.env.SECRET_ACCESS_KEY,
-    // Not working key, Your ACCESS KEY ID from AWS should go here,
-    // Never share it!
-    // Setup Env Variable, e.g: process.env.ACCESS_KEY_ID
-    accessKeyId: process.env.ACCESS_KEY_ID,
-    region: 'us-east-1' // region of your bucket
-});
-
-const s3 = new aws.S3();
-
-
-const upload = multer({
-    storage: multerS3({
-        s3: s3,
-        acl: 'public-read',
-        // contentType: 'image/png',
-        bucket: 'instant-messenger',
-        
-        // metadata: (req, file, cb) => {
-        //     cb(null, {fileName: file.fieldname});
-        // },
-        key: (req, file, cb) => {
-            console.log(file);
-            cb(null, Date.now().toString()+'.jpeg')
-        }
-    })
-});
-
-const singleUpload = upload.single('profile-image');
-
-app.post('/profile/image', withAuth,    (req, res) => {
-    // console.log(req);
-    console.log(req.body)
-    // console.log(req.file.name);
-
-    singleUpload(req, res, function(err, some) {
-        if (err) {
-          return res.status(422).send({errors: [{title: 'Image Upload Error', detail: err.message}] });
-        }   
-
-        User.findOne({where: {username: req.username}}).then(user => {
-            user.update({
-                profileImgUrl: req.file.location
-            }).then(user => {
-                res.json(user);
-            })
-            // 
-        });        
-      });
-});
 
 app.get('/conversations',withAuth, (req, res) => {
     // console.log(req.headers.authorization);
@@ -278,187 +228,14 @@ const connection = io
             everyone: 'in',
             '/chat': 'will get'
         })
-    })
-    // connection.on('message', msg => {
-    //     console.log(msg)
-    // });
+    });
 
-    // console.log(io);
-// get ALL friends data, friendships, friendRequests
-app.get('/friends', withAuth, (req, res) => {
-    // find all friends, include: posts
-    // find all friend requests
-    // User.findOne({where: {username: req.username,}}).then(user => {
-    //     FriendRequest.findAllRequests(user.id).then(requests => {
-    //         console.log(requests);
-    //         res.json(requests);
-    //     })
-    // });
-
-    User.findOne(
-        {where: {username: req.username},
-        include: [
-            {model: FriendRequest, as: 'friendrequests',
-            include:[
-                {
-                    model: User,
-                    attributes: {exclude: ['password']}
-                }
-            ]},
-            {
-                model: Friendship,
-                include: [
-                    {
-                        model: User,
-                        attributes: {exclude: ['password']}
-                    }
-                ]
-                // as: 'friends',
-                // include:[ {
-                //     model: User,
-                // }]
-            }
-            ]})
-            .then(userData => {
-            res.json(userData)
-        });
-
-    // User.findOne(
-    //     {where: {username: req.username}}
-    //     )
-    //     .then(user => {
-    //     FriendRequest.findAll(
-    //         {where: {userId: user.id}, include: [
-    //         {model: User,
-    //         where: {
-    //             id: {
-    //                 [Op.col]: `friendrequest.friendrequestId`
-    //             }
-    //         }}
-    //     ]})}).then(friendrequests => {
-    //         console.log(user);
-    //         console.log(friendrequests)
-    //     });
-    // });
-
-});
-
-app.post('/friends/add/:id', withAuth, (req, res) => {
-    console.log(req.username);
-    User.findOne({where: {username: req.username}}).then(requester => {
-        User.findOne({where: {username: req.params.id}}).then(requestee => {
-            FriendRequest.findOrCreateRequest(requester, requestee).then(request => {
-                console.log(request);
-                res.status(200).send();
-            })
-        })
-    })
-});
-
-app.post('/friends/delete/:id', (req, res) => {
-
-});
-
-app.post('/friends/accept/:id', withAuth, (req, res) => {
-    console.log(req.params);
-    
-    FriendRequest.findOne({where: {id: req.params.id}}).then(request => {
-        FriendRequest.accept(request).then(friendship => {
-            res.json(friendship)
-        })
-    })
-});
-
-app.get('/feed', withAuth, (req,res) => {
-    Post.findAll({include: [
-        {
-            model: User,
-        },
-        {
-            model: Comment,
-            include: {
-                model: User,
-                attributes: {
-                    exclude: 'password'
-                }
-            }
-        }
-    ]}).then(posts => {
-        console.log(posts);
-        res.json(posts);
-    })
-});
-
-const postPhotoUpload = upload.single('post-image');
-
-app.post('/feed/create', withAuth, (req, res) => {
-    console.log('Hit /feed/create')
-
-    postPhotoUpload(req, res, function(err, some) {
-        if (err) {
-          return res.status(422).send({errors: [{title: 'Image Upload Error', detail: err.message}] });
-        }
-
-        User.findOne({where: {username: req.username}}).then(user => {
-            const obj = JSON.parse(JSON.stringify(req.body));
-            console.log(obj);
-            Post.create({contentUrl: req.file.location, text: obj['post-body']}).then(post => {
-                post.setUser(user);
-                res.status(200).send('Success!');
-            })
-            
-        });        
-      });
-});
-
-app.delete('/posts/:id', withAuth, (req,res) => {
-    // call Post.delete() which will return an error if if req.username !=
-});
-
-app.put('/posts/:id', withAuth, (req, res) => {
-    // for editing post
-})
-
-app.post('/posts/:id/comments', withAuth, (req,res) => {
-    console.log('hit /posts/:id/comments');
-    console.log(req.body);
-    User.findOne({where: {username: req.username}}).then(user => {
-        Post.findOne({where: {id: req.params.id}}).then(post => {
-            Comment.create({text: req.body.text}).then(comment => {
-                comment.setPost(post);
-                comment.setUser(user);
-                // res.status(200).send('Comment Added Successfully!')
-            })
-        })
-    })
-    
-});
-
-app.post('/posts/:id/like', withAuth, (req,res) => {
-    User.findOne({where: {username: req.username}}).then(user => {
-        Post.findOne({where: {id: req.params.id}}).then(post => {
-            PostLike.createOrRemoveLike(user, post).then(postlike => {
-                console.log(postlike.json())
-            })
-        })
-    })
-})
-
-app.delete('/posts/:id/comment/:commentId', (req,res) => {
-    
-})
-
-app.put('/posts/:id/comment/:commentId', (req, res) => {
-
-});
 
 app.get('/profile/:id', (req, res) => {
 
 })
 
-// app.get('/', (req, res) => {
-//     res.sendFile()
-// })
+
 
 server.listen(port);
 
