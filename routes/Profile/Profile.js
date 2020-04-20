@@ -19,8 +19,11 @@ router.post('/image', withAuth,    (req, res) => {
         }   
 
         User.findOne({where: {username: req.username}}).then(user => {
+            const obj = JSON.parse(JSON.stringify(req.body));
+            console.log(obj);
             user.update({
-                profileImgUrl: req.file.location
+                profileImgUrl: req.file.location,
+                about: obj['profile-about'],
             }).then(user => {
                 res.json(user);
             })

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Route, Switch, Link, NavLink, Redirect, useParams} from 'react-router-dom';
+import { Route, Switch, Link, NavLink, Redirect, useParams, useHistory} from 'react-router-dom';
 import {uploadProfilePhoto, getProfileData} from '../../../API';
 import { useContext } from 'react';
 import { UserContext } from '../../../context';
@@ -121,7 +121,9 @@ const UserProfile = props => {
 
     return (
         <FeedContainer>
-            {loaded ? 
+            <Switch>
+                <Route exact path={'/profile/:username'}>
+                {loaded ? 
             <React.Fragment>
                 <PostHeader>
                     <PostHeaderImage width={`80px`} height={'80px'} url={userData.profileImgUrl} size={'100px 100px'}></PostHeaderImage>
@@ -136,7 +138,7 @@ const UserProfile = props => {
                 </PostHeader>
                 <ProfileAbout>
                     <ProfileTextBold>{userData.username}</ProfileTextBold>
-                    <ProfileText>Some About Text</ProfileText>
+                <ProfileText>{userData.about}</ProfileText>
                 </ProfileAbout>
                 {userData.username === context.userData.username ? 
                     <EditContainer>
@@ -155,6 +157,12 @@ const UserProfile = props => {
             </React.Fragment>
                 : null
             }
+                </Route>
+                <Route path={'/profile/:username/edit'}>
+                    <ProfileEdit />
+                </Route>
+            </Switch>
+            
             
         </FeedContainer>
     )
@@ -169,6 +177,7 @@ const Input = styled.input`
     opacity: 0.3;
     border: none;
     width: calc(100% - 33px);
+    height: 30px;
 
     &:focus {
         outline: none;
@@ -202,9 +211,15 @@ const PostCommentButton = styled.button`
 
 const ProfileEdit = props => {
     const [file, setFile] = useState(null);
+    const [fileUrl, setFileUrl] = useState(null);
     const context = useContext(UserContext);
     const [about, setAbout] = useState(null);
     const [submittable, setSubmittable] = useState(false);
+    const history = useHistory();
+
+    console.log(history);
+
+    console.log(props.history);
 
     const checkSubmittable = () => {
         setSubmittable(file && about);
@@ -223,6 +238,7 @@ const ProfileEdit = props => {
         const formData = new FormData();
 
         formData.append('profile-image', file);
+        formData.append('profile-about', about)
         setTimeout(() => {
             console.log(formData.entries());
         })
@@ -230,27 +246,32 @@ const ProfileEdit = props => {
         uploadProfilePhoto(context.jwt, formData).then(res => {
             res.json().then(parsedJson => {
                 console.log(parsedJson);
+                context.initializeUserData();
+                history.push(`/profile/${context.userData.username}`)
             })
         })
     };
 
     const handleFileChange = (e) => {
         setFile(e.target.files[0]);
-        console.log(e.target.files);
-    }
+        setFileUrl(URL.createObjectURL(e.target.files[0]));
+        checkSubmittable();
+        
+    };
 
     return (
         <React.Fragment>
             <EditProfileHeader>
-                <PostHeaderImage width={`100px`} height={'100px'} url={userData.profileImgUrl} size={'120px 120px'}></PostHeaderImage>
+                <PostHeaderImage width={`100px`} height={'100px'} url={context.userData.profileImgUrl} size={'120px 120px'}></PostHeaderImage>
             </EditProfileHeader>
             <ProfileForm>
-                <Input value={context.userData.about} onChange={handleAboutInput}/>
+                <label for='about'></label>
+                <Input placeholder={context.userData.about} onChange={handleAboutInput} id={'about'}/>
                 <PostImageContainer>
                     <PostImage src={fileUrl ? fileUrl : context.userData.profileImgUrl}/>
                 </PostImageContainer>
                 <input type='file' onChange={handleFileChange} />
-                <PostCommentButton active={submittable}/>
+                <PostCommentButton active={submittable} onClick={onPhotoUpload} disabled={!submittable}>Submit</PostCommentButton>
             </ProfileForm>
         </React.Fragment>
     )

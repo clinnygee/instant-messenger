@@ -87,6 +87,8 @@ const View = (props) => {
     //     }
     // })
 
+    console.log(props.history)
+
    
     return (
         
@@ -147,7 +149,7 @@ const Nav = props => {
         <NavWrapper>
             <NavLink to='/posts'
                 activeStyle={{
-                    color: 'black'
+                    color: 'black !important'
                 }}
             >
                 <NavItem >

@@ -32,7 +32,7 @@ router.get('/', withAuth, (req,res) => {
         res.json(posts);
     })
 });
-
+// 
 const postPhotoUpload = upload.single('post-image');
 
 router.post('/create', withAuth, (req, res) => {
@@ -102,10 +102,10 @@ router.post('/:id/comments', withAuth, (req,res) => {
             Comment.create({text: req.body.text}).then(comment => {
                 comment.setPost(post);
                 comment.setUser(user);
-                console.log(comment);
-                res.json(comment);
+                // console.log(comment);
+                // res.json(comment);
                 
-                // res.status(200).send('Comment Added Successfully!')
+                res.status(200).send('Comment Added Successfully!')
             })
         })
     })
