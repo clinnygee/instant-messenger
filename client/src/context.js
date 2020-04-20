@@ -1,15 +1,17 @@
 import React, {createContext} from 'react';
 import {w3cwebsocket as W3CWebSocket} from 'websocket'
 import openSocket from 'socket.io-client';
-import {fetchConversationData, makeFriendRequest} from './API'
+import {fetchConversationData, makeFriendRequest, fetchUserData} from './API'
 
 export const UserContext = createContext({
+    userData: [],
     username: '',
     authenticated: false,
     authenticating: false,
     jwt: null,
     client: null,
     conversationData: [],
+    initializeUserData: () => {},
     getConversationData: () => {},
     setJwt: () => {},
     changeAuthenticated: () => {},
@@ -47,10 +49,13 @@ export class UserProvider extends React.Component {
     };
 
     setJwt = (jwt) => {
+        if(jwt.token){
+            jwt = jwt.token;
+        }
         console.log(jwt);
-        sessionStorage.setItem('instant-messenger-jwt', jwt.token);
+        sessionStorage.setItem('instant-messenger-jwt', jwt);
         console.log(jwt)
-        this.setState({jwt: jwt.token}, () => {
+        this.setState({jwt: jwt}, () => {
             this.getConversationData();
         });
         this.changeAuthenticated();
@@ -62,6 +67,14 @@ export class UserProvider extends React.Component {
 
     changeAuthenticating = () => {
         this.setState({authenticating: !this.state.authenticating})
+    };
+
+    initializeUserData = () => {
+        return fetchUserData(this.state.jwt).then(res => {
+             res.json().then(parsedJson => {
+                 this.setState({userData: parsedJson})
+            })
+        });
     };
 
     initializeWsClient = () => {
@@ -132,16 +145,35 @@ export class UserProvider extends React.Component {
         })
     };
 
-    componentDidMount = () => {
-        // let onLoadJwt = sessionStorage.getItem('instant-messenger-jwt');
+    checkJwtToken = jwt => {
+        console.log(jwt);
+        fetch('/user/checkToken', {
+            method: 'get',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${jwt}`,
+            }
+        }).then(authenticated => {
+            if(authenticated.status === 200){
+                this.setJwt(jwt);
+            } else {
+                sessionStorage.removeItem('instant-messenger-jwt');
+            }
+        })
+    }
 
-        // if(onLoadJwt){
-        //     console.log(onLoadJwt);
-        //     this.setJwt(onLoadJwt);
-        // }
+    componentDidMount = () => {
+        let onLoadJwt = sessionStorage.getItem('instant-messenger-jwt');
+
+        if(onLoadJwt){
+            this.checkJwtToken(onLoadJwt);
+            // this.setJwt(onLoadJwt);
+        }
     }
 
     state = {
+        userData: [],
         username: '',
         authenticated: false,
         authenticating: false,
@@ -149,6 +181,7 @@ export class UserProvider extends React.Component {
         client: null,
         conversationData: [],
         getConversationData: this.getConversationData,
+        initializeUserData: this.initializeUserData,
         setJwt: this.setJwt,
         changeAuthenticated: this.changeAuthenticated,
         changeAuthenticating: this.changeAuthenticating,

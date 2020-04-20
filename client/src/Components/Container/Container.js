@@ -18,6 +18,8 @@ import { UserContext } from '../../context';
 const Container = (props) => {
     const [mobileView, setMobileView] = useState(true);
     const [screenWidth, setScreenWidth] = useState(true);
+    const context = useContext(UserContext);
+    const [fetching, setFetching] = useState(true);
 
     
 
@@ -40,17 +42,23 @@ const Container = (props) => {
 
         window.addEventListener('resize', checkMobile);
 
+        context.initializeUserData().then(success => {
+            
+            setFetching(false);
+        })
+
         return() => {
             window.removeEventListener('resize', checkMobile)
 
         }
     }, []);
 
-    
+    console.log(context.userData);
 
     return (
         <AppWrapper>
             <Router>
+                {/* conditional here while we fetch user data */}
                 <View screenWidth={screenWidth}/> 
             </Router>            
         </AppWrapper>           
@@ -67,34 +75,17 @@ const MobileWrapper = styled.div`
 `
 
 const View = (props) => {
-    const [conversationsDisplay, setConversationsDisplay] = useState(true);
-    const [messageDisplay, setMessageDisplay] = useState(false);
-    const [receiver, setReceiver] = useState(null);
-    const context = useContext(UserContext);
     // const context = useContext(UserContext);
-
-    const toggleDisplay = () => {
-        setMessageDisplay(false);
-        setConversationsDisplay(!conversationsDisplay);
-    };
-
-    const displayMessage = () => {
-        setMessageDisplay(true);
-    };
-
-    const selectMessageReceiver = (username) => {
-        setReceiver(username);
-        setMessageDisplay(true);
-    }
+    // const context = useContext(UserContext); 
 
     
 
-    useEffect(() => {
-        return () => {
-            console.log('Container is unmounting')
+    // useEffect(() => {
+    //     return () => {
+    //         console.log('Container is unmounting')
             
-        }
-    })
+    //     }
+    // })
 
    
     return (
@@ -115,6 +106,9 @@ const View = (props) => {
                 </Route>
                 <Route path='/profile'>
                     <Profile />
+                </Route>
+                <Route path='/*'>
+                    <div>This page does not exist!</div>
                 </Route>
             </Switch>
             <Nav />
@@ -140,8 +134,9 @@ const NavWrapper = styled.div`
 const NavItem = styled.div`
     height: 100%;
     width: 10%;
+    color: rgb(220,222,225);
     font-size: ${({screenWidth}) => screenWidth ? `${screenWidth / 20}px` : '25px'};
-    color:  'rgb(220,222,225)' !important;
+    
     
 `
 
@@ -178,7 +173,7 @@ const Nav = props => {
                     <FontAwesomeIcon icon={faUserFriends} />
                 </NavItem>
             </NavLink>
-            <NavLink to={`/profile/${context.username}`}
+            <NavLink to={`/profile/${context.userData.username}`}
                 activeStyle={{
                     color: 'black'
                 }}
@@ -192,15 +187,5 @@ const Nav = props => {
     )
 }
 
-// const DesktopView = (props) => {
-
-//     return (
-//         <React.Fragment>
-//             <Conversations />
-//             <People />
-            
-//         </React.Fragment>
-//     )
-// }
 
 export default Container;

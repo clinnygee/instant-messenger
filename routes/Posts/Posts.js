@@ -11,6 +11,9 @@ router.get('/', withAuth, (req,res) => {
     Post.findAll({include: [
         {
             model: User,
+            attributes: {
+                exclude: 'password'
+            }
         },
         {
             model: Comment,
@@ -20,6 +23,9 @@ router.get('/', withAuth, (req,res) => {
                     exclude: 'password'
                 }
             }
+        },
+        {
+            model: PostLike,
         }
     ]}).then(posts => {
         console.log(posts);
@@ -58,6 +64,9 @@ router.get('/:id', withAuth, (req, res) => {
             include: [
                 {
                     model: User,
+                    attributes: {
+                        exclude: 'password'
+                    }
                 },
                 {
                     model: Comment,
@@ -67,6 +76,9 @@ router.get('/:id', withAuth, (req, res) => {
                             exclude: 'password'
                         }
                     }
+                },
+                {
+                    model: PostLike,
                 }
             ]
         }).then(post => {
@@ -90,6 +102,9 @@ router.post('/:id/comments', withAuth, (req,res) => {
             Comment.create({text: req.body.text}).then(comment => {
                 comment.setPost(post);
                 comment.setUser(user);
+                console.log(comment);
+                res.json(comment);
+                
                 // res.status(200).send('Comment Added Successfully!')
             })
         })
@@ -101,7 +116,7 @@ router.post('/:id/like', withAuth, (req,res) => {
     User.findOne({where: {username: req.username}}).then(user => {
         Post.findOne({where: {id: req.params.id}}).then(post => {
             PostLike.createOrRemoveLike(user, post).then(postlike => {
-                console.log(postlike.json())
+                res.status(200).send('Reaction Created or Removed');
             })
         })
     })

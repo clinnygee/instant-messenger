@@ -16,7 +16,7 @@ const withAuth = require('./middleware/auth');
 
 const bcrypt = require('bcrypt');
 const secret = (process.env.SECRET || 'instant-messenger');
-const saltRounds = 10;
+const saltRounds = (process.env.SALTROUNDS || 10);
 
 
 require('dotenv').config();
@@ -54,7 +54,7 @@ conn.sync({logging: false});
 
 // console.log(Conversation)
 
-// const seedDb = require('./database/seeders/seed');
+const seedDb = require('./database/seeders/seed');
 // seedDb();
 
 
@@ -105,6 +105,28 @@ app.post('/register', (req, res) => {
 
 
     res.status(200).send('Hit the Register route');
+});
+
+app.get('/user', withAuth, (req, res) => {
+    User.findOne(
+        {where: 
+            {
+                username: req.username
+            },
+            attributes: {
+                exclude: 'password'
+            },
+        }).then(user => {
+            res.json(user);
+        });
+});
+
+app.get('/user/checkToken', withAuth, (req, res) => {
+    if(req.username){
+        res.status(200).send('User is authorized');
+    } else {
+        res.status(400).send('User is unauthorized')
+    };
 });
 
 
@@ -231,9 +253,13 @@ const connection = io
     });
 
 
-app.get('/profile/:id', (req, res) => {
+// app.get('/profile/:id', (req, res) => {
 
-})
+// })
+
+app.get('*', (req, res) => {
+    res.sendFile(__dirname + '/client/build/index.html');
+});
 
 
 

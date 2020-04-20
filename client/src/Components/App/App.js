@@ -30,6 +30,10 @@ const GlobalStyle = createGlobalStyle`
   p{
     rgb(38,38,38);
   }
+  a{
+    text-decoration: none;
+    color: inherit;
+  }
 `
 
 const AppWrapper = styled.div`

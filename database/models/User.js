@@ -4,6 +4,11 @@ const bcrypt = require('bcrypt');
 const {Sequelize} = conn;
 
 const User = conn.define('user', {
+    // id: {
+    //     primaryKey: true,
+    //     type: Sequelize.UUID,
+    //     defaultValue: Sequelize.UUIDV4,
+    // },
     username: {
         type: Sequelize.STRING,
         allowNull: false,
@@ -17,6 +22,11 @@ const User = conn.define('user', {
         type: Sequelize.STRING,
         allowNull: false,
         defaultValue: 'https://picsum.photos/100',
+    },
+    about: {
+        type: Sequelize.STRING,
+        allowNull: true,
+        defaultValue: '',
     }
 }, {
     freezeTableName: true,

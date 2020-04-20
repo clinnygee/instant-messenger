@@ -3,9 +3,10 @@ import styled from 'styled-components';
 import {UserContext} from '../../../context';
 import { Route, Switch, Link, NavLink, Redirect, useParams} from 'react-router-dom';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import {faHeart, faCameraRetro} from '@fortawesome/free-solid-svg-icons';
+import {faHeart, faCameraRetro, faEllipsisH} from '@fortawesome/free-solid-svg-icons';
 
 import  { uploadNewPost, getAllPosts, createPostComment, changePostLike, getSinglePost } from '../../../API';
+import {useIsLoggedInUser, useHasUserLiked} from '../../Hooks';
 
 
 const FeedContainer = styled.div`
@@ -59,7 +60,8 @@ const Feed = () => {
         return posts.map(post => {
             return <Post key={post.id} id={post.id} imageUrl={post.contentUrl} 
                         text={post.text} created={post.createdAt} user={post.user}
-                        comments={post.comments}    
+                        comments={post.comments}   
+                        likes={post.postlikes} 
                     />
         })
     }
@@ -175,7 +177,7 @@ const PostCommentForm = styled.form`
     
 `
 
-const PostCommentInput = styled.input`
+const Input = styled.input`
     opacity: 0.3;
     border: none;
     width: calc(100% - 33px);
@@ -204,7 +206,14 @@ const NavItem = styled.div`
     height: 100%;
     width: 10%;
     font-size: ${({fontSize}) => fontSize ? `${fontSize}` : '25px'};
-    color: ${({active}) => active ? 'black' : 'rgb(220,222,225)'}
+    color: ${({active}) => active ? 'black' : 'rgb(220,222,225)'};
+`
+
+const LikeItem = styled.div`
+    height: 100%;
+    width: 10%;
+    font-size: ${({fontSize}) => fontSize ? `${fontSize}` : '25px'};
+    color: ${({liked}) => liked ? 'red' : 'rgb(220,222,225)'};
 `
 
 const CommentContainer = styled.div`
@@ -219,6 +228,8 @@ const Post = props => {
 
     const [submittable, setSubmittable] = useState(false);
     const [comment, setComment] = useState(null);
+    const isUsers = useIsLoggedInUser(props.user.id);
+    const userHasLiked = useHasUserLiked(props.likes);
     const context = useContext(UserContext);
 
     const handleCommentInput = (e) => {
@@ -235,6 +246,10 @@ const Post = props => {
         e.preventDefault();
         createPostComment(context.jwt, {text: comment}, props.id).then(res => {
             console.log(res);
+            console.log('What?')
+            res.json().then(parsedJson => {
+                console.log(parsedJson)
+            })
         })
     };
 
@@ -270,16 +285,16 @@ const Post = props => {
                         <ConversationHeader>{props.user.username}</ConversationHeader>
                     </Link>
                 </UserLink>
-                
+                {isUsers ? <PostOptions /> : null}
                 
             </PostHeader>
             <PostImageContainer>
                 <PostImage src={props.imageUrl}/>
             </PostImageContainer>
             <ReactionContainer>
-                <NavItem onClick={handlePostLike}>
+                <LikeItem onClick={handlePostLike} liked={userHasLiked}>
                     <FontAwesomeIcon icon={faHeart} />
-                </NavItem>
+                </LikeItem>
             </ReactionContainer>
             <Reacts>
                 <p>Liked by X, Y, Z</p>
@@ -294,7 +309,7 @@ const Post = props => {
             
             <PostComment>
                 <PostCommentForm>
-                    <PostCommentInput placeholder='Add a comment..' onChange={handleCommentInput}/>
+                    <Input placeholder='Add a comment..' onChange={handleCommentInput}/>
 
                     
                     <PostCommentButton type='submit' disabled={!submittable} active={submittable} onClick={handleCommentSubmit}>POST</PostCommentButton>
@@ -314,6 +329,24 @@ const Comment = props => {
         
     )
 };
+
+const OptionsContainer = styled.div`
+    height: auto;
+    width: 50px;
+    margin-left: auto;
+    padding: 0px 8px;
+    
+`
+
+const PostOptions = props => {
+    return (
+        <OptionsContainer>
+            <NavItem fontSize={'30px'}>
+                        <FontAwesomeIcon icon={faEllipsisH}/>
+            </NavItem>
+        </OptionsContainer>
+    )
+}
 
 const PostCreateForm = styled.form`
     display: flex;
@@ -365,7 +398,7 @@ const NewPost = props => {
             </PostImageContainer>
             <PostCreateForm>
                 <input type='file' onChange={handleFileChange} />
-                <PostCommentInput placeholder='Add a description' onChange={handleBodyInput} />
+                <Input placeholder='Add a description' onChange={handleBodyInput} />
                 <PostCommentButton type='submit' disabled={!submittable} active={submittable} onClick={onPostUpload}>POST</PostCommentButton>
             </PostCreateForm>
         </PostContainer>

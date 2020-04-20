@@ -12,9 +12,11 @@ const Profile = props => {
 
     return (
         <Switch>
+
             <Route path='/profile/:username'>
                 <UserProfile />
             </Route>
+            
         </Switch>
     )
 };
@@ -136,11 +138,13 @@ const UserProfile = props => {
                     <ProfileTextBold>{userData.username}</ProfileTextBold>
                     <ProfileText>Some About Text</ProfileText>
                 </ProfileAbout>
-                {userData.username === context.username ? 
+                {userData.username === context.userData.username ? 
                     <EditContainer>
+                        <Link to={`/profile/${username}/edit`} style={{width: '100%', display: 'flex',}}>
                         <EditButton>
                             Edit Profile
                         </EditButton>
+                        </Link >
                     </EditContainer>
 
                 : null
@@ -156,6 +160,102 @@ const UserProfile = props => {
     )
 };
 
+const EditProfileHeader = styled.div`
+    display: flex;
+    align-items: center;
+    justify-content: center;
+`
+const Input = styled.input`
+    opacity: 0.3;
+    border: none;
+    width: calc(100% - 33px);
+
+    &:focus {
+        outline: none;
+    }
+`
+const ProfileForm = styled.form`
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+`
+
+const PostImageContainer = styled.div`
+    width: 100%;
+    height: 330px;
+`
+
+const PostImage = styled.img`
+    width: 100%;
+    height: 100%;
+`
+const PostCommentButton = styled.button`
+    border: none;
+    background: #fff;
+    color: ${({active}) => active ? 'rgb(0,149,246)' : 'rgba(0,149,246,.3)'};
+    width: 33px;
+    margin: 16px 0px 0px 0px;
+    &:focus: {
+        outline: none;
+    }
+`
+
+const ProfileEdit = props => {
+    const [file, setFile] = useState(null);
+    const context = useContext(UserContext);
+    const [about, setAbout] = useState(null);
+    const [submittable, setSubmittable] = useState(false);
+
+    const checkSubmittable = () => {
+        setSubmittable(file && about);
+    }
+
+    const handleAboutInput = e => {
+        setAbout(e.target.value);
+        checkSubmittable();
+
+    };
+
+    const onPhotoUpload = (e) => {
+        console.log(file);
+        e.preventDefault();
+
+        const formData = new FormData();
+
+        formData.append('profile-image', file);
+        setTimeout(() => {
+            console.log(formData.entries());
+        })
+        console.log(formData);
+        uploadProfilePhoto(context.jwt, formData).then(res => {
+            res.json().then(parsedJson => {
+                console.log(parsedJson);
+            })
+        })
+    };
+
+    const handleFileChange = (e) => {
+        setFile(e.target.files[0]);
+        console.log(e.target.files);
+    }
+
+    return (
+        <React.Fragment>
+            <EditProfileHeader>
+                <PostHeaderImage width={`100px`} height={'100px'} url={userData.profileImgUrl} size={'120px 120px'}></PostHeaderImage>
+            </EditProfileHeader>
+            <ProfileForm>
+                <Input value={context.userData.about} onChange={handleAboutInput}/>
+                <PostImageContainer>
+                    <PostImage src={fileUrl ? fileUrl : context.userData.profileImgUrl}/>
+                </PostImageContainer>
+                <input type='file' onChange={handleFileChange} />
+                <PostCommentButton active={submittable}/>
+            </ProfileForm>
+        </React.Fragment>
+    )
+}
+
 const EditContainer = styled.div`
     width: 100%;
     display: flex;
@@ -167,7 +267,7 @@ const EditButton = styled.button`
     border-radius: 3px;
     background: inherit;
     border: 1px solid rgb(219, 219, 219);
-    color: rgb(110,110,110mmpp);
+    color: rgb(110,110,110);
     padding: 8px;
     font-size: 1.1em;
     box-shadow: 4px 4px 10px -5px rgba(0,0,0,0.75);

@@ -20,6 +20,17 @@ export const logInUser = (data) => {
     })
 };
 
+export const fetchUserData = token => {
+    return fetch('/user', {
+        method: 'get',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+        }
+    })
+};
+
 export const fetchConversationData = ( token) => {
     return fetch('/conversations', {
         method: 'get',
