@@ -263,11 +263,14 @@ const Post = props => {
         <PostContainer>
             <PostHeader>
                 <Link to={`/profile/${props.user.username}`} >
-                <PostHeaderImage url={props.user.profileImgUrl}></PostHeaderImage>
-                <UserLink >
-                    <ConversationHeader>{props.user.username}</ConversationHeader>
-                </UserLink>
+                    <PostHeaderImage url={props.user.profileImgUrl}></PostHeaderImage>
                 </Link>
+                <UserLink >
+                    <Link to={`/profile/${props.user.username}`} >
+                        <ConversationHeader>{props.user.username}</ConversationHeader>
+                    </Link>
+                </UserLink>
+                
                 
             </PostHeader>
             <PostImageContainer>

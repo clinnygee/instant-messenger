@@ -136,6 +136,15 @@ const UserProfile = props => {
                     <ProfileTextBold>{userData.username}</ProfileTextBold>
                     <ProfileText>Some About Text</ProfileText>
                 </ProfileAbout>
+                {userData.username === context.username ? 
+                    <EditContainer>
+                        <EditButton>
+                            Edit Profile
+                        </EditButton>
+                    </EditContainer>
+
+                : null
+                }
                 <ThumbnailContainer>
                     {thumbnails}
                 </ThumbnailContainer>
@@ -146,6 +155,28 @@ const UserProfile = props => {
         </FeedContainer>
     )
 };
+
+const EditContainer = styled.div`
+    width: 100%;
+    display: flex;
+`
+const EditButton = styled.button`
+    width: 80%;
+    max-width: 300px;
+    margin: 8px auto;
+    border-radius: 3px;
+    background: inherit;
+    border: 1px solid rgb(219, 219, 219);
+    color: rgb(110,110,110mmpp);
+    padding: 8px;
+    font-size: 1.1em;
+    box-shadow: 4px 4px 10px -5px rgba(0,0,0,0.75);
+    
+
+    &:focus{
+        outline: none;
+    }
+`
 
 const ThumbnailContainer = styled.div`
     width: 100%;

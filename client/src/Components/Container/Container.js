@@ -9,6 +9,7 @@ import ConversationDisplay from '../Conversation';
 import {AppWrapper} from '../Styled/styled-components';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faComments, faUserFriends, faAddressCard, faHome} from '@fortawesome/free-solid-svg-icons';
+import { UserContext } from '../../context';
 
 
 
@@ -69,6 +70,7 @@ const View = (props) => {
     const [conversationsDisplay, setConversationsDisplay] = useState(true);
     const [messageDisplay, setMessageDisplay] = useState(false);
     const [receiver, setReceiver] = useState(null);
+    const context = useContext(UserContext);
     // const context = useContext(UserContext);
 
     const toggleDisplay = () => {
@@ -144,6 +146,7 @@ const NavItem = styled.div`
 `
 
 const Nav = props => {
+    const context = useContext(UserContext);
 
     return(
         <NavWrapper>
@@ -175,7 +178,7 @@ const Nav = props => {
                     <FontAwesomeIcon icon={faUserFriends} />
                 </NavItem>
             </NavLink>
-            <NavLink to='/profile'
+            <NavLink to={`/profile/${context.username}`}
                 activeStyle={{
                     color: 'black'
                 }}
