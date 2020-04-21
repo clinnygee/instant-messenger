@@ -55,7 +55,7 @@ conn.sync({logging: false});
 // console.log(Conversation)
 
 const seedDb = require('./database/seeders/seed');
-// seedDb();
+seedDb();
 
 
 
@@ -116,6 +116,23 @@ app.get('/user', withAuth, (req, res) => {
             attributes: {
                 exclude: 'password'
             },
+            include: [
+                
+                    {
+                        model: Friendship,
+                        include: [
+                            {
+                                model: User,
+                                attributes: {exclude: ['password']}
+                            }
+                        ]
+                        
+                    },
+                    {
+                        model: FriendRequest,
+                    }
+                
+            ]
         }).then(user => {
             res.json(user);
         });
@@ -151,6 +168,26 @@ app.get('/conversations',withAuth, (req, res) => {
         }
     })
 });
+
+app.get('/search/:searchTerm', withAuth, (req,res) => {
+    console.log('hit search route')
+    console.log(req.params.searchTerm)
+    User.findAll({where: {
+        username: {
+            [Op.like]: `%${req.params.searchTerm}%`
+        }
+    }, attributes: {
+        exclude: 'password'
+    }}).then(searchResults => {
+        if(searchResults.length === 0){
+
+        } else {
+            res.json(searchResults);
+        }
+        console.log(searchResults)
+        
+    })
+})
 
 const getKeyByValue = (object, value) => {
     // return Object.keys(object.find(key => {object[key] === value}))
@@ -257,7 +294,7 @@ const connection = io
 
 // })
 
-app.get('*', (req, res) => {
+app.get('/*', (req, res) => {
     res.sendFile(__dirname + '/client/build/index.html');
 });
 

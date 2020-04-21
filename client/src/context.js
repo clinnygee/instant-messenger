@@ -21,6 +21,7 @@ export const UserContext = createContext({
     sendWsMessage: () => {},
     sendWsReaction: () => {},
     sendFriendRequest: () => {},
+    logOut: () => {},
 });
 
 export class UserProvider extends React.Component {
@@ -139,6 +140,11 @@ export class UserProvider extends React.Component {
         this.state.client.emit('reaction', JSON.stringify(Reaction));
     };
 
+    logOut = () => {
+        sessionStorage.removeItem('instant-messenger-jwt');
+        this.setState({authenticated: false, authenticating: false, jwt: null});
+    }
+
     sendFriendRequest = (user) => {
         makeFriendRequest(user, this.state.jwt).then(res => {
             console.log(res);
@@ -190,6 +196,7 @@ export class UserProvider extends React.Component {
         sendWsMessage: this.sendWsMessage,
         sendWsReaction: this.sendWsReaction,
         sendFriendRequest: this.sendFriendRequest,
+        logOut: this.logOut,
     }
 
     render(){

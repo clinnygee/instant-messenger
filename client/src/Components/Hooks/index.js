@@ -27,6 +27,56 @@ const useHasUserLiked = likes => {
     });
 
     return hasLiked;
-}
+};
 
-export {useIsLoggedInUser, useHasUserLiked};
+const useIsUsersFriend = friendships => {
+    const context = useContext(UserContext);
+    const [isFriends, setIsFriends] = useState(false);
+
+    useEffect(() => {
+        const friends = friendships.filter(friendship => {
+            return (context.userData.id === friendship.friendId)
+        })
+
+        friends.length > 0 ? setIsFriends(true) : setIsFriends(false)
+    })
+
+    return isFriends;
+};
+
+const useHasSentFriendRequest = friendrequests => {
+    const context = useContext(UserContext);
+    const [hasRequested, setHasRequested] = useState(false);
+
+    useEffect(() => {
+        const request = friendrequests.filter(friendrequest => {
+            console.log(context.userData.id)
+            console.log(friendrequest)
+            return (context.userData.id === friendrequest.friendrequestId)
+        })
+
+        request.length > 0 ? setHasRequested(true) : setHasRequested(false);
+    })
+
+    return hasRequested;
+};
+
+const useReceivedFriendRequest = id => {
+    const context = useContext(UserContext);
+    const [hasRequest, setHasRequest] = useState(false);
+
+    
+
+    useEffect(() => {
+        const request = context.userData.friendrequests.filter(friendrequest => {
+            
+            return (id === friendrequest.friendrequestId)
+        })
+        
+        request.length > 0 ? setHasRequest(true) : setHasRequest(false);
+    })
+
+    return hasRequest;
+};
+
+export {useIsLoggedInUser, useHasUserLiked, useIsUsersFriend, useHasSentFriendRequest, useReceivedFriendRequest};

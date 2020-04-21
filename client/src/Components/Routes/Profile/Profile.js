@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { Route, Switch, Link, NavLink, Redirect, useParams, useHistory} from 'react-router-dom';
-import {uploadProfilePhoto, getProfileData} from '../../../API';
+import {uploadProfilePhoto, getProfileData, makeFriendRequest, acceptFriendRequest, deleteFriendship} from '../../../API';
 import { useContext } from 'react';
 import { UserContext } from '../../../context';
 import { JsonWebTokenError } from 'jsonwebtoken';
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 
 import styled from 'styled-components';
+import { faSignOutAlt } from '@fortawesome/free-solid-svg-icons';
+import { useIsLoggedInUser, useIsUsersFriend, useHasSentFriendRequest, useReceivedFriendRequest } from '../../Hooks';
 
 const Profile = props => {
 
@@ -94,6 +97,7 @@ const UserProfile = props => {
     const [loaded, setLoaded] = useState(false);
     let { username } = useParams();
     const context = useContext(UserContext);
+    const history = useHistory();
 
     useEffect(() => {
         getProfileData(context.jwt, username).then(userdata => {
@@ -104,7 +108,7 @@ const UserProfile = props => {
                 
             })
         })
-    }, []);
+    }, [history.location]);
 
     const createThumbnails = () => {
         return userData.posts.map(post => {
@@ -126,6 +130,7 @@ const UserProfile = props => {
                 {loaded ? 
             <React.Fragment>
                 <PostHeader>
+                    {userData.username === context.userData.username ? <LogOut /> : null}
                     <PostHeaderImage width={`80px`} height={'80px'} url={userData.profileImgUrl} size={'100px 100px'}></PostHeaderImage>
                     <ProfileHeaderItem>
                         <ProfileTextBold>{userData.posts.length}</ProfileTextBold>
@@ -140,17 +145,13 @@ const UserProfile = props => {
                     <ProfileTextBold>{userData.username}</ProfileTextBold>
                 <ProfileText>{userData.about}</ProfileText>
                 </ProfileAbout>
-                {userData.username === context.userData.username ? 
-                    <EditContainer>
-                        <Link to={`/profile/${username}/edit`} style={{width: '100%', display: 'flex',}}>
-                        <EditButton>
-                            Edit Profile
-                        </EditButton>
-                        </Link >
-                    </EditContainer>
-
-                : null
-                }
+                
+                <ProfileButton 
+                    friendrequests={userData.friendrequests}
+                    friendships={userData.friendships}
+                    id={userData.id}
+                    username={userData.username}
+                />
                 <ThumbnailContainer>
                     {thumbnails}
                 </ThumbnailContainer>
@@ -168,6 +169,90 @@ const UserProfile = props => {
     )
 };
 
+const ProfileButton = props => {
+    // const currentUser = props.username;
+    const context = useContext(UserContext);
+    const sentFriendRequest = useHasSentFriendRequest(props.friendrequests);
+    const receivedFriendRequest = useReceivedFriendRequest(props.id);
+    const isFriend = useIsUsersFriend(props.friendships);
+    const isCurrentUser = useIsLoggedInUser(props.id);
+
+    // useEffect(() => {
+
+    // });
+
+    const handleFriendRequest = () => {
+        makeFriendRequest(context.jwt, props.username).then(res => {
+            console.log(res);
+        })
+    };
+
+    const handleAcceptFriendRequest = () => {
+        let request = context.userData.friendrequests.filter(request =>{ return (props.id === request.friendrequestId)})
+        console.log(request);
+        acceptFriendRequest(context.jwt, request[0].id).then(res => {
+            if(res.status === 200){
+                context.initializeUserData().then(
+                    window.location.reload()
+                );
+            }
+            console.log(res);
+        })
+    };
+
+    const handleRemoveFriend = () => {
+        console.log(context.userData.friendships)
+        console.log(props.id);
+        // console.log(friendship.friendId)
+        let friendships = context.userData.friendships.filter(friendship => {return (props.id === friendship.friendId)})
+        deleteFriendship(context.jwt, friendships[0].id).then(res => {
+            if(res.status === 200){
+                context.initializeUserData().then(
+                    window.location.reload()
+                )
+            }
+        })
+    }
+
+    const renderButton = () => {
+        if(isCurrentUser){
+            return (
+                <Link to={`/profile/${props.username}/edit`} style={{width: '100%', display: 'flex',}}>
+                    <EditButton>
+                        Edit Profile
+                    </EditButton>
+                 </Link >
+            )
+        }else if (isFriend){
+            return (
+            <EditButton onClick={handleRemoveFriend}>
+                Delete Friend
+            </EditButton>)
+        } else if (receivedFriendRequest){
+            return (
+            <EditButton onClick={handleAcceptFriendRequest}>
+                Accept Friend Request
+            </EditButton>)
+        }else if (sentFriendRequest){
+            return (
+            <EditButton>
+                Pending Friend Request
+            </EditButton>)
+        } else {
+            return(
+            <EditButton onClick={handleFriendRequest}>
+                Send Friend Request
+            </EditButton>)
+        }
+    }
+
+    return (
+        <EditContainer>
+            {renderButton()}
+        </EditContainer>
+    )
+};
+
 const EditProfileHeader = styled.div`
     display: flex;
     align-items: center;
@@ -181,6 +266,7 @@ const Input = styled.input`
 
     &:focus {
         outline: none;
+        opacity: 1;
     }
 `
 const ProfileForm = styled.form`
@@ -327,6 +413,39 @@ const PostThumbnail = props => {
             </ThumbnailPostContainer>
         </Link>
     )
+};
+
+
+const LogOutContainer = styled.div`
+    position: absolute;
+    right: 8px;
+    top: 8px;
+`
+const ChatLink = styled.div`
+    height: 40px;
+    width: 40px;
+    font-size: ${({screenWidth}) => screenWidth ? `${screenWidth / 20}px` : '30px'};
+    color: ${({submittable}) => submittable ? 'rgb(0,149,246)' : 'rgb(220,222,225)'};
+    margin: 8px;
+`
+
+const LogOut = props => {
+    const history = useHistory();
+    const context = useContext(UserContext);
+
+    const handleLogOut = () => {
+        context.logOut()
+        history.replace('/');
+    }
+
+    return (
+        <LogOutContainer onClick={handleLogOut}>
+            <ChatLink submittable={true}>
+                <FontAwesomeIcon icon={faSignOutAlt} />
+            </ChatLink>
+        </LogOutContainer>
+    )
+
 }
 
 

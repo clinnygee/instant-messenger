@@ -5,7 +5,7 @@ const seedDb = async () => {
     const user1 = await User.createUser('Clinnygee', 'clinton2', 10);
     // console.log(user1);
 
-    // const user2 = await User.createUser('Jason', 'clinton2', 10);
+    const user2 = await User.createUser('Jason', 'clinton2', 10);
 
     // const user3 = await User.createUser('Joseph', 'clinton2', 10);
 

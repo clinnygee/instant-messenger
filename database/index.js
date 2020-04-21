@@ -30,9 +30,11 @@ PostLike.belongsTo(Post, {foreignKey: 'postId'});
 // User.hasMany(FriendRequest, {foreignKey: 'Requestee'});
 User.belongsToMany(User, {as: 'friends', through: Friendship});
 User.hasMany(Friendship);
+Friendship.belongsTo(User, {foreignKey: 'friendId'});
 
 User.belongsToMany(User, {as:'friendrequests', through: FriendRequest});
 User.hasMany(FriendRequest);
+FriendRequest.belongsTo(User, {foreignKey: 'friendrequestId'});
 
 // User.belongsToMany(User, {as:'Requester', through: FriendRequest, foreignKey: 'Requester', otherKey: 'id'})
 // User.hasMany(FriendRequest, {foreignKey: 'Requester'});
@@ -42,8 +44,8 @@ Conversation.belongsTo(User, {as: 'user2'});
 
 // Friendship.belongsTo(User, {foreignKey:{name: 'User1'}, as: 'user1'});
 // Friendship.belongsTo(User, {foreignKey:{name: 'User2'},as: 'user2'});
-Friendship.belongsTo(User, {foreignKey: 'friendId'});
-FriendRequest.belongsTo(User, {foreignKey: 'friendrequestId'});
+
+
 
 // FriendRequest.belongsTo(User, {as: 'requester', foreignKey: 'Requester'});
 // FriendRequest.belongsTo(User, {as: 'requestee', foreignKey:'Requestee'});

@@ -225,6 +225,11 @@ const Time = styled.time`
 `
 
 const Post = props => {
+    const [comments, setComments] = useState([]);
+    const [user, setUser] = useState({});
+    const [image, setImage] = useState({});
+    const [body, setBody] = useState('');
+    const [time, setTime] = useState(null);
 
     const [submittable, setSubmittable] = useState(false);
     const [comment, setComment] = useState(null);
@@ -232,11 +237,24 @@ const Post = props => {
     const userHasLiked = useHasUserLiked(props.likes);
     const context = useContext(UserContext);
 
+    useEffect(() => {
+        setComments(props.comments);
+        setUser(props.user);
+        setImage(props.imageUrl);
+        setBody(props.text);
+        setTime(props.created);
+    }, []);
+
     const handleCommentInput = (e) => {
         console.log(e.target.value);
         setComment(e.target.value);
         checkSubmittable();
     };
+
+    const resetCommentForm = () => {
+        setComment(null);
+        checkSubmittable();
+    }
 
     const checkSubmittable = () => {
         (comment && comment.length > 0) ? setSubmittable(true) : setSubmittable(false); 
@@ -247,9 +265,10 @@ const Post = props => {
         createPostComment(context.jwt, {text: comment}, props.id).then(res => {
             console.log(res);
             console.log('What?')
-            res.json().then(parsedJson => {
-                console.log(parsedJson)
-            })
+            if(res.status === 200){
+                comments.push({user:{username: context.userData.username, id:context.userData.id}, text: comment});
+                resetCommentForm();
+            }
         })
     };
 
@@ -260,7 +279,7 @@ const Post = props => {
     }
 
     const createComments = () => {
-        return props.comments.map(comment => {
+        return comments.map(comment => {
             return <Comment 
                 username={comment.user.username}
                 userId={comment.user.id}
@@ -273,23 +292,23 @@ const Post = props => {
 
     console.log(props);
 
-    const comments = (props.comments && props.comments.length > 0) ? createComments() : null;
+    const commentsComponents = (comments && comments.length > 0) ? createComments() : null;
     return (
         <PostContainer>
             <PostHeader>
-                <Link to={`/profile/${props.user.username}`} >
-                    <PostHeaderImage url={props.user.profileImgUrl}></PostHeaderImage>
+                <Link to={`/profile/${user.username}`} >
+                    <PostHeaderImage url={user.profileImgUrl}></PostHeaderImage>
                 </Link>
                 <UserLink >
-                    <Link to={`/profile/${props.user.username}`} >
-                        <ConversationHeader>{props.user.username}</ConversationHeader>
+                    <Link to={`/profile/${user.username}`} >
+                        <ConversationHeader>{user.username}</ConversationHeader>
                     </Link>
                 </UserLink>
                 {isUsers ? <PostOptions /> : null}
                 
             </PostHeader>
             <PostImageContainer>
-                <PostImage src={props.imageUrl}/>
+                <PostImage src={image}/>
             </PostImageContainer>
             <ReactionContainer>
                 <LikeItem onClick={handlePostLike} liked={userHasLiked}>
@@ -300,11 +319,11 @@ const Post = props => {
                 <p>Liked by X, Y, Z</p>
             </Reacts>
             <CommentContainer>
-                <Comment text={props.text} username={props.user.username}/>
-                {comments}
+                <Comment text={body} username={user.username}/>
+                {commentsComponents}
             </CommentContainer>
             <CommentContainer>
-                <Time>{props.created}</Time>
+                <Time>{time}</Time>
             </CommentContainer>
             
             <PostComment>

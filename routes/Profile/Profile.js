@@ -53,7 +53,11 @@ router.get('/:username', withAuth, (req, res) => {
                     }
                 ]
                 
+            },
+            {
+                model: FriendRequest,
             }
+
             ]})
             .then(user => {
                 res.json(user);

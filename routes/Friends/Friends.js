@@ -50,6 +50,13 @@ router.post('/add/:id', withAuth, (req, res) => {
 
 router.post('/delete/:id', (req, res) => {
 
+    console.log(req.params.id);
+    Friendship.delete(req.params.id).then(
+        res.status(200).send('Friendship Destroyed')
+    )
+    // Friendship.findOne({where: {id: req.params.id}}).then(friendship => {
+    //     friendship.delete(friendship).then(res.status(200).send('Friend Deleted'));
+    // })
 });
 
 router.post('/accept/:id', withAuth, (req, res) => {

@@ -1,6 +1,8 @@
 import React from 'react';
 import styled, {createGlobalStyle} from 'styled-components';
-import Authentication from '../Authentication'
+import Authentication from '../Authentication';
+
+import {BrowserRouter as Router, Route} from 'react-router-dom';
 
 import {UserProvider, UserConsumer} from '../../context';
 import Container from '../Container';
@@ -48,19 +50,22 @@ const AppWrapper = styled.div`
 function App() {
 
   return (
-    <UserProvider>
-      <UserConsumer>{
-        value => (
-          <AppWrapper>
-            <GlobalStyle />
-            {value.authenticated ? <Container /> : <Authentication />}
-            {/* <Conversations context={value}/> */}
-            {/* <People /> */}
-          </AppWrapper>
-        )}   
-      </UserConsumer>
-    </UserProvider>
-      
+    <Router>
+      <UserProvider>
+        <Route path='/'>
+        <UserConsumer>{
+          value => (
+            <AppWrapper>
+              <GlobalStyle />
+              {value.authenticated ? <Container /> : <Authentication />}
+              {/* <Conversations context={value}/> */}
+              {/* <People /> */}
+            </AppWrapper>
+          )}   
+        </UserConsumer>
+        </Route>
+      </UserProvider>
+    </Router>
     
     
   )

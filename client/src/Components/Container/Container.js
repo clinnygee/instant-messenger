@@ -1,5 +1,5 @@
 import React, {useState, useEffect, useContext} from 'react';
-import {BrowserRouter as Router, Route, Switch, Link, NavLink, Redirect} from 'react-router-dom';
+import {BrowserRouter as Router, Route, Switch, Link, NavLink, Redirect, useHistory} from 'react-router-dom';
 import styled from 'styled-components';
 import Feed from '../Routes/Feed'
 
@@ -20,6 +20,8 @@ const Container = (props) => {
     const [screenWidth, setScreenWidth] = useState(true);
     const context = useContext(UserContext);
     const [fetching, setFetching] = useState(true);
+    const history=useHistory();
+    console.log(history);
 
     
 
@@ -57,10 +59,10 @@ const Container = (props) => {
 
     return (
         <AppWrapper>
-            <Router>
+            
                 {/* conditional here while we fetch user data */}
                 <View screenWidth={screenWidth}/> 
-            </Router>            
+                       
         </AppWrapper>           
         
     )

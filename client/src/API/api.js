@@ -43,7 +43,7 @@ export const fetchConversationData = ( token) => {
     })
 };
 
-export const makeFriendRequest = (name, token) => {
+export const makeFriendRequest = ( token, name) => {
     return fetch(`/friends/add/${name}`, {
         method: 'post',
         headers: {
@@ -54,7 +54,7 @@ export const makeFriendRequest = (name, token) => {
     })
 };
 
-export const acceptFriendRequest = (id, token) => {
+export const acceptFriendRequest = (token, id) => {
     return fetch(`/friends/accept/${id}`, {
         method: 'post',
         headers: {
@@ -64,6 +64,17 @@ export const acceptFriendRequest = (id, token) => {
         }
     })
 };
+
+export const deleteFriendship = (token, id) => {
+    return fetch(`/friends/delete/${id}`, {
+        method: 'post',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+        }
+    })
+}
 
 export const fetchFriendsData = token => {
     return fetch('/friends', {
@@ -153,3 +164,13 @@ export const getSinglePost = (token, id) => {
         }
     })
 };
+
+export const getSearchResults = (token, searchTerm) => {
+    return fetch(`/search/${searchTerm}`, {
+        method: 'get',
+        headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-type': 'application/json',
+        }
+    })
+}
