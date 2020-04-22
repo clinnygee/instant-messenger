@@ -1,5 +1,5 @@
 import React, {createContext} from 'react';
-import {w3cwebsocket as W3CWebSocket} from 'websocket'
+
 import openSocket from 'socket.io-client';
 import {fetchConversationData, makeFriendRequest, fetchUserData} from './API'
 
@@ -7,7 +7,7 @@ export const UserContext = createContext({
     userData: [],
     username: '',
     authenticated: false,
-    authenticating: false,
+    authenticating: true,
     jwt: null,
     client: null,
     conversationData: [],
@@ -26,15 +26,22 @@ export const UserContext = createContext({
 
 export class UserProvider extends React.Component {
 
-    constructor(){
-        super();
-        let onLoadJwt = sessionStorage.getItem('instant-messenger-jwt');
-
-        if(onLoadJwt){
-            this.checkJwtToken(onLoadJwt);
-            this.setJwt(onLoadJwt);
-        }
-    }
+    // constructor(){
+    //     super();
+    //     let onLoadJwt = sessionStorage.getItem('instant-messenger-jwt');
+    //     console.log('constructor');
+    //     if(onLoadJwt){
+    //         console.log('jwt');
+    //         this.setState({authenticating: true});
+    //         this.checkJwtToken(onLoadJwt);
+    //         // this.setJwt(onLoadJwt);
+    //     } else {
+    //         console.log('no jwt');
+    //         let authenticating = false;
+    //         // this.setState({authenticating: authenticating});
+    //         this.changeAuthenticating();
+    //     }
+    // }
 
     handleAuthentication = async (res, username) => {
         let re = /login/;
@@ -52,23 +59,29 @@ export class UserProvider extends React.Component {
         }
     };
 
-    getConversationData = () => {
-        fetchConversationData( this.state.jwt)
+    getConversationData =  () => {
+        console.log(this.state.jwt)
+        return fetchConversationData( this.state.jwt)
         .then(res => res.json())
         .then(parsedJSON => this.setState({conversationData: parsedJSON}));
     };
 
-    setJwt = (jwt) => {
+    setJwt = async (jwt) => {
         if(jwt.token){
             jwt = jwt.token;
         }
         console.log(jwt);
         sessionStorage.setItem('instant-messenger-jwt', jwt);
         console.log(jwt)
-        this.setState({jwt: jwt}, () => {
-            this.getConversationData();
+        this.setState({jwt: jwt}, async () => {
+            console.log('calling initializeUserData');
+            await this.initializeUserData();
+            await this.getConversationData();
+            await this.initializeWsClient();
+            this.changeAuthenticated();
+            this.changeAuthenticating();
         });
-        this.changeAuthenticated();
+        
     };
 
     changeAuthenticated = () => {
@@ -80,6 +93,7 @@ export class UserProvider extends React.Component {
     };
 
     initializeUserData = () => {
+        console.log(this.state.jwt);
         return fetchUserData(this.state.jwt).then(res => {
              res.json().then(parsedJson => {
                  this.setState({userData: parsedJson})
@@ -100,7 +114,7 @@ export class UserProvider extends React.Component {
         });
         // before this is called, we need username in state.
         
-        socket.emit('user-details', `${this.state.username}`);
+        socket.emit('user-details', `${this.state.userData.username}`);
 
         socket.on('message', msg => {
             console.log(msg);
@@ -143,7 +157,7 @@ export class UserProvider extends React.Component {
         const Reaction = {
             messageId: messageId,
             reaction: reaction,
-            user: this.state.username,
+            user: this.state.userData.username,
         };
 
         this.state.client.emit('reaction', JSON.stringify(Reaction));
@@ -178,20 +192,27 @@ export class UserProvider extends React.Component {
         })
     }
 
-    // componentDidMount = () => {
-    //     let onLoadJwt = sessionStorage.getItem('instant-messenger-jwt');
-
-    //     if(onLoadJwt){
-    //         this.checkJwtToken(onLoadJwt);
-    //         // this.setJwt(onLoadJwt);
-    //     }
-    // }
+    componentDidMount = () => {
+        let onLoadJwt = sessionStorage.getItem('instant-messenger-jwt');
+            console.log('constructor');
+            if(onLoadJwt){
+                console.log('jwt');
+                this.setState({authenticating: true});
+                this.checkJwtToken(onLoadJwt);
+                // this.setJwt(onLoadJwt);
+            } else {
+                console.log('no jwt');
+                let authenticating = false;
+                // this.setState({authenticating: authenticating});
+                this.changeAuthenticating();
+            }
+    }
 
     state = {
         userData: [],
         username: '',
         authenticated: false,
-        authenticating: false,
+        authenticating: true,
         jwt: null,
         client: null,
         conversationData: [],

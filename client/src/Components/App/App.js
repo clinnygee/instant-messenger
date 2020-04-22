@@ -52,20 +52,20 @@ function App() {
   return (
     <Router>
       <UserProvider>
-        <Route path='/'>
+        {/* <Route path='/'> */}
         <UserConsumer>{
           value => (
             <AppWrapper>
               <GlobalStyle />
-              {value.authenticated ? <Container /> : <Authentication />}
+              {/* {value.authenticated ? <Container /> : <Authentication />} */}
               
-               {/* <Container /> */}
+               <Container />
               {/* <Conversations context={value}/> */}
               {/* <People /> */}
             </AppWrapper>
           )}   
         </UserConsumer>
-        </Route>
+        {/* </Route> */}
       </UserProvider>
     </Router>
     

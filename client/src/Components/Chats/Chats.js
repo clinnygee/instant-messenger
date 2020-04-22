@@ -9,7 +9,7 @@ import { faPen} from '@fortawesome/free-solid-svg-icons';
 
 const ConversationListContainer = styled.div`
     
-    width: ${({mobile}) => mobile ? '100vw' : '43%'};
+    width: 100%;
     
     height: ${({mobile}) => mobile ? '85%' : '100%'};
 `
@@ -119,7 +119,7 @@ const Chats = props => {
     const context = useContext(UserContext);
 
     const chatCreator = (conversations) => {
-        const username = context.username;
+        const username = context.userData.username;
         let chats = conversations.map(conversation => {
             return (
             <Chat conversationTitle={conversation.user1Username === username ? conversation.user2Username : conversation.user1Username} 

@@ -1,6 +1,8 @@
 import React, {useState, useEffect, useContext} from 'react';
 import {BrowserRouter as Router, Route, Switch, Link, NavLink, Redirect, useHistory} from 'react-router-dom';
 import styled from 'styled-components';
+
+import Authentication from '../Authentication';
 import Feed from '../Routes/Feed'
 
 import People from '../People';
@@ -21,7 +23,9 @@ const Container = (props) => {
     const context = useContext(UserContext);
     const [fetching, setFetching] = useState(true);
     const history=useHistory();
-    console.log(history);
+    // console.log(history);
+
+    console.log(context);
 
     
 
@@ -44,10 +48,12 @@ const Container = (props) => {
 
         window.addEventListener('resize', checkMobile);
 
-        context.initializeUserData().then(success => {
+        // context.initializeUserData().then(success => {
             
-            setFetching(false);
-        })
+        //     setFetching(false);
+        // });
+
+        console.log('Calling Container Use Effect')
 
         return() => {
             window.removeEventListener('resize', checkMobile)
@@ -55,13 +61,28 @@ const Container = (props) => {
         }
     }, []);
 
-    console.log(context.userData);
+    const renderView = () => {
+        if(context.authenticated){
+            return (
+                <View screenWidth={screenWidth} />
+            )
+        } else if (context.authenticating){
+            return (
+                <div>Authenticating</div>
+            )
+        } else {
+            return (
+            <Authentication />
+            )
+        }
+    }
+
+    // console.log(context.userData);
 
     return (
         <AppWrapper>
             
-                {/* conditional here while we fetch user data */}
-                <View screenWidth={screenWidth}/> 
+                {renderView()}
                        
         </AppWrapper>           
         
@@ -84,9 +105,7 @@ const View = (props) => {
         
         <MobileWrapper>
             <Switch>
-                <Route exact path='/'
-                    render={() => <Redirect to='/posts' />}
-                />
+                
                     
                 <Route path='/posts'
                     render={()=> <Feed />}    
@@ -100,10 +119,14 @@ const View = (props) => {
                     render={() => <People mobile={true} />}
                 />
                    
-                <Route path='/profile' render={() => <Profile />}/>
+                <Route path='/profile' 
+                    render={() => <Profile />}
+                />
                     
                 <Route path='/*' render={() => <div>This page does not exist!</div> }/>
-                    
+                <Route exact path='/'
+                    render={() => <Redirect to='/posts' />}
+                />
             </Switch>
             <Nav />
         </MobileWrapper>

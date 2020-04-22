@@ -88,6 +88,24 @@ const SearchInput = styled.input`
     }
 `
 
+const FeedContainer = styled.div`
+    width: 100vw;
+    max-width: 600px;
+    margin: 0 auto;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow-y: scroll;
+    padding: 5px;
+    background: rgb(250,250,250);
+    padding-top: 70px;
+
+    &::-webkit-scrollbar {
+        display: none;
+      }
+
+`
+
 // This needs to be a container component, which will either display all of your conversations,
 // or will allow you to send a new message to a new recipient.
 // Show Chats by default, unless a reciever is selected
@@ -123,9 +141,9 @@ const ConversationContainer = props => {
     };
 
     return (
-        <React.Fragment>
+        <FeedContainer>
             {messageDisplay ? conversationsDisplayRender() : chatsDisplayRender()}
-        </React.Fragment>
+        </FeedContainer>
         
     )
 

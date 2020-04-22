@@ -21,6 +21,7 @@ export const logInUser = (data) => {
 };
 
 export const fetchUserData = token => {
+    console.log(token)
     return fetch('/user', {
         method: 'get',
         headers: {
@@ -32,6 +33,7 @@ export const fetchUserData = token => {
 };
 
 export const fetchConversationData = ( token) => {
+    console.log('fetch conversation data is called')
     return fetch('/conversations', {
         method: 'get',
         
