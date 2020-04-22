@@ -47,148 +47,12 @@ const ConversationHeader = styled.h1`
 
 const ChatLink = styled.div`
     height: 40px;
-    width: 40px;
+    width: ${({width}) => width ? `${width}` : '40px'}; 
     font-size: ${({screenWidth}) => screenWidth ? `${screenWidth / 20}px` : '30px'};
     color: ${({submittable}) => submittable ? 'rgb(0,149,246)' : 'rgb(220,222,225)'};
     margin: 8px;
 `
 
-// const People = (props) => {
-
-//     const [addFriend, setAddFriend] = useState(false);
-//     const [friendsData, setFriendsData] = useState([]);
-//     const context = useContext(UserContext);
-
-//     const changeAddFriend = () => {
-//         setAddFriend(!addFriend);
-//     };
-
-//     const handleCreateFriendRequest = (user) => {
-//         context.sendFriendRequest(user);
-//     };
-
-//     const handleAcceptFriendRequest = id => {
-//         console.log(id);
-//         acceptFriendRequest(id, context.jwt).then(res => {
-//             console.log(res);
-//         })
-//     }
-
-//     useEffect(() => {
-//         fetchFriendsData(context.jwt).then(res => {
-//             res.json().then(parsedJson => {
-//                 setFriendsData(parsedJson);
-//             })
-//         })
-//     }, []);
-
-//     console.log(friendsData);
-
-//     return (
-//         <Wrapper mobile={props.mobile}>
-//             <Header>
-//                 <ConversationImage people={true}></ConversationImage>
-//                 <ConversationHeader>People</ConversationHeader>
-//                 <IconContainer>
-//                     <ChatLink>
-//                         <FontAwesomeIcon icon={faAddressBook}/>
-//                     </ChatLink>
-//                     <ChatLink onClick={changeAddFriend}>
-//                         <FontAwesomeIcon icon={faUserPlus} />
-//                     </ChatLink>
-//                 </IconContainer>
-                
-                
-//             </Header>
-//             {addFriend ? <AddFriend onFriendRequest={handleCreateFriendRequest} requests={friendsData.friendrequests} acceptRequest={handleAcceptFriendRequest}/> : null}
-//         </Wrapper>
-//     )
-// };
-
-// const FriendInputWrapper = styled.div`
-//     width: 100%;
-//     height: 80px;
-//     display: flex;
-//     flex-direction: row;
-//     padding: 8px 16px 8px 16px;
-//     align-items: center;
-// `
-
-// const FriendInput = styled.input`
-//     width: 100px;
-//     height: 40px;
-//     background-color: #fff;
-//     border: none;
-    
-
-//     &:focus {
-//         outline: none;
-//     }
-// `
-
-// const AddFriend = (props) => {
-//     const [name, setName] = useState('');
-
-//     const updateName = e => {
-//         setName(e.target.value);
-//     };
-
-//     const onNameSubmit = () => {
-//         props.onFriendRequest(name);
-//     }
-
-//     let friendRequests = null;
-//     if(props.requests.length > 0){
-//         friendRequests = props.requests.map(request => {
-//             return <FriendRequest id={request.id} acceptRequest={props.acceptRequest} />
-//         });
-//     }
-
-    
-
-//     console.log(friendRequests);
-
-//     return (
-//         <React.Fragment>
-//             <FriendInputWrapper>
-//                 <FriendInput placeholder={'Name..'} onChange={updateName}/>
-//                 <IconContainer>
-//                      <ChatLink onClick={onNameSubmit}>
-//                          <FontAwesomeIcon icon={faPlusCircle} />
-//                      </ChatLink>
-//                 </IconContainer>
-                
-//             </FriendInputWrapper>
-//             {/* {props.requests ? {friendRequests} : null}
-//              */}
-//              {friendRequests}
-//         </React.Fragment>
-        
-//     )
-//     };
-
-// const FriendRequest = props => {
-
-//     const onRequestAccept = () => {
-//         props.acceptRequest(props.id);
-//     }
-    
-//     return (
-//         <FriendInputWrapper>
-//             <ConversationImage people={true}></ConversationImage>
-//             <p>User</p>
-//             <IconContainer>
-//                 <ChatLink>
-//                     <FontAwesomeIcon icon={faTimes}/>
-//                 </ChatLink>
-//                 <ChatLink onClick={onRequestAccept}>
-//                     <FontAwesomeIcon icon={faUserCheck}/>
-//                 </ChatLink>
-//             </IconContainer>
-            
-//         </FriendInputWrapper>
-//     )
-// }
 
 
 const SearchBarWrapper = styled.div`
@@ -263,6 +127,74 @@ const People = props => {
 
     return (
         <FeedContainer>
+            <PeopleNav>
+                <Link to='/friends'>
+                    <ChatLink width={'auto'} style={{color: 'rgb(0,149,246)'}}>
+                        Search
+                    </ChatLink>
+                </Link>
+                <Link to='/friends/friendrequests'>
+                    <ChatLink width={'auto'}>
+                        Requests
+                    </ChatLink>
+                </Link>
+                <Link to='/friends/friendships'>
+                    <ChatLink width={'auto'}>
+                        Friends
+                    </ChatLink>
+                </Link>                
+            </PeopleNav>
+            <Route exact path='/friends'>
+                <PeopleSearch />
+            </Route>
+            <Route path='/friends/friendships'>
+                <FriendShips />
+            </Route>
+            <Route path='/friends/friendrequests'>
+                <FriendRequests />
+            </Route>
+            
+        </FeedContainer>
+        
+    )
+};
+
+const PeopleSearch = props => {
+    const [submittable, setSubmittable] = useState(false);
+    const [searchTerm, setSearchTerm] = useState('');
+    const context = useContext(UserContext);
+    const [results, setResults] = useState(null);
+
+    const handleSearchChange = (e) => {
+        setSearchTerm(e.target.value)
+        // handleSearch();
+        checkSubmittable();
+        if(submittable){
+            handleSearch()
+        }
+    };
+
+    const checkSubmittable = () => {
+        searchTerm.length > 0 ? setSubmittable(true) : setSubmittable(false);
+    }
+
+    const handleSearch = () => {
+        getSearchResults(context.jwt, searchTerm).then(res => res.json()).then(parsedResponse => setResults(parsedResponse))
+    };
+
+    const createResults =() => {
+        return results.map(result => {
+            return <SearchResult 
+                username={result.username}
+                image={result.profileImgUrl}
+            />
+        })
+    }
+
+    const searchResults = results ? createResults(): null;
+
+    return (
+        <React.Fragment>
             <SearchBarWrapper>
                 <ChatLink submittable={submittable}>
                     <FontAwesomeIcon icon={faSearch} onClick={handleSearch}/>
@@ -270,10 +202,18 @@ const People = props => {
                 <Input placeholder='Search' onChange={handleSearchChange}/>
             </SearchBarWrapper>
             {searchResults}
-        </FeedContainer>
-        
+        </React.Fragment>
     )
-};
+}
+
+const PeopleNav = styled.div`
+    width: 100%;
+    height: 40px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    margin: 16px 0px;
+`
 
 const UserImage = styled.img`
     width: 60px;
@@ -300,6 +240,41 @@ const SearchResult = props => {
         </Link>
     )
 };
+
+const FriendShips = props => {
+    const context = useContext(UserContext);
+
+    const friends = context.userData.friendships.map(friendship => {
+        return <SearchResult 
+            username={friendship.user.username}
+            image={friendship.user.profileImgUrl}
+            
+        />
+    })
+    return (
+        <React.Fragment>
+                {friends}
+        </React.Fragment>
+        
+    )
+};
+
+const FriendRequests = props => {
+    const context = useContext(UserContext);
+
+    const requests = context.userData.friendrequests.map(request => {
+        return <SearchResult
+            username={request.user.username}
+            image={request.user.profileImgUrl}
+        />
+    })
+
+    return (
+        <React.Fragment>
+            {requests}
+        </React.Fragment>
+    )
+}
 
 
 

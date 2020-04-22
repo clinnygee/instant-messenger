@@ -77,43 +77,33 @@ const MobileWrapper = styled.div`
 `
 
 const View = (props) => {
-    // const context = useContext(UserContext);
-    // const context = useContext(UserContext); 
-
     
-
-    // useEffect(() => {
-    //     return () => {
-    //         console.log('Container is unmounting')
-            
-    //     }
-    // })
-
-    console.log(props.history)
 
    
     return (
         
         <MobileWrapper>
             <Switch>
-                <Route exact path='/'>
-                    <Redirect to='/posts' />
-                </Route>
-                <Route path='/posts'>
-                    <Feed />
-                </Route>
-                <Route path='/conversations'>
-                    <ConversationDisplay />
-                </Route>
-                <Route path='/friends'>
-                    <People mobile={true}/>
-                </Route>
-                <Route path='/profile'>
-                    <Profile />
-                </Route>
-                <Route path='/*'>
-                    <div>This page does not exist!</div>
-                </Route>
+                <Route exact path='/'
+                    render={() => <Redirect to='/posts' />}
+                />
+                    
+                <Route path='/posts'
+                    render={()=> <Feed />}    
+                />
+                    
+                <Route path='/conversations' render={
+                    () => <ConversationDisplay />
+                }/>
+                    
+                <Route path='/friends' 
+                    render={() => <People mobile={true} />}
+                />
+                   
+                <Route path='/profile' render={() => <Profile />}/>
+                    
+                <Route path='/*' render={() => <div>This page does not exist!</div> }/>
+                    
             </Switch>
             <Nav />
         </MobileWrapper>

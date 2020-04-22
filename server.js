@@ -130,6 +130,12 @@ app.get('/user', withAuth, (req, res) => {
                     },
                     {
                         model: FriendRequest,
+                        include: [
+                        {
+                            model: User,
+                            attributes: {exclude: 'password'}
+                        }
+                        ]
                     }
                 
             ]

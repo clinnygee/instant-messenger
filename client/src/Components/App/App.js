@@ -58,6 +58,8 @@ function App() {
             <AppWrapper>
               <GlobalStyle />
               {value.authenticated ? <Container /> : <Authentication />}
+              
+               {/* <Container /> */}
               {/* <Conversations context={value}/> */}
               {/* <People /> */}
             </AppWrapper>

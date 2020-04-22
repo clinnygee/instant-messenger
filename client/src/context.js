@@ -26,6 +26,15 @@ export const UserContext = createContext({
 
 export class UserProvider extends React.Component {
 
+    constructor(){
+        super();
+        let onLoadJwt = sessionStorage.getItem('instant-messenger-jwt');
+
+        if(onLoadJwt){
+            this.checkJwtToken(onLoadJwt);
+            this.setJwt(onLoadJwt);
+        }
+    }
 
     handleAuthentication = async (res, username) => {
         let re = /login/;
@@ -169,14 +178,14 @@ export class UserProvider extends React.Component {
         })
     }
 
-    componentDidMount = () => {
-        let onLoadJwt = sessionStorage.getItem('instant-messenger-jwt');
+    // componentDidMount = () => {
+    //     let onLoadJwt = sessionStorage.getItem('instant-messenger-jwt');
 
-        if(onLoadJwt){
-            this.checkJwtToken(onLoadJwt);
-            // this.setJwt(onLoadJwt);
-        }
-    }
+    //     if(onLoadJwt){
+    //         this.checkJwtToken(onLoadJwt);
+    //         // this.setJwt(onLoadJwt);
+    //     }
+    // }
 
     state = {
         userData: [],
