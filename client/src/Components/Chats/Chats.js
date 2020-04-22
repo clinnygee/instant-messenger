@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import {UserContext} from '../../context';
 
 import Chat from './Chats.view';
+import {Link, useHistory} from 'react-router-dom';
 
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import { faPen} from '@fortawesome/free-solid-svg-icons';
@@ -117,15 +118,24 @@ const ConversationList = styled.div`
 
 const Chats = props => {
     const context = useContext(UserContext);
+    const history = useHistory();
+    console.log('we in chats!')
 
     const chatCreator = (conversations) => {
         const username = context.userData.username;
         let chats = conversations.map(conversation => {
             return (
-            <Chat conversationTitle={conversation.user1Username === username ? conversation.user2Username : conversation.user1Username} 
-            conversationPreview={conversation.messages[0].text }
-            onSelect={props.onSelect}
-            />)
+                <Link to={{
+                    pathname: `/conversations/${conversation.user1Username === username ? conversation.user2Username : conversation.user1Username}`,
+                    search: `${conversation.user1Username === username ? conversation.user2Username : conversation.user1Username}`}}
+                    style={{width: '100%'}}    
+                >
+                    <Chat conversationTitle={conversation.user1Username === username ? conversation.user2Username : conversation.user1Username} 
+                        conversationPreview={conversation.messages[0].text }
+                        onSelect={props.onSelect}
+                    />
+                </Link>
+            )
         });
 
         return chats;

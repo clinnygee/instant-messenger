@@ -1,10 +1,11 @@
-import React, {useState, useContext, useEffect} from 'react';
+import React, {useState, useContext, useEffect, useRef} from 'react';
 import styled from 'styled-components';
 import Message from './Message.view';
 import Chats from '../Chats';
 import {UserContext} from '../../context';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faPaperPlane} from '@fortawesome/free-solid-svg-icons';
+import { Switch, Route, useHistory } from 'react-router-dom';
 
 
 const _ConversationContainer = styled.div`
@@ -125,6 +126,7 @@ const ConversationContainer = props => {
     };
 
     const chatsDisplayRender = () => {
+        console.log('chats display render')
         return (
             
                  <Chats onSelect={selectMessageReceiver} mobile={true} createMessage={displayMessage}/> 
@@ -142,7 +144,11 @@ const ConversationContainer = props => {
 
     return (
         <FeedContainer>
-            {messageDisplay ? conversationsDisplayRender() : chatsDisplayRender()}
+            <Switch>
+                <Route exact path='/conversations' render={() => {return (chatsDisplayRender())}} />
+                <Route path='/conversations/:username' render={() => {return(conversationsDisplayRender())}} />
+            </Switch>
+            {/* {messageDisplay ? conversationsDisplayRender() : chatsDisplayRender()} */}
         </FeedContainer>
         
     )
@@ -154,6 +160,8 @@ const Conversation = props => {
     const [receiver, setReceiver] = useState(null);
     const context = useContext(UserContext);
     const [messages, setMessages] = useState(null);
+    const history = useHistory();
+    console.log(history.location.search);
 
     console.log(context)
 
@@ -197,10 +205,16 @@ const Conversation = props => {
 
     useEffect(() => {
         console.log('calling useEffect in Conversation')
-        if(receiver === null && props.receiver){
-            setReceiver(props.receiver);
-            findConversationMessages(props.receiver);
-        } 
+        console.log(history.location.search);
+        let search = history.location.search.split('?')[1];
+        console.log(search);
+        setReceiver(search);
+        findConversationMessages(search);
+        
+        // if(receiver === null && props.receiver){
+        //     setReceiver(props.receiver);
+        //     findConversationMessages(props.receiver);
+        // } 
         
     }, []);
 
@@ -312,6 +326,8 @@ const MessageCreateContainer = styled.div`
 const MessageCreate = props => {
 
     const [message, setMessage] = useState(null);
+    const inputRef = useRef(null);
+    console.log(inputRef);
     
     const updateMessage = (e) => {
         setMessage(e.target.value);
@@ -320,12 +336,14 @@ const MessageCreate = props => {
     const submit = () => {
         console.log('submitting message');
         props.onSubmit(message);
+        setMessage(null);
+        inputRef.current.value = "";
     }
 
     return (
         <MessageCreateContainer>
             <SearchForm height={`50px`}>
-                    <SearchInput placeholder={'Message..'} onChange={updateMessage} >
+                    <SearchInput placeholder={'Message..'} onChange={updateMessage} ref={inputRef}>
                     </SearchInput>
             </SearchForm>
             <IconContainer active={message} onClick={submit}>
