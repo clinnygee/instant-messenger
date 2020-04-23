@@ -2,6 +2,7 @@ import React, {useState, useContext, useEffect, useRef} from 'react';
 import styled from 'styled-components';
 import Message from './Message.view';
 import Chats from '../Chats';
+import {Back} from '../Reusable'
 import {UserContext} from '../../context';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faPaperPlane} from '@fortawesome/free-solid-svg-icons';
@@ -226,6 +227,7 @@ const Conversation = props => {
     return (
         <_ConversationContainer>
             <Header>
+                <Back />
                 {receiver ? 
                     <Recipient receiver={receiver} />
                 :

@@ -1,11 +1,13 @@
 import React, { useState, useContext, useEffect } from 'react';
+import ReactDOM from 'react-dom';
 import styled from 'styled-components';
 import {UserContext} from '../../../context';
-import { Route, Switch, Link, NavLink, Redirect, useParams} from 'react-router-dom';
+import { Route, Switch, Link, NavLink, Redirect, useParams, useHistory} from 'react-router-dom';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faHeart, faCameraRetro, faEllipsisH} from '@fortawesome/free-solid-svg-icons';
+import {GlobalStyle} from '../../App/App';
 
-import  { uploadNewPost, getAllPosts, createPostComment, changePostLike, getSinglePost } from '../../../API';
+import  { uploadNewPost, getAllPosts, createPostComment, changePostLike, getSinglePost, deletePost } from '../../../API';
 import {useIsLoggedInUser, useHasUserLiked} from '../../Hooks';
 
 
@@ -48,6 +50,7 @@ const Feed = () => {
         console.log(context);
 
         getAllPosts(context.jwt).then(res => {
+            console.log(res);
             res.json().then(posts => {
                 setPosts(posts);
             })
@@ -121,6 +124,7 @@ const PostHeader = styled.div`
 `
 
 const ConversationHeader = styled.h1`
+    font-weight: bold;
     font-size: 14px;
     padding: 0px 0px 0px 16px;
 `
@@ -299,12 +303,12 @@ const Post = props => {
                 <Link to={`/profile/${user.username}`} >
                     <PostHeaderImage url={user.profileImgUrl}></PostHeaderImage>
                 </Link>
-                <UserLink >
+                {/* <UserLink > */}
                     <Link to={`/profile/${user.username}`} >
                         <ConversationHeader>{user.username}</ConversationHeader>
                     </Link>
-                </UserLink>
-                {isUsers ? <PostOptions /> : null}
+                {/* </UserLink> */}
+                {isUsers ? <PostOptions id={props.id}/> : null}
                 
             </PostHeader>
             <PostImageContainer>
@@ -358,14 +362,102 @@ const OptionsContainer = styled.div`
 `
 
 const PostOptions = props => {
+    const [showModal, setShowModal] = useState(false);
+    const context = useContext(UserContext);
+    const history = useHistory();
+
+    const toggleModal = () => {
+        setShowModal(!showModal);
+    };
+
+    const handleDeletePost = () => {
+        deletePost(context.jwt, props.id).then(res => {
+            console.log(res);
+            if(res.status === 200){
+                history.goBack();
+            }
+        });
+    }
     return (
-        <OptionsContainer>
-            <NavItem fontSize={'30px'}>
-                        <FontAwesomeIcon icon={faEllipsisH}/>
-            </NavItem>
-        </OptionsContainer>
+        <React.Fragment>
+            <PostModal toggleModal={toggleModal} open={showModal} onPostDelete={handleDeletePost}/>
+            <OptionsContainer>
+                <NavItem fontSize={'30px'} onClick={toggleModal}>
+                    <FontAwesomeIcon icon={faEllipsisH}/>
+                </NavItem>
+            </OptionsContainer>
+        </React.Fragment>
     )
-}
+};
+
+const PostModal = ({toggleModal, open, onPostDelete}) => {
+
+    return (
+        <React.Fragment>
+            {open ? 
+                ReactDOM.createPortal(
+                    
+                    <ModalContainer onClick={toggleModal}>
+                        
+                        <ModalBox onClick={(e) => e.stopPropagation()}>
+                            <ModalButton onClick={onPostDelete}>Delete</ModalButton>
+                            <ModalButton>Edit</ModalButton>
+                            <ModalButton>Copy Link</ModalButton>
+                            <ModalButton>Cancel</ModalButton>
+                        </ModalBox>
+                    </ModalContainer>                    
+                    , document.body
+                )
+            : null
+            }
+        </React.Fragment>
+    )
+};
+
+const ModalContainer = styled.div`
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0,0,0,.65);
+    position: absolute;
+    top: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+`
+
+const ModalBox = styled.div`
+    width: 100%;
+    max-width: 400px;
+    
+    background-color: #fff;
+    border-radius: 12px;
+
+    
+`
+
+const ModalButton = styled.button`
+    width: 100%;
+    border: none;
+    border-top: 1px solid rgb(219,219,219);
+    height: 39px;
+    background-color: #fff;
+
+    &:first-child{
+        border-top-left-radius: 12px;
+        border-top-right-radius: 12px;
+        border-top: none;
+    }
+
+    &:last-child{
+        border-bottom-right-radius: 12px;
+        border-bottom-left-radius: 12px;
+    }
+
+    &:focus{
+        outline:none;
+    }
+
+`
 
 const PostCreateForm = styled.form`
     display: flex;
@@ -377,6 +469,7 @@ const NewPost = props => {
     const [postBody, setPostBody] = useState(null);
     const [submittable, setSubmittable] = useState(false);
     const context = useContext(UserContext);
+    const history = useHistory();
 
     const handleFileChange = (e) => {
         setFile(e.target.files[0]);
@@ -406,7 +499,10 @@ const NewPost = props => {
         console.log(post.entries());
 
         uploadNewPost(context.jwt, post).then(res => {
-            console.log(res);
+            if(res.status === 200){
+                history.push('/posts');
+            }
+            // console.log(res);
         })
     }
 

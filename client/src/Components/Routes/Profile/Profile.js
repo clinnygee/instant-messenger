@@ -10,6 +10,7 @@ import styled from 'styled-components';
 import { faSignOutAlt } from '@fortawesome/free-solid-svg-icons';
 import { useIsLoggedInUser, useIsUsersFriend, useHasSentFriendRequest, useReceivedFriendRequest } from '../../Hooks';
 
+import {Back} from '../../Reusable';
 const Profile = props => {
 
 
@@ -112,7 +113,7 @@ const UserProfile = props => {
 
     const createThumbnails = () => {
         return userData.posts.map(post => {
-            return <PostThumbnail id={post.id} url={post.contentUrl}/>
+            return <PostThumbnail key={post.id} id={post.id} url={post.contentUrl}/>
         })
     }
 
@@ -130,6 +131,7 @@ const UserProfile = props => {
                 {loaded ? 
             <React.Fragment>
                 <PostHeader>
+                    <Back />
                     {userData.username === context.userData.username ? <LogOut /> : null}
                     <PostHeaderImage width={`80px`} height={'80px'} url={userData.profileImgUrl} size={'100px 100px'}></PostHeaderImage>
                     <ProfileHeaderItem>
@@ -348,6 +350,7 @@ const ProfileEdit = props => {
     return (
         <React.Fragment>
             <EditProfileHeader>
+                <Back />
                 <PostHeaderImage width={`100px`} height={'100px'} url={context.userData.profileImgUrl} size={'120px 120px'}></PostHeaderImage>
             </EditProfileHeader>
             <ProfileForm>

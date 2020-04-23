@@ -41,9 +41,9 @@ app.use(cookieParser());
 
 app.use(bodyParser.json());
 
-app.use('/posts', PostsRouter);
-app.use('/profile', ProfileRouter);
-app.use('/friends', FriendsRouter);
+app.use('/api/posts', PostsRouter);
+app.use('/api/profile', ProfileRouter);
+app.use('/api/friends', FriendsRouter);
 
 const {Op} = Sequelize;
 
@@ -59,7 +59,7 @@ seedDb();
 
 
 
-app.post('/login', (req,res) => {
+app.post('/api/login', (req,res) => {
     const {username, password} = req.body;
 
     User.findOne({where: {username: username}}).then(user => {
@@ -83,7 +83,7 @@ app.post('/login', (req,res) => {
     });
 });
 
-app.post('/register', (req, res) => {
+app.post('/api/register', (req, res) => {
     const {username, password} = req.body;
 
     console.log(username, password);
@@ -107,7 +107,7 @@ app.post('/register', (req, res) => {
     res.status(200).send('Hit the Register route');
 });
 
-app.get('/user', withAuth, (req, res) => {
+app.get('/api/user', withAuth, (req, res) => {
     User.findOne(
         {where: 
             {
@@ -144,7 +144,7 @@ app.get('/user', withAuth, (req, res) => {
         });
 });
 
-app.get('/user/checkToken', withAuth, (req, res) => {
+app.get('/api/user/checkToken', withAuth, (req, res) => {
     if(req.username){
         res.status(200).send('User is authorized');
     } else {
@@ -154,7 +154,7 @@ app.get('/user/checkToken', withAuth, (req, res) => {
 
 
 
-app.get('/conversations',withAuth, (req, res) => {
+app.get('/api/conversations',withAuth, (req, res) => {
     // console.log(req.headers.authorization);
     console.log('username: ------------------------------------')
     console.log(req.username);
@@ -175,7 +175,7 @@ app.get('/conversations',withAuth, (req, res) => {
     })
 });
 
-app.get('/search/:searchTerm', withAuth, (req,res) => {
+app.get('/api/search/:searchTerm', withAuth, (req,res) => {
     console.log('hit search route')
     console.log(req.params.searchTerm)
     User.findAll({where: {

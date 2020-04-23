@@ -1,5 +1,5 @@
 export const registerUser = (data) => {
-    return fetch('/register', {
+    return fetch('/api/register', {
         method: 'post',
         body: JSON.stringify(data),
         headers: {
@@ -10,7 +10,7 @@ export const registerUser = (data) => {
 }
 
 export const logInUser = (data) => {
-    return fetch('/login', {
+    return fetch('/api/login', {
         method: 'post',
         body: JSON.stringify(data),
         headers: {
@@ -22,7 +22,7 @@ export const logInUser = (data) => {
 
 export const fetchUserData = token => {
     console.log(token)
-    return fetch('/user', {
+    return fetch('/api/user', {
         method: 'get',
         headers: {
             'Accept': 'application/json',
@@ -34,7 +34,7 @@ export const fetchUserData = token => {
 
 export const fetchConversationData = ( token) => {
     console.log('fetch conversation data is called')
-    return fetch('/conversations', {
+    return fetch('/api/conversations', {
         method: 'get',
         
         headers: {
@@ -46,7 +46,7 @@ export const fetchConversationData = ( token) => {
 };
 
 export const makeFriendRequest = ( token, name) => {
-    return fetch(`/friends/add/${name}`, {
+    return fetch(`/api/friends/add/${name}`, {
         method: 'post',
         headers: {
             'Accept': 'application/json',
@@ -57,7 +57,7 @@ export const makeFriendRequest = ( token, name) => {
 };
 
 export const acceptFriendRequest = (token, id) => {
-    return fetch(`/friends/accept/${id}`, {
+    return fetch(`/api/friends/accept/${id}`, {
         method: 'post',
         headers: {
             'Accept': 'application/json',
@@ -68,7 +68,7 @@ export const acceptFriendRequest = (token, id) => {
 };
 
 export const deleteFriendship = (token, id) => {
-    return fetch(`/friends/delete/${id}`, {
+    return fetch(`/api/friends/delete/${id}`, {
         method: 'post',
         headers: {
             'Accept': 'application/json',
@@ -79,7 +79,7 @@ export const deleteFriendship = (token, id) => {
 }
 
 export const fetchFriendsData = token => {
-    return fetch('/friends', {
+    return fetch('/api/friends', {
         method: 'get',
         headers: {
             'Accept': 'application/json',
@@ -91,7 +91,7 @@ export const fetchFriendsData = token => {
 
 export const uploadProfilePhoto = (token, formData) => {
 
-    return fetch('/profile/image', {
+    return fetch('/api/profile/image', {
         method: 'POST',
         headers: {
             // 'Accept': 'application/json',
@@ -103,7 +103,7 @@ export const uploadProfilePhoto = (token, formData) => {
 };
 
 export const uploadNewPost = (token, formData) => {
-    return fetch('/posts/create', {
+    return fetch('/api/posts/create', {
         method: 'POST',
         headers: {
             'Authorization': `Bearer ${token}`
@@ -113,7 +113,7 @@ export const uploadNewPost = (token, formData) => {
 };
 
 export const getAllPosts = (token) => {
-    return fetch('/posts', {
+    return fetch('/api/posts', {
         method: 'GET',
         headers: {
             'Accept': 'application/json',
@@ -123,9 +123,22 @@ export const getAllPosts = (token) => {
     })
 };
 
+export const deletePost = (token, postId) => {
+    console.log(postId);
+    return fetch(`api/posts/${postId}`, {
+        method: 'DELETE',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+        },
+        // body: JSON.stringify(postId),
+    })
+}
+
 export const createPostComment = (token, comment, postId) => {
     console.log(JSON.stringify(comment));
-    return fetch(`/posts/${postId}/comments`, {
+    return fetch(`/api/posts/${postId}/comments`, {
         method: 'POST',
         body: JSON.stringify(comment),
         headers: {
@@ -138,7 +151,7 @@ export const createPostComment = (token, comment, postId) => {
 
 export const changePostLike = (token, postId) => {
 
-    return fetch(`/posts/${postId}/like`, {
+    return fetch(`/api/posts/${postId}/like`, {
         method: 'POST',
         headers: {
             'Authorization': `Bearer ${token}`,
@@ -148,7 +161,7 @@ export const changePostLike = (token, postId) => {
 };
 
 export const getProfileData = (token, username) => {
-    return fetch(`/profile/${username}`, {
+    return fetch(`/api/profile/${username}`, {
         method: 'GET',
         headers: {
             'Authorization': `Bearer ${token}`,
@@ -158,7 +171,7 @@ export const getProfileData = (token, username) => {
 };
 
 export const getSinglePost = (token, id) => {
-    return fetch(`/posts/${id}`, {
+    return fetch(`/api/posts/${id}`, {
         method: 'GET',
         headers: {
             'Authorization': `Bearer ${token}`,
@@ -168,7 +181,7 @@ export const getSinglePost = (token, id) => {
 };
 
 export const getSearchResults = (token, searchTerm) => {
-    return fetch(`/search/${searchTerm}`, {
+    return fetch(`/api/search/${searchTerm}`, {
         method: 'get',
         headers: {
             'Authorization': `Bearer ${token}`,

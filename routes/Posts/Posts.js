@@ -8,6 +8,8 @@ const upload = require('../../modules/multer');
 
 
 router.get('/', withAuth, (req,res) => {
+    console.log('hit the posts route');
+    console.log('---------------')
     Post.findAll({include: [
         {
             model: User,
@@ -88,6 +90,22 @@ router.get('/:id', withAuth, (req, res) => {
 
 router.delete('/:id', withAuth, (req,res) => {
     // call Post.delete() which will return an error if if req.username !=
+    console.log('hit the delete route')
+    console.log(req.params.id);
+
+    Post.findOne({where: {id: req.params.id},
+        include: [{model: User}]
+    }).then(post => {
+        console.log(post);
+        if(post.user.username === req.username){
+            post.destroy();
+            res.status(200).send('Post Deleted!');
+        } else if(!post){
+            res.status(400).send('Post Not Found')
+        } else {
+            res.status(401).send('You can only delete your own posts.')
+        }
+    })
 });
 
 router.put('/:id', withAuth, (req, res) => {

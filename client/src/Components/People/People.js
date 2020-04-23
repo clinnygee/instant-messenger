@@ -1,11 +1,11 @@
 import React, {useContext, useState, useEffect} from 'react';
 import {UserContext} from '../../context'; 
 import styled from 'styled-components';
-import Chat from '../Chats/Chats.view';
+
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import { faUserPlus, faAddressBook, faPlusCircle, faUserCheck, faTimes, faSearch} from '@fortawesome/free-solid-svg-icons';
-import {fetchFriendsData, acceptFriendRequest, getSearchResults} from '../../API';
-import { Route, Switch, Link, NavLink, Redirect, useParams, useHistory} from 'react-router-dom';
+import {  faSearch} from '@fortawesome/free-solid-svg-icons';
+import { getSearchResults} from '../../API';
+import { Route, Link} from 'react-router-dom';
 
 const Wrapper = styled.div`
     width: ${({mobile}) => mobile ? `100vw` : `30%`};

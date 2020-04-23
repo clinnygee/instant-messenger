@@ -151,7 +151,7 @@ const NavWrapper = styled.div`
 const NavItem = styled.div`
     height: 100%;
     width: 10%;
-    color: rgb(220,222,225);
+    // color: rgb(220,222,225);
     font-size: ${({screenWidth}) => screenWidth ? `${screenWidth / 20}px` : '25px'};
     
     
@@ -161,10 +161,10 @@ const Nav = props => {
     const context = useContext(UserContext);
 
     return(
-        <NavWrapper>
+        <NavWrapper style={{color: 'rgb(220,222,225)'}}>
             <NavLink to='/posts'
                 activeStyle={{
-                    color: 'black !important'
+                    color: 'rgb(0,149,246)'
                 }}
             >
                 <NavItem >
@@ -173,7 +173,7 @@ const Nav = props => {
             </NavLink>
             <NavLink to='/conversations'
                 activeStyle={{
-                    color: 'black'
+                    color: 'rgb(0,149,246)'
                 }}
             >
                 <NavItem onClick={props.toggleDisplay} screenWidth={props.screenWidth}>
@@ -183,7 +183,7 @@ const Nav = props => {
             
             <NavLink to='/friends'
                 activeStyle={{
-                    color: 'black'
+                    color: 'rgb(0,149,246)'
                 }}
             >
                 <NavItem active={!props.conversationsDisplay} onClick={props.toggleDisplay}>
@@ -192,7 +192,7 @@ const Nav = props => {
             </NavLink>
             <NavLink to={`/profile/${context.userData.username}`}
                 activeStyle={{
-                    color: 'black'
+                    color: 'rgb(0,149,246)'
                 }}
             >
                 <NavItem>
