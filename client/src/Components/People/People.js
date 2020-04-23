@@ -232,7 +232,7 @@ const SearchResult = props => {
 
 
     return(
-        <Link to={`/profile/${props.username}`}>
+        <Link to={{pathname: `/profile/${props.username}`}}>
             <SearchResultContainer>
                 <UserImage src={props.image} />
                 <h1>{props.username}</h1>            

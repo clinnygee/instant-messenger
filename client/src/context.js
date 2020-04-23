@@ -103,7 +103,7 @@ export class UserProvider extends React.Component {
 
     initializeWsClient = () => {
         console.log('in initalizeWsClient')
-        console.log(window.location.host);
+        console.log(window.location)
 
         const socket = openSocket(window.location.host + '/connection');
 

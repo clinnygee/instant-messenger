@@ -116,7 +116,7 @@ const View = (props) => {
                 }/>
                     
                 <Route path='/friends' 
-                    render={() => <People mobile={true} />}
+                    render={() => <People  />}
                 />
                    
                 <Route path='/profile' 

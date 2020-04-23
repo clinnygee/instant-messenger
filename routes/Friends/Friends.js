@@ -5,36 +5,36 @@ const withAuth = require('../../middleware/auth');
 
 const {User, Conversation, Message, Reaction, Friendship, FriendRequest, Post, Comment, PostLike} = require('../../database').models;
 
-router.get('/', withAuth, (req, res) => {
+// router.get('/', withAuth, (req, res) => {
     
-
-    User.findOne(
-        {where: {username: req.username},
-        include: [
-            {model: FriendRequest, as: 'friendrequests',
-            include:[
-                {
-                    model: User,
-                    attributes: {exclude: ['password']}
-                }
-            ]},
-            {
-                model: Friendship,
-                include: [
-                    {
-                        model: User,
-                        attributes: {exclude: ['password']}
-                    }
-                ]
+//     console.log('/recieved request on /friends');
+//     User.findOne(
+//         {where: {username: req.username},
+//         include: [
+//             {model: FriendRequest, as: 'friendrequests',
+//             include:[
+//                 {
+//                     model: User,
+//                     attributes: {exclude: ['password']}
+//                 }
+//             ]},
+//             {
+//                 model: Friendship,
+//                 include: [
+//                     {
+//                         model: User,
+//                         attributes: {exclude: ['password']}
+//                     }
+//                 ]
                 
-            }
-            ]})
-            .then(userData => {
-            res.json(userData)
-        });
+//             }
+//             ]})
+//             .then(userData => {
+//             res.json(userData)
+//         });
 
     
-});
+// });
 
 router.post('/add/:id', withAuth, (req, res) => {
     console.log(req.username);
