@@ -3,9 +3,9 @@ import {UserContext} from '../../context';
 import styled from 'styled-components';
 
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import {  faSearch} from '@fortawesome/free-solid-svg-icons';
+import {  faSearch, faExclamationCircle} from '@fortawesome/free-solid-svg-icons';
 import { getSearchResults} from '../../API';
-import { Route, Link} from 'react-router-dom';
+import { Route, Link, NavLink} from 'react-router-dom';
 
 const Wrapper = styled.div`
     width: ${({mobile}) => mobile ? `100vw` : `30%`};
@@ -49,8 +49,9 @@ const ChatLink = styled.div`
     height: 40px;
     width: ${({width}) => width ? `${width}` : '40px'}; 
     font-size: ${({screenWidth}) => screenWidth ? `${screenWidth / 20}px` : '30px'};
-    color: ${({submittable}) => submittable ? 'rgb(0,149,246)' : 'rgb(220,222,225)'};
+    // color: ${({submittable}) => submittable ? 'rgb(0,149,246)' : 'rgb(220,222,225)'};
     margin: 8px;
+    position: relative;
 `
 
 
@@ -91,6 +92,14 @@ const FeedContainer = styled.div`
       }
 
 `
+
+const Notification = styled.div`
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    color: red;
+    font-size: 8px;
+`
 const People = props => {
     const [submittable, setSubmittable] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
@@ -123,35 +132,47 @@ const People = props => {
         })
     }
 
-    const searchResults = results ? createResults(): null;
+    // const searchResults = results ? createResults(): null;
 
     return (
         <FeedContainer>
             <PeopleNav>
-                <Link to='/friends'>
-                    <ChatLink width={'auto'} style={{color: 'rgb(0,149,246)'}}>
+                <NavLink exact to='/friends'
+                    activeStyle={{color: 'rgb(0,149,246)'}}
+                >
+                    <ChatLink width={'auto'} >
                         Search
                     </ChatLink>
-                </Link>
-                <Link to='/friends/friendrequests'>
+                </NavLink>
+                <NavLink to='/friends/friendrequests'
+                    activeStyle={{color: 'rgb(0,149,246)'}}
+                >   
+                    
                     <ChatLink width={'auto'}>
+                    {context.userData.friendrequests.length > 0 ?
+                        <Notification>
+                            <FontAwesomeIcon icon={faExclamationCircle}/>
+                        </Notification>
+                    :null}
                         Requests
                     </ChatLink>
-                </Link>
-                <Link to='/friends/friendships'>
+                </NavLink>
+                <NavLink to='/friends/friendships'
+                    activeStyle={{color: 'rgb(0,149,246)'}}
+                >
                     <ChatLink width={'auto'}>
                         Friends
                     </ChatLink>
-                </Link>                
+                </NavLink>                
             </PeopleNav>
             <Route exact path='/friends'>
-                <PeopleSearch />
+                <PeopleSearch link={'/profile'}/>
             </Route>
             <Route path='/friends/friendships'>
-                <FriendShips />
+                <FriendShips link={'/profile'}/>
             </Route>
             <Route path='/friends/friendrequests'>
-                <FriendRequests />
+                <FriendRequests link={'/profile'}/>
             </Route>
             
         </FeedContainer>
@@ -159,7 +180,7 @@ const People = props => {
     )
 };
 
-const PeopleSearch = props => {
+export const PeopleSearch = props => {
     const [submittable, setSubmittable] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
     const context = useContext(UserContext);
@@ -185,8 +206,11 @@ const PeopleSearch = props => {
     const createResults =() => {
         return results.map(result => {
             return <SearchResult 
+                key={result.id}
                 username={result.username}
                 image={result.profileImgUrl}
+                link={props.link}
+                search={props.search ? result.username : null}
             />
         })
     }
@@ -208,11 +232,12 @@ const PeopleSearch = props => {
 
 const PeopleNav = styled.div`
     width: 100%;
-    height: 40px;
+    
     display: flex;
     flex-direction: row;
     justify-content: space-around;
     margin: 16px 0px;
+    color: rgb(220,222,225);
 `
 
 const UserImage = styled.img`
@@ -228,11 +253,11 @@ const SearchResultContainer = styled.div`
     align-items: center;
 `
 
-const SearchResult = props => {
+export const SearchResult = props => {
 
 
     return(
-        <Link to={{pathname: `/profile/${props.username}`}}>
+        <Link to={{pathname: `${props.link}/${props.username}`, search: props.search}}>
             <SearchResultContainer>
                 <UserImage src={props.image} />
                 <h1>{props.username}</h1>            
@@ -246,8 +271,10 @@ const FriendShips = props => {
 
     const friends = context.userData.friendships.map(friendship => {
         return <SearchResult 
+            key={friendship.user.id}
             username={friendship.user.username}
             image={friendship.user.profileImgUrl}
+            link={props.link}
             
         />
     })
@@ -264,8 +291,10 @@ const FriendRequests = props => {
 
     const requests = context.userData.friendrequests.map(request => {
         return <SearchResult
+            key={request.user.id}
             username={request.user.username}
             image={request.user.profileImgUrl}
+            link={props.link}
         />
     })
 

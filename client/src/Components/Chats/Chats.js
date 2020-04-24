@@ -1,8 +1,9 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import styled from 'styled-components';
 import {UserContext} from '../../context';
 
 import Chat from './Chats.view';
+import {PeopleSearch} from '../People/People'
 import {Link, useHistory} from 'react-router-dom';
 
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
@@ -119,6 +120,7 @@ const ConversationList = styled.div`
 const Chats = props => {
     const context = useContext(UserContext);
     const history = useHistory();
+    const [showSelectReceiver, setShowSelectReceiver] = useState(false);
     console.log('we in chats!')
 
     const chatCreator = (conversations) => {
@@ -141,6 +143,10 @@ const Chats = props => {
         return chats;
     };
 
+    const selectReceiver = () => {
+        setShowSelectReceiver(!showSelectReceiver);
+    }
+
     const Chats = context.conversationData.length > 0 ? chatCreator(context.conversationData) : null;
 
     return (
@@ -151,15 +157,71 @@ const Chats = props => {
                 <ConversationHeader>
                     Chat
                 </ConversationHeader>
-                <ChatLink onClick={props.createMessage}>
+                <ChatLink onClick={selectReceiver}>
                     <FontAwesomeIcon icon={faPen} />
                 </ChatLink>
             </Header>
-            <ConversationList>                
-                {Chats}
+            <ConversationList>
+                {showSelectReceiver ?
+                    <PeopleSearch link={'/conversations'} search={true} />
+                : Chats}                
+                
             </ConversationList>
         </ConversationListContainer>
     )
-}
+};
+
+const Form = styled.form`
+    
+    display: flex;
+    flex-direction: row;
+    width: 300px !important:
+    height: 50px !important;
+    box-sizing: border-box;
+`
+
+const RecipientInputContainer = styled.div`
+    width: 232px;
+    height: 50px;
+    box-sizing: border-box;
+`
+
+const ButtonContainer = styled.div`
+    width: 50px;
+    height: 50px;
+    clip-path: circle(50% at 50% 50%);
+    background-color: rgb(238,240,243);
+    display: flex;
+    align-items: center;
+    text-align: center;
+    justify-content: center;
+    margin: 0px 16px 0px 16px;
+    font-size: 25px;
+    
+`
+
+const RecipientSelect = props => {
+    const [user, setUser] = useState('');
+
+    const updateRecipient = (e) => {
+        setUser(e.target.value);
+        console.log(user)
+    };
+
+    const submit = () => {
+        props.onSubmit(user);
+    }
+
+    return (
+        <Form>
+            <RecipientInputContainer>
+                <SearchInput placeholder={'Recipient'} onChange={updateRecipient} width={`200px`}/>                
+            </RecipientInputContainer>
+            <ButtonContainer onClick={submit}>
+                <p>+</p>
+            </ButtonContainer>
+        </Form>
+    )
+};
 
 export default Chats;

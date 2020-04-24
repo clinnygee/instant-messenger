@@ -32,16 +32,13 @@ const User = conn.define('user', {
     freezeTableName: true,
 });
 
-User.createUser = async (username, password, saltRounds) => {
+User.createUser =  (username, password, saltRounds, profileImg) => {
     let userObject = null;
-    await bcrypt.hash(password, saltRounds, (err, hash) => {
-        User.create({
+    return bcrypt.hash(password, saltRounds).then(hash => {
+        return User.create({
             username: username,
             password: hash,
-        }).then((user) => {
-            // console.log(user);
-            return user;
-            console.log(user)
+            profileImgUrl: profileImg ? profileImg : 'https://picsum.photos/100',
         })
     });
     

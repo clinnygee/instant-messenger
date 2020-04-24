@@ -162,9 +162,9 @@ const Conversation = props => {
     const context = useContext(UserContext);
     const [messages, setMessages] = useState(null);
     const history = useHistory();
-    console.log(history.location.search);
+    // console.log(history.location.search);
 
-    console.log(context)
+    // console.log(context)
 
     const updateReceiver = (name) => {
 
@@ -173,7 +173,8 @@ const Conversation = props => {
     };
 
     const sendMessage = (message) => {
-        context.sendWsMessage(receiver, message)
+        context.sendWsMessage(receiver, message);
+        console.log(receiver);
     };
 
     const findConversationMessages = (receiverUsername) => {
@@ -217,7 +218,7 @@ const Conversation = props => {
         //     findConversationMessages(props.receiver);
         // } 
         
-    }, []);
+    }, [history.location]);
 
 
 
@@ -256,7 +257,7 @@ const Recipient = props => {
                     {props.receiver}
                 </ConversationHeader>
                 <ConversationSecondary>
-                    Last Active: 
+                    {/* Last Active:  */}
                 </ConversationSecondary>
             </ConversationSummary>
         </React.Fragment>
@@ -333,6 +334,7 @@ const MessageCreate = props => {
     
     const updateMessage = (e) => {
         setMessage(e.target.value);
+
     };
 
     const submit = () => {

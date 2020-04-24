@@ -10,6 +10,9 @@ import {GlobalStyle} from '../../App/App';
 import  { uploadNewPost, getAllPosts, createPostComment, changePostLike, getSinglePost, deletePost } from '../../../API';
 import {useIsLoggedInUser, useHasUserLiked} from '../../Hooks';
 
+import PostLikes from './Likes';
+import {LoadingSymbol} from '../../Reusable';
+
 
 const FeedContainer = styled.div`
     width: 100vw;
@@ -44,6 +47,9 @@ const Feed = () => {
 
     const context = useContext(UserContext);
     const [posts, setPosts] = useState([]);
+    const history = useHistory();
+    const [loading, setLoading] = useState(true);
+    
 
     useEffect(() => {
         console.log(context.jwt);
@@ -53,11 +59,13 @@ const Feed = () => {
             console.log(res);
             res.json().then(posts => {
                 setPosts(posts);
+                setLoading(false);
             })
         });
     }, []);
 
-    console.log(posts);
+
+    
 
     const createPosts = () => {
         return posts.map(post => {
@@ -67,7 +75,7 @@ const Feed = () => {
                         likes={post.postlikes} 
                     />
         })
-    }
+    };
 
     const DisplayPosts = posts.length > 0 ? createPosts() : null;
 
@@ -87,23 +95,38 @@ const Feed = () => {
                 </NavLink>                
         </FeedNav>
         <FeedContainer>
+            {loading ? 
+                <LoadingSymbol />
             
-            <Switch>
-                <Route exact path='/posts'>
-                    {DisplayPosts}
-                </Route>
-                <Route path='/posts/create'>
-                    <NewPost />
-                </Route>
-                <Route path='/posts/:id'>
-                    <PostSingle />
-                </Route>
-            </Switch>
+            :
+                <FeedRoutes DisplayPosts={DisplayPosts} posts={posts}/>
+            }
+            
             
         </FeedContainer>
         </React.Fragment>
     );
 };
+
+const FeedRoutes = ({DisplayPosts, posts}) => {
+
+    return (
+        <Switch>
+            <Route exact path='/posts'>
+                {DisplayPosts}
+            </Route>
+            <Route path='/posts/create'>
+                <NewPost />
+            </Route>
+            <Route path='/posts/:id/likes'>
+                <PostLikes posts={posts}/>
+            </Route>
+            <Route path='/posts/:id'>
+                <PostSingle />
+            </Route>
+        </Switch>
+    )
+}
 
 const PostContainer = styled.div`
     border-radius: 3px;
@@ -235,10 +258,13 @@ const Post = props => {
     const [body, setBody] = useState('');
     const [time, setTime] = useState(null);
 
+    const [doubleTapLike, setDoubleTapLike] = useState(false);
+
     const [submittable, setSubmittable] = useState(false);
     const [comment, setComment] = useState(null);
+    const [likes, setLikes] = useState([]);
     const isUsers = useIsLoggedInUser(props.user.id);
-    const userHasLiked = useHasUserLiked(props.likes);
+    const userHasLiked = useHasUserLiked(likes);
     const context = useContext(UserContext);
 
     useEffect(() => {
@@ -247,6 +273,7 @@ const Post = props => {
         setImage(props.imageUrl);
         setBody(props.text);
         setTime(props.created);
+        setLikes(props.likes);
     }, []);
 
     const handleCommentInput = (e) => {
@@ -278,8 +305,34 @@ const Post = props => {
 
     const handlePostLike = e => {
         changePostLike(context.jwt, props.id).then(res => {
-            console.log(res);
+            return res.json()
+            // console.log(res);
+        }).then(parsedJson => {
+            console.log(parsedJson)
+            if(Array.isArray(parsedJson)){
+                console.log('Like has been removed')
+                // find a way to remove users like from the like array
+                let newLikes = likes.filter(like => { return (like.userId !== context.userData.id)});
+                setLikes(newLikes);
+            } else if(typeof parsedJson === 'object'){
+                let newLikes = [parsedJson].concat(likes);
+                console.log('this is a new like')
+                setLikes(newLikes);
+                console.log(likes);
+            }
         })
+    };
+
+    const tapLike = e => {
+        if(doubleTapLike){
+            handlePostLike();
+            setDoubleTapLike(false);
+        }else {
+            setDoubleTapLike(true);
+            setTimeout(() => {
+                setDoubleTapLike(false);
+            }, 1000)
+        }
     }
 
     const createComments = () => {
@@ -290,11 +343,13 @@ const Post = props => {
                 text={comment.text}
             />
         })
-    }
+    };
+
+
 
     // this component will handle POST requests to the server at /posts/comment/create
 
-    console.log(props);
+    // console.log(props);
 
     const commentsComponents = (comments && comments.length > 0) ? createComments() : null;
     return (
@@ -311,7 +366,7 @@ const Post = props => {
                 {isUsers ? <PostOptions id={props.id}/> : null}
                 
             </PostHeader>
-            <PostImageContainer>
+            <PostImageContainer onClick={tapLike}>
                 <PostImage src={image}/>
             </PostImageContainer>
             <ReactionContainer>
@@ -319,9 +374,9 @@ const Post = props => {
                     <FontAwesomeIcon icon={faHeart} />
                 </LikeItem>
             </ReactionContainer>
-            <Reacts>
-                <p>Liked by X, Y, Z</p>
-            </Reacts>
+            <Likes likes={likes} id={props.id}>
+
+            </Likes>
             <CommentContainer>
                 <Comment text={body} username={user.username}/>
                 {commentsComponents}
@@ -350,6 +405,24 @@ const Comment = props => {
             <p><UserLink><span>{props.username}</span></UserLink> {props.text}</p>
         </React.Fragment>
         
+    )
+};
+
+const Likes = ({likes, id}) => {
+    
+    return (
+        <Reacts>
+            {likes.length > 0 ?
+                <p>Liked by 
+                    <Link to={`/profile/${likes[0].user.username}`} 
+                        style={{fontWeight: 'bold'}}> {likes[0].user.username}
+                    </Link> 
+                {likes.length > 1 ? 
+                <span> and <Link to={`posts/${id}/likes`} style={{fontWeight: 'bold'}}> others </Link></span>
+                :null}
+                </p>
+            : null}
+        </Reacts>
     )
 };
 
@@ -403,7 +476,7 @@ const PostModal = ({toggleModal, open, onPostDelete}) => {
                             <ModalButton onClick={onPostDelete}>Delete</ModalButton>
                             <ModalButton>Edit</ModalButton>
                             <ModalButton>Copy Link</ModalButton>
-                            <ModalButton>Cancel</ModalButton>
+                            <ModalButton onClick={toggleModal}>Cancel</ModalButton>
                         </ModalBox>
                     </ModalContainer>                    
                     , document.body

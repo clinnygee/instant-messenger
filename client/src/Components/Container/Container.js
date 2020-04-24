@@ -10,7 +10,7 @@ import Profile from '../Routes/Profile';
 import ConversationDisplay from '../Conversation';
 import {AppWrapper} from '../Styled/styled-components';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import {faComments, faUserFriends, faAddressCard, faHome} from '@fortawesome/free-solid-svg-icons';
+import {faComments, faUserFriends, faAddressCard, faHome, faExclamationCircle} from '@fortawesome/free-solid-svg-icons';
 import { UserContext } from '../../context';
 
 
@@ -149,12 +149,20 @@ const NavWrapper = styled.div`
 `
 
 const NavItem = styled.div`
-    height: 100%;
-    width: 10%;
+    height: 25px;
+    width: 35px;
     // color: rgb(220,222,225);
     font-size: ${({screenWidth}) => screenWidth ? `${screenWidth / 20}px` : '25px'};
+    position: relative;
     
     
+`
+const Notification = styled.div`
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    color: red;
+    font-size: 8px;
 `
 
 const Nav = props => {
@@ -187,6 +195,11 @@ const Nav = props => {
                 }}
             >
                 <NavItem active={!props.conversationsDisplay} onClick={props.toggleDisplay}>
+                {context.userData.friendrequests.length > 0 ?
+                    <Notification>
+                        <FontAwesomeIcon icon={faExclamationCircle}/>
+                    </Notification>
+                : null}
                     <FontAwesomeIcon icon={faUserFriends} />
                 </NavItem>
             </NavLink>
@@ -196,6 +209,10 @@ const Nav = props => {
                 }}
             >
                 <NavItem>
+                    {/* {context.userData.friendrequests.length > 0 ?  */}
+                    
+                    {/* // : null                    
+                    // } */}
                     <FontAwesomeIcon icon={faAddressCard} />
                 </NavItem>
             </NavLink>

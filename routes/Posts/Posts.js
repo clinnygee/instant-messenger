@@ -28,6 +28,12 @@ router.get('/', withAuth, (req,res) => {
         },
         {
             model: PostLike,
+            include: {
+                model: User,
+                attributes: {
+                    exclude: 'password'
+                }
+            }
         }
     ]}).then(posts => {
         console.log(posts);
@@ -120,9 +126,7 @@ router.post('/:id/comments', withAuth, (req,res) => {
             Comment.create({text: req.body.text}).then(comment => {
                 comment.setPost(post);
                 comment.setUser(user);
-                // console.log(comment);
-                // res.json(comment);
-                
+                                
                 res.status(200).send('Comment Added Successfully!')
             })
         })
@@ -134,7 +138,17 @@ router.post('/:id/like', withAuth, (req,res) => {
     User.findOne({where: {username: req.username}}).then(user => {
         Post.findOne({where: {id: req.params.id}}).then(post => {
             PostLike.createOrRemoveLike(user, post).then(postlike => {
-                res.status(200).send('Reaction Created or Removed');
+                console.log(postlike);
+                if(postlike !== 'Postlike Destroyed'){
+                    console.log('this is an instance of postlike')
+                    PostLike.findOne({where: {id: postlike.id}, include: [{model: User}]}).then(postlikeAndUser => {
+                        console.log(postlikeAndUser)
+                        res.status(200).json(postlikeAndUser)
+                    })
+                } else {
+                    res.status(200).json([]);
+                }
+                
             })
         })
     })

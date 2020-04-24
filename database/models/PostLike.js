@@ -33,12 +33,12 @@ const PostLike = conn.define('postlike', {
 PostLike.createOrRemoveLike = (user, post) => {
     return PostLike.findOne({where: {userId: user.dataValues.id, postId: post.dataValues.id}}).then(postlike => {
         if(postlike instanceof PostLike){
-            console.log('postlike exists')
-            return postlike.destroy();
+            
+            postlike.destroy();
+            return 'Postlike Destroyed';
         } else {
-            return PostLike.create({}).then(newPostLike => {
-                newPostLike.setPost(post);
-                newPostLike.setUser(user);
+            return PostLike.create({userId: user.id, postId: post.id}).then(newPostLike => {
+                
                 return newPostLike;
             })
         }

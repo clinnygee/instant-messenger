@@ -15,8 +15,10 @@ const useIsLoggedInUser = dataId => {
 };
 
 const useHasUserLiked = likes => {
+    
     const context = useContext(UserContext);
     const [hasLiked, setHasLiked] = useState(false);
+    
 
     useEffect(() => {
         const userLike = likes.filter(like => {
