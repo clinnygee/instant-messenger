@@ -55,7 +55,7 @@ conn.sync({logging: false});
 // console.log(Conversation)
 
 const seedDb = require('./database/seeders/seed');
-seedDb();
+// seedDb();
 
 
 

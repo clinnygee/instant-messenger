@@ -10,7 +10,9 @@ import {GlobalStyle} from '../../App/App';
 import  { uploadNewPost, getAllPosts, createPostComment, changePostLike, getSinglePost, deletePost } from '../../../API';
 import {useIsLoggedInUser, useHasUserLiked} from '../../Hooks';
 
+import CreatePost from './Create';
 import PostLikes from './Likes';
+import Search from './Search';
 import {LoadingSymbol} from '../../Reusable';
 
 
@@ -73,13 +75,14 @@ const Feed = () => {
                         text={post.text} created={post.createdAt} user={post.user}
                         comments={post.comments}   
                         likes={post.postlikes} 
+                        tags={post.posttags}
                     />
         })
     };
 
     const DisplayPosts = posts.length > 0 ? createPosts() : null;
 
-    
+    console.log(posts);
 
     return (
         <React.Fragment>
@@ -116,7 +119,10 @@ const FeedRoutes = ({DisplayPosts, posts}) => {
                 {DisplayPosts}
             </Route>
             <Route path='/posts/create'>
-                <NewPost />
+                <CreatePost />
+            </Route>
+            <Route path='/posts/search/:tag'>
+                <Search />
             </Route>
             <Route path='/posts/:id/likes'>
                 <PostLikes posts={posts}/>
@@ -251,7 +257,7 @@ const Time = styled.time`
     color: rgb(142,142,142);
 `
 
-const Post = props => {
+export const Post = props => {
     const [comments, setComments] = useState([]);
     const [user, setUser] = useState({});
     const [image, setImage] = useState({});
@@ -341,6 +347,7 @@ const Post = props => {
                 username={comment.user.username}
                 userId={comment.user.id}
                 text={comment.text}
+                key={comment.user.id}
             />
         })
     };
@@ -378,7 +385,7 @@ const Post = props => {
 
             </Likes>
             <CommentContainer>
-                <Comment text={body} username={user.username}/>
+                <Comment text={body} username={user.username} tags={props.tags}/>
                 {commentsComponents}
             </CommentContainer>
             <CommentContainer>
@@ -400,9 +407,31 @@ const Post = props => {
 
 const Comment = props => {
 
+
+    const createTags = () => {
+        
+        return props.tags.map(tag => {
+            return (
+                <Link to={{
+                    pathname: `/posts/search/${tag.tag.tag}`,
+                    // search: tag.tag.tag,
+                }}
+                style={{
+                    textDecoration: 'underline',
+                }}
+                >
+                    <span>{` #${tag.tag.tag} `}</span>
+                </Link>
+            
+            )
+        })
+    };
+
+    const tags = props.tags && props.tags.length > 0 ? createTags() : null;
+
     return (
         <React.Fragment>
-            <p><UserLink><span>{props.username}</span></UserLink> {props.text}</p>
+            <p><UserLink><span>{props.username}</span></UserLink> {props.text} {tags}</p>
         </React.Fragment>
         
     )
@@ -536,62 +565,62 @@ const PostCreateForm = styled.form`
     display: flex;
     flex-direction: column;
 `
-const NewPost = props => {
-    const [file, setFile] = useState(null);
-    const [fileUrl, setFileUrl] = useState(null);
-    const [postBody, setPostBody] = useState(null);
-    const [submittable, setSubmittable] = useState(false);
-    const context = useContext(UserContext);
-    const history = useHistory();
+// const NewPost = props => {
+//     const [file, setFile] = useState(null);
+//     const [fileUrl, setFileUrl] = useState(null);
+//     const [postBody, setPostBody] = useState(null);
+//     const [submittable, setSubmittable] = useState(false);
+//     const context = useContext(UserContext);
+//     const history = useHistory();
 
-    const handleFileChange = (e) => {
-        setFile(e.target.files[0]);
-        setFileUrl(URL.createObjectURL(e.target.files[0]));
-        checkSubmittable();
+//     const handleFileChange = (e) => {
+//         setFile(e.target.files[0]);
+//         setFileUrl(URL.createObjectURL(e.target.files[0]));
+//         checkSubmittable();
         
-    };
+//     };
 
-    const checkSubmittable = () => {
-        setSubmittable(file && postBody);
-    }
+//     const checkSubmittable = () => {
+//         setSubmittable(file && postBody);
+//     }
 
-    const handleBodyInput = e => {
-        setPostBody(e.target.value);
-        checkSubmittable();
+//     const handleBodyInput = e => {
+//         setPostBody(e.target.value);
+//         checkSubmittable();
 
-    };
+//     };
 
-    const onPostUpload = e => {
-        e.preventDefault();
+//     const onPostUpload = e => {
+//         e.preventDefault();
 
-        const post = new FormData();
+//         const post = new FormData();
 
-        post.append('post-image', file);
-        post.append('post-body', postBody);
+//         post.append('post-image', file);
+//         post.append('post-body', postBody);
 
-        console.log(post.entries());
+//         console.log(post.entries());
 
-        uploadNewPost(context.jwt, post).then(res => {
-            if(res.status === 200){
-                history.push('/posts');
-            }
-            // console.log(res);
-        })
-    }
+//         uploadNewPost(context.jwt, post).then(res => {
+//             if(res.status === 200){
+//                 history.push('/posts');
+//             }
+//             // console.log(res);
+//         })
+//     }
 
-    return (
-        <PostContainer>
-            <PostImageContainer>
-                <PostImage src={fileUrl ? fileUrl : null}/>
-            </PostImageContainer>
-            <PostCreateForm>
-                <input type='file' onChange={handleFileChange} />
-                <Input placeholder='Add a description' onChange={handleBodyInput} />
-                <PostCommentButton type='submit' disabled={!submittable} active={submittable} onClick={onPostUpload}>POST</PostCommentButton>
-            </PostCreateForm>
-        </PostContainer>
-    )
-};
+//     return (
+//         <PostContainer>
+//             <PostImageContainer>
+//                 <PostImage src={fileUrl ? fileUrl : null}/>
+//             </PostImageContainer>
+//             <PostCreateForm>
+//                 <input type='file' onChange={handleFileChange} />
+//                 <Input placeholder='Add a description' onChange={handleBodyInput} />
+//                 <PostCommentButton type='submit' disabled={!submittable} active={submittable} onClick={onPostUpload}>POST</PostCommentButton>
+//             </PostCreateForm>
+//         </PostContainer>
+//     )
+// };
 
 const PostSingle = props => {
     const {id} = useParams();

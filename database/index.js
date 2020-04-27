@@ -9,6 +9,8 @@ const FriendRequest = require('./models/FriendRequest');
 const Post = require('./models/Post');
 const Comment = require('./models/Comment');
 const PostLike = require('./models/PostLike');
+const Tag = require('./models/Tag');
+const PostTag = require('./models/PostTag');
 
 console.log('setting up relations')
 console.log('--------------------------------------------------')
@@ -25,9 +27,7 @@ PostLike.belongsTo(User, {foreignKey: 'userId'});
 Post.hasMany(PostLike);
 PostLike.belongsTo(Post, {foreignKey: 'postId'});
 
-// User.hasMany(Friendship, {foreignKey: 'User1'});
-// User.hasMany(Friendship, {foreignKey: 'User2'});
-// User.hasMany(FriendRequest, {foreignKey: 'Requestee'});
+
 User.belongsToMany(User, {as: 'friends', through: Friendship});
 User.hasMany(Friendship);
 Friendship.belongsTo(User, {foreignKey: 'friendId'});
@@ -36,19 +36,22 @@ User.belongsToMany(User, {as:'friendrequests', through: FriendRequest});
 User.hasMany(FriendRequest);
 FriendRequest.belongsTo(User, {foreignKey: 'friendrequestId'});
 
-// User.belongsToMany(User, {as:'Requester', through: FriendRequest, foreignKey: 'Requester', otherKey: 'id'})
-// User.hasMany(FriendRequest, {foreignKey: 'Requester'});
+
 
 Conversation.belongsTo(User, {as: 'user1'});
 Conversation.belongsTo(User, {as: 'user2'});
 
-// Friendship.belongsTo(User, {foreignKey:{name: 'User1'}, as: 'user1'});
-// Friendship.belongsTo(User, {foreignKey:{name: 'User2'},as: 'user2'});
+// Tag.belongsToMany(Post, {through: PostTag, foreignKey: 'tagId'});
+// Post.hasMany(PostTag);
+// PostTag.belongsTo(Post, {foreignKey: 'postId'});
+
+Post.hasMany(PostTag);
+PostTag.belongsTo(Post, {foreignKey: 'postId'});
+Tag.hasMany(PostTag);
+PostTag.belongsTo(Tag, {foreignKey: 'tagId'});
 
 
 
-// FriendRequest.belongsTo(User, {as: 'requester', foreignKey: 'Requester'});
-// FriendRequest.belongsTo(User, {as: 'requestee', foreignKey:'Requestee'});
 
 Message.belongsTo(Conversation);
 
@@ -56,8 +59,7 @@ Message.hasMany(Reaction);
 Reaction.belongsTo(Message);
 
 Conversation.hasMany(Message);
-console.log('follow is User')
-console.log(User);
+
 
 module.exports = {
     conn,
@@ -71,5 +73,7 @@ module.exports = {
         Post,
         Comment,
         PostLike,
+        Tag, 
+        PostTag,
     }
-}
+};

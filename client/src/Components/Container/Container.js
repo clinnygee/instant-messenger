@@ -10,7 +10,7 @@ import Profile from '../Routes/Profile';
 import ConversationDisplay from '../Conversation';
 import {AppWrapper} from '../Styled/styled-components';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import {faComments, faUserFriends, faAddressCard, faHome, faExclamationCircle} from '@fortawesome/free-solid-svg-icons';
+import {faComments, faUserFriends, faAddressCard, faHome, faExclamationCircle, faSearch} from '@fortawesome/free-solid-svg-icons';
 import { UserContext } from '../../context';
 
 
@@ -122,11 +122,14 @@ const View = (props) => {
                 <Route path='/profile' 
                     render={() => <Profile />}
                 />
-                    
-                <Route path='/*' render={() => <div>This page does not exist!</div> }/>
+                <Route path='/search'>
+                    <p>search route</p>
+                </Route>
                 <Route exact path='/'
                     render={() => <Redirect to='/posts' />}
                 />
+                <Route path='/*' render={() => <div>This page does not exist!</div> }/>
+                
             </Switch>
             <Nav />
         </MobileWrapper>
@@ -186,6 +189,15 @@ const Nav = props => {
             >
                 <NavItem onClick={props.toggleDisplay} screenWidth={props.screenWidth}>
                     <FontAwesomeIcon icon={faComments} />
+                </NavItem>
+            </NavLink>
+            <NavLink to='/search'
+                activeStyle={{
+                    color: 'rgb(0,149,246)'
+                }}
+            >
+                <NavItem onClick={props.toggleDisplay} screenWidth={props.screenWidth}>
+                    <FontAwesomeIcon icon={faSearch} />
                 </NavItem>
             </NavLink>
             

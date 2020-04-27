@@ -28,6 +28,7 @@ export const GlobalStyle = createGlobalStyle`
   	font: inherit;
     vertical-align: baseline;
     box-sizing: border-box;
+    font-family: "Comic Sans MS", cursive, sans-serif;
   }
   p{
     rgb(38,38,38);
