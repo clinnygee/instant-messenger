@@ -31,6 +31,7 @@ const port = (process.env.PORT || 8080);
 const PostsRouter = require('./routes/Posts/Posts');
 const ProfileRouter = require('./routes/Profile/Profile');
 const FriendsRouter = require('./routes/Friends/Friends');
+const SearchRouter = require('./routes/Search/Search');
 
 
 app.use(express.static(path.join(__dirname, '/client/build')));
@@ -44,11 +45,12 @@ app.use(bodyParser.json());
 app.use('/api/posts', PostsRouter);
 app.use('/api/profile', ProfileRouter);
 app.use('/api/friends', FriendsRouter);
+app.use('/api/search', SearchRouter);
 
 const {Op} = Sequelize;
 
 const conn = require('./database').conn;
-const {User, Conversation, Message, Reaction, Friendship, FriendRequest, Post, Comment, PostLike} = require('./database').models;
+const {User, Conversation, Message, Reaction, Friendship, FriendRequest, Post, Comment, PostLike, Tag} = require('./database').models;
 // conn.sync({logging: false, force: true});
 conn.sync({logging: false});
 
@@ -89,15 +91,29 @@ app.post('/api/register', (req, res) => {
     console.log(username, password);
 
     console.log(User);
+    User.findOne({where: {username: username}}).then(user => {
+        if(user){
+            res.status(400).send('That username is taken!');
+        } else {
+            bcrypt.hash(password, saltRounds, (err, hash) => {
+                User.create({
+                    username: username,
+                    password: hash,
+                }).then((user) => {
+                    console.log(user);
+                })
+            });
+        }
+    })
 
-    bcrypt.hash(password, saltRounds, (err, hash) => {
-        User.create({
-            username: username,
-            password: hash,
-        }).then((user) => {
-            console.log(user);
-        })
-    });
+    // bcrypt.hash(password, saltRounds, (err, hash) => {
+    //     User.create({
+    //         username: username,
+    //         password: hash,
+    //     }).then((user) => {
+    //         console.log(user);
+    //     })
+    // });
 
     
     // add logic here to create first friendship, send some messages in it etc.
@@ -175,25 +191,6 @@ app.get('/api/conversations',withAuth, (req, res) => {
     })
 });
 
-app.get('/api/search/:searchTerm', withAuth, (req,res) => {
-    console.log('hit search route')
-    console.log(req.params.searchTerm)
-    User.findAll({where: {
-        username: {
-            [Op.like]: `%${req.params.searchTerm}%`
-        }
-    }, attributes: {
-        exclude: 'password'
-    }}).then(searchResults => {
-        if(searchResults.length === 0){
-
-        } else {
-            res.json(searchResults);
-        }
-        console.log(searchResults)
-        
-    })
-})
 
 const getKeyByValue = (object, value) => {
     // return Object.keys(object.find(key => {object[key] === value}))

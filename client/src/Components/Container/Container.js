@@ -8,6 +8,7 @@ import Feed from '../Routes/Feed'
 import People from '../People';
 import Profile from '../Routes/Profile';
 import ConversationDisplay from '../Conversation';
+import Search from '../Routes/Search';
 import {AppWrapper} from '../Styled/styled-components';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faComments, faUserFriends, faAddressCard, faHome, faExclamationCircle, faSearch} from '@fortawesome/free-solid-svg-icons';
@@ -123,7 +124,7 @@ const View = (props) => {
                     render={() => <Profile />}
                 />
                 <Route path='/search'>
-                    <p>search route</p>
+                    <Search />
                 </Route>
                 <Route exact path='/'
                     render={() => <Redirect to='/posts' />}

@@ -188,4 +188,14 @@ export const getSearchResults = (token, searchTerm) => {
             'Content-type': 'application/json',
         }
     })
+};
+
+export const getTagSearchResults = (token, searchTerm) => {
+    return fetch(`/api/search/tags/${searchTerm}`,{
+        method: 'get',
+        headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-type': 'application/json'
+        }
+    })
 }

@@ -260,16 +260,19 @@ const EditProfileHeader = styled.div`
     align-items: center;
     justify-content: center;
 `
+
 const Input = styled.input`
     opacity: 0.3;
     border: none;
     width: calc(100% - 33px);
-    height: 30px;
+    margin: 8px 8px;
+    border-bottom: 1px solid rgb(219,219,219);
 
     &:focus {
         outline: none;
         opacity: 1;
     }
+
 `
 const ProfileForm = styled.form`
     width: 100%;
@@ -290,7 +293,7 @@ const PostCommentButton = styled.button`
     border: none;
     background: #fff;
     color: ${({active}) => active ? 'rgb(0,149,246)' : 'rgba(0,149,246,.3)'};
-    width: 33px;
+    width: 50px;
     margin: 16px 0px 0px 0px;
     &:focus: {
         outline: none;
@@ -353,7 +356,7 @@ const ProfileEdit = props => {
             </EditProfileHeader>
             <ProfileForm>
                 <label for='about'></label>
-                <Input placeholder={context.userData.about} onChange={handleAboutInput} id={'about'}/>
+                <Input placeholder={context.userData.about.length > 1 ? context.userData.about : 'Enter an about'} onChange={handleAboutInput} id={'about'}/>
                 <PostImageContainer>
                     <PostImage src={fileUrl ? fileUrl : context.userData.profileImgUrl}/>
                 </PostImageContainer>

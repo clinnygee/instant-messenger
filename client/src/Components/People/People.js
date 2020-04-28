@@ -4,7 +4,7 @@ import styled from 'styled-components';
 
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {  faSearch, faExclamationCircle} from '@fortawesome/free-solid-svg-icons';
-import { getSearchResults} from '../../API';
+import { getSearchResults, getTagSearchResults} from '../../API';
 import { Route, Link, NavLink} from 'react-router-dom';
 
 const Wrapper = styled.div`
@@ -137,13 +137,7 @@ const People = props => {
     return (
         <FeedContainer>
             <PeopleNav>
-                <NavLink exact to='/friends'
-                    activeStyle={{color: 'rgb(0,149,246)'}}
-                >
-                    <ChatLink width={'auto'} >
-                        Search
-                    </ChatLink>
-                </NavLink>
+                
                 <NavLink to='/friends/friendrequests'
                     activeStyle={{color: 'rgb(0,149,246)'}}
                 >   
@@ -165,9 +159,9 @@ const People = props => {
                     </ChatLink>
                 </NavLink>                
             </PeopleNav>
-            <Route exact path='/friends'>
+            {/* <Route exact path='/friends'>
                 <PeopleSearch link={'/profile'}/>
-            </Route>
+            </Route> */}
             <Route path='/friends/friendships'>
                 <FriendShips link={'/profile'}/>
             </Route>
@@ -200,7 +194,13 @@ export const PeopleSearch = props => {
     }
 
     const handleSearch = () => {
-        getSearchResults(context.jwt, searchTerm).then(res => res.json()).then(parsedResponse => setResults(parsedResponse))
+        console.log(props.tags)
+        if(props.tags){
+            getTagSearchResults(context.jwt, searchTerm).then(res => res.json())
+            .then(parsedResponse => {setResults(parsedResponse)})
+        }else{
+            getSearchResults(context.jwt, searchTerm).then(res => res.json()).then(parsedResponse => setResults(parsedResponse))
+        }
     };
 
     const createResults =() => {
@@ -213,9 +213,31 @@ export const PeopleSearch = props => {
                 search={props.search ? result.username : null}
             />
         })
+    };
+
+    const createTagResults = () => {
+        return results.map(result => {
+            return <SearchResult 
+                key={result.id}
+                username={result.tag}
+                image={null}
+                link={props.link}
+                search={props.search ? result.username : null}
+            />
+        })
+    };
+
+    // const searchResults = results ? createResults(): null;
+
+    let searchResults= null;
+
+    if(results && results.length > 0 && !props.tags){
+        searchResults = createResults();
+    } else if (results && results.length > 0 && props.tags){
+        searchResults = createTagResults()
     }
 
-    const searchResults = results ? createResults(): null;
+    // (results && !props.tags) ? searchResults = createResults() : searchResults = createTagResults();
 
     return (
         <React.Fragment>

@@ -565,62 +565,7 @@ const PostCreateForm = styled.form`
     display: flex;
     flex-direction: column;
 `
-// const NewPost = props => {
-//     const [file, setFile] = useState(null);
-//     const [fileUrl, setFileUrl] = useState(null);
-//     const [postBody, setPostBody] = useState(null);
-//     const [submittable, setSubmittable] = useState(false);
-//     const context = useContext(UserContext);
-//     const history = useHistory();
 
-//     const handleFileChange = (e) => {
-//         setFile(e.target.files[0]);
-//         setFileUrl(URL.createObjectURL(e.target.files[0]));
-//         checkSubmittable();
-        
-//     };
-
-//     const checkSubmittable = () => {
-//         setSubmittable(file && postBody);
-//     }
-
-//     const handleBodyInput = e => {
-//         setPostBody(e.target.value);
-//         checkSubmittable();
-
-//     };
-
-//     const onPostUpload = e => {
-//         e.preventDefault();
-
-//         const post = new FormData();
-
-//         post.append('post-image', file);
-//         post.append('post-body', postBody);
-
-//         console.log(post.entries());
-
-//         uploadNewPost(context.jwt, post).then(res => {
-//             if(res.status === 200){
-//                 history.push('/posts');
-//             }
-//             // console.log(res);
-//         })
-//     }
-
-//     return (
-//         <PostContainer>
-//             <PostImageContainer>
-//                 <PostImage src={fileUrl ? fileUrl : null}/>
-//             </PostImageContainer>
-//             <PostCreateForm>
-//                 <input type='file' onChange={handleFileChange} />
-//                 <Input placeholder='Add a description' onChange={handleBodyInput} />
-//                 <PostCommentButton type='submit' disabled={!submittable} active={submittable} onClick={onPostUpload}>POST</PostCommentButton>
-//             </PostCreateForm>
-//         </PostContainer>
-//     )
-// };
 
 const PostSingle = props => {
     const {id} = useParams();
