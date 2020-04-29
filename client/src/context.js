@@ -44,11 +44,11 @@ export class UserProvider extends React.Component {
     // }
 
     handleAuthentication = async (res, username) => {
-        let re = /login/;
+        
 
         console.log(res.url)
 
-        if(re.test(res.url) && res.status === 200){
+        if( res.status === 200){
             console.log('match');
             this.setState({username: username});
             this.setJwt(await res.json());
@@ -126,10 +126,42 @@ export class UserProvider extends React.Component {
             if(conversationToUpdate){
                 conversationToUpdate.messages.unshift(newMessage);
                 this.setState({conversationData: this.state.conversationData})
+            } else {
+                // fetch(`/api/conversations/${newMessage.conversationId}`, {
+                //     method: 'get',
+                //     headers: {
+                //         'Accept': 'application/json',
+                //         'Content-Type': 'application/json',
+                //         'Authorization': `Bearer ${this.state.jwt}`
+                //     }
+                // }).then(conversation => {
+                //     console.log(conversation)
+                //     conversation.json()
+                // }).then(parsedConversation => {
+                //     console.log(parsedConversation);
+                //     let newConversationData = [...this.state.conversationData];
+                //     newConversationData.push(parsedConversation);
+                //     this.setState({conversationData: newConversationData});
+                // })
+                console.log('We need to call the server and find the conversation, then we will add it to the list.');
+                fetch(`/api/conversations/${newMessage.conversationId}`, {
+                    method: 'get',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${this.state.jwt}`
+                    }
+                }).then(res => res.json().then(conversation => {
+                    console.log(conversation);
+                    let newConversationData = [...this.state.conversationData];
+                    newConversationData.push(conversation);
+                    this.setState({conversationData: newConversationData});
+                    window.location.reload();
+                }))
             }
 
-            console.log(conversationToUpdate)
-            console.log(this.state.conversationData);
+            // console.log(conversationToUpdate)
+            // console.log(this.state.conversationData);
         });
 
         socket.on('reaction', reaction => {

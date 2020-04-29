@@ -28,7 +28,7 @@ const AuthFormText = styled.p`
 const FormWrapper = styled.div`
     margin: 20px;
     width: 300px;
-    height: 300px;
+    
     background-color: #fff;
     display: flex;
     flex-direction: column;
@@ -49,7 +49,7 @@ const FormInput = styled.input`
     background-color: rgb(238,240,243);
     border-radius: 50px;
     padding: 0 16px 0 16px;
-    border: none;
+    border: ${props => props.error ? '1px solid red' : 'none'};
     
     color: rgb(0,0,0);
 
@@ -66,6 +66,12 @@ const FormSubmit = styled.input`
     background-color: rgb(220, 222, 225);
     text-align: center;
 `
+
+const ErrorLabel= styled.label`
+    display: block;
+    color: red;
+    font-size: 10px;
+    `
 
 const Authentication = (props) => {
     const [register, setRegister] = useState(false);
@@ -101,9 +107,13 @@ const Authentication = (props) => {
 const AuthenticationForm = (props) => {
     const [password, setPassword] = useState('');
     const [username, setUsername] = useState('');
+    const [usernameError, setUsernameError] = useState(false);
+    const [usernameErrorText, setUsernameErrorText] = useState(null);
     const context = useContext(UserContext);
 
     const updateUsername = (e) => {
+        setUsernameError(false);
+        setUsernameErrorText(false);
         setUsername(e.target.value);
         console.log(username);
 
@@ -116,25 +126,41 @@ const AuthenticationForm = (props) => {
 
     const  onSubmit = async (e) => {
         e.preventDefault();
-        context.changeAuthenticating();
+        // context.changeAuthenticating();
         const response = await props.apiCall({username: username, password: password});
 
+        
+
+        // console.log(await resJson);
+        if(response.status === 400){
+            const resJson = response.json();
+            console.log('in error');
+            setUsernameError(true);
+            
+            setUsernameErrorText(await resJson);
+        } else {
+            context.handleAuthentication(response, username);
+        }
         console.log(response);
-        context.handleAuthentication(response, username);
+        // console.log(response.body);
+        // context.handleAuthentication(response, username);
         // registerUser({username: username, password: password});
     };
 
     const toggle = () => {
         console.log('toggle button clicked')
         props.toggleForm();
-    }
+    };
+
+    console.log(usernameErrorText)
 
     return (
         <Form>
             <AuthFormText>
                 {props.header}
             </AuthFormText>
-            <FormInput placeholder={'username'}  required={true} onChange={updateUsername}/>
+            <FormInput placeholder={'username'} name='username' required={true} onChange={updateUsername} error={usernameError}/>
+            {usernameErrorText ? <ErrorLabel htmlFor={username}>{usernameErrorText.error}</ErrorLabel> : null}
             <FormInput placeholder={'password'} type={'password'} required={true} onChange={updatePassword}/>
             <FormSubmit placeholder={'Submit'} type={'submit'} onClick={onSubmit} />
             <AuthFormText onClick={toggle}>

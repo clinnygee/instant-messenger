@@ -279,7 +279,7 @@ export const SearchResult = props => {
 
 
     return(
-        <Link to={{pathname: `${props.link}/${props.username}`, search: props.search}}>
+        <Link exact to={{pathname: `${props.link}/${props.username}`, search: props.search}}>
             <SearchResultContainer>
                 <UserImage src={props.image} />
                 <h1>{props.username}</h1>            

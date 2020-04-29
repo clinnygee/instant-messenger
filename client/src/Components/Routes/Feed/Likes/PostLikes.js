@@ -28,6 +28,7 @@ const PostLikes = ({posts}) => {
                 <SearchResult 
                     username={like.user.username}
                     image={like.user.profileImgUrl}
+                    link={'/profile'}
                 />
             )
         })
