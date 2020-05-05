@@ -51,8 +51,8 @@ const {Op} = Sequelize;
 
 const conn = require('./database').conn;
 const {User, Conversation, Message, Reaction, Friendship, FriendRequest, Post, Comment, PostLike, Tag} = require('./database').models;
-// conn.sync({logging: false, force: true});
-conn.sync({logging: false});
+conn.sync({logging: false, force: true});
+// conn.sync({logging: false});
 
 // console.log(Conversation)
 

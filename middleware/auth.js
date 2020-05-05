@@ -76,8 +76,8 @@ const withAuth = (req, res, next) => {
                 let current = new Date().getTime() / 1000;
                 console.log(current)
                 console.log('expiry ----------------------')
-                console.log(expiry.toUTCString());
-                if(current < expiry.toUTCString()){
+                // console.log(expiry.toUTCString());
+                if(current < decoded.exp){
                 User.findOne({where: {username: decoded.username}}).then(user=> {
                     if(user){
                         req.username = decoded.username;
@@ -86,7 +86,7 @@ const withAuth = (req, res, next) => {
                     }else{
                         res.status(401).json({error: 'Unauthorized: Invalid token'});
                     }
-                })} elese {
+                })} else {
                     res.status(401).json({error: 'Expired JWT'});
                 }
                 // perhaps we also need to store the password in the jwt,
