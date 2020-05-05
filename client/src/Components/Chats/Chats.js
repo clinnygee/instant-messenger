@@ -133,6 +133,7 @@ const Chats = props => {
                     style={{width: '100%'}}    
                 >
                     <Chat conversationTitle={conversation.user1Username === username ? conversation.user2Username : conversation.user1Username} 
+                        image={conversation.user1Username === username ? conversation.user2.profileImgUrl : conversation.user1.profileImgUrl}
                         conversationPreview={conversation.messages[0].text }
                         onSelect={props.onSelect}
                     />

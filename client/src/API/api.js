@@ -125,7 +125,7 @@ export const getAllPosts = (token) => {
 
 export const deletePost = (token, postId) => {
     console.log(postId);
-    return fetch(`api/posts/${postId}`, {
+    return fetch(`/api/posts/${postId}`, {
         method: 'DELETE',
         headers: {
             'Accept': 'application/json',

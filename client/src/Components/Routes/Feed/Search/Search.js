@@ -16,12 +16,14 @@ const Search = props => {
     console.log(tag);
 
     useEffect(() => {
+        console.log(context.token)
+        console.log('calling Useeffect in Search')
         fetch(`/api/posts/search/${tag}`,{
             method: 'GET',
             headers: {
             'Accept': 'application/json',
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${context.token}`
+            'Authorization': `Bearer ${context.jwt}`
         }
         }).then(res => res.json()).then(parsedJson => {
             console.log(parsedJson);
@@ -31,6 +33,8 @@ const Search = props => {
             setPosts(receivedPosts);
         })
     }, [tag]);
+
+    console.log(posts);
 
     const createPosts = () => {
         return posts.map(post => {

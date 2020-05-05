@@ -37,10 +37,11 @@ const ChatContainer = styled.div`
 
 
 const IconContainer = styled.div`
-    width: 80px;
-    height: 75px;
+    width: 40px;
+    height: 50px;
     font-size: 40px;
-    color: ${({active}) => active ? '#000' : `rgb(220, 222, 225)`}
+    margin-left: 8px;
+    color: ${({active}) => active ? 'rgb(0,149,246)' : `rgb(220, 222, 225)`}
 
 `
 
@@ -162,6 +163,8 @@ const Conversation = props => {
     const context = useContext(UserContext);
     const [messages, setMessages] = useState(null);
     const history = useHistory();
+    // const [newConversation, setNewConversation] = useState(false);
+    // const [update, setUpdate] = useState(false);
     // console.log(history.location.search);
 
     // console.log(context)
@@ -175,6 +178,9 @@ const Conversation = props => {
     const sendMessage = (message) => {
         context.sendWsMessage(receiver, message);
         console.log(receiver);
+        // if(newConversation){
+        //     setUpdate(true);
+        // }
     };
 
     const findConversationMessages = (receiverUsername) => {
@@ -188,7 +194,8 @@ const Conversation = props => {
         if(conversation) {
             console.log(conversation.messages)
             setMessages(conversation.messages);
-        }
+            // setNewConversation(false);
+        } 
 
         
 
@@ -213,12 +220,12 @@ const Conversation = props => {
         setReceiver(search);
         findConversationMessages(search);
         
-        // if(receiver === null && props.receiver){
-        //     setReceiver(props.receiver);
-        //     findConversationMessages(props.receiver);
-        // } 
         
     }, [history.location]);
+
+    useEffect(()=> {
+        findConversationMessages(receiver);
+    },[context.conversationData]);
 
 
 
@@ -353,8 +360,7 @@ const MessageCreate = props => {
             <IconContainer active={message} onClick={submit}>
                 <FontAwesomeIcon icon={faPaperPlane} />
             </IconContainer>
-            <IconContainer>
-            </IconContainer>
+            
         </MessageCreateContainer>
     )
 }

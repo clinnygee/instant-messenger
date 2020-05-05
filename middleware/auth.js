@@ -1,6 +1,7 @@
 const jwt = require('jsonwebtoken');
 
 const secret = (process.env.SECRET || 'instant-messenger');
+const {User} = require('../database').models;
 
 // Everything that comes through this middlewares req.username will be = to the username. duh
 
@@ -27,22 +28,74 @@ const withAuth = (req, res, next) => {
     // console.log(_token);
 
     console.log(token);
+    console.log(req.cookies.jwt);
 
-    if(!token) {
+    // if(!token) {
+    //     res.redirect('/');
+    //     // res.status(401).send('Unauthorized: No Logged in user');
+    // } else {
+    //     console.log('token recieved');
+    //     jwt.verify(token, secret, function(err, decoded){
+    //         if(err){
+    //             console.log(token);
+    //             res.status(401).send('Unauthorized: No Logged in user');
+    //         } else {
+    //             console.log(decoded);
+    //             User.findOne({where: {username: decoded.username}}).then(user=> {
+    //                 if(user){
+    //                     req.username = decoded.username;
+    //                     res.cookie('jwt', token);
+    //                     next();
+    //                 }else{
+    //                     res.status(401).json({error: 'Unauthorized: Invalid token'});
+    //                 }
+    //             })
+    //             // perhaps we also need to store the password in the jwt,
+
+    //             // console.log(decoded);
+    //             // req.username = decoded.username;
+                
+    //             // console.log(decoded);
+    //             // next();
+    //         }
+    //     })
+    // }
+    if(!req.cookies.jwt) {
         res.redirect('/');
         // res.status(401).send('Unauthorized: No Logged in user');
     } else {
-        console.log('token recieved');
-        jwt.verify(token, secret, function(err, decoded){
+        console.log('req.cookies.jwt recieved');
+        jwt.verify(req.cookies.jwt, secret, function(err, decoded){
             if(err){
-                console.log(token);
+                console.log(req.cookies.jwt);
                 res.status(401).send('Unauthorized: No Logged in user');
             } else {
-                console.log(decoded);
-                req.username = decoded.username;
+                console.log('below is decoded ---------------------------------------------------------------------')
+                console.log(decoded.exp);
                 
-                console.log(decoded);
-                next();
+                let current = new Date().getTime() / 1000;
+                console.log(current)
+                console.log('expiry ----------------------')
+                console.log(expiry.toUTCString());
+                if(current < expiry.toUTCString()){
+                User.findOne({where: {username: decoded.username}}).then(user=> {
+                    if(user){
+                        req.username = decoded.username;
+                        res.cookie('jwt', token);
+                        next();
+                    }else{
+                        res.status(401).json({error: 'Unauthorized: Invalid token'});
+                    }
+                })} elese {
+                    res.status(401).json({error: 'Expired JWT'});
+                }
+                // perhaps we also need to store the password in the jwt,
+
+                // console.log(decoded);
+                // req.username = decoded.username;
+                
+                // console.log(decoded);
+                // next();
             }
         })
     }

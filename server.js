@@ -57,26 +57,29 @@ conn.sync({logging: false});
 // console.log(Conversation)
 
 const seedDb = require('./database/seeders/seed');
-// seedDb();
+seedDb();
 
 
 
 app.post('/api/login', (req,res) => {
     const {username, password} = req.body;
 
+    console.log(password);
+
     User.findOne({where: {username: username}}).then(user => {
         if(!user){
-            res.status(400).send('User does not exist, Please sign up.')
+            res.status(400).json({error: 'User does not exist'})
         } else {
             console.log(user);
             bcrypt.compare(password, user.password, (err, result) => {
-                if(err){
-                    res.status(400).send('Incorrect Password')
+                if(!result){
+                    res.status(401).json({error: 'Incorrect Password'})
                 } else {
                     const payload = {username};
                     const token = jwt.sign(payload, secret, {
                         expiresIn: '24h',
-                    })
+                    });
+                    res.cookie('jwt', token);
                     res.json({token: token});
                 }
                 
@@ -107,6 +110,7 @@ app.post('/api/register', (req, res) => {
                         expiresIn: '24h'
                     });
                     console.log(token);
+                    res.cookie('jwt', token);
                     res.json({token: token});
                     // res.status(200).send('Success!')
                 })

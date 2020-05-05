@@ -7,7 +7,7 @@ const SearchController = require('./Search.controller');
 
 
 router.get('/:searchTerm', withAuth, SearchController.posts);
-router.get('/tags/:searchTerm', withAuth, SearchController.tags);
+router.get('/search/:searchTerm', withAuth, SearchController.tags);
 
 
 

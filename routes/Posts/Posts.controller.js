@@ -110,6 +110,12 @@ const PostsController = {
                     },
                     {
                         model: PostLike,
+                        include:{
+                            model: User,
+                            attributes: {
+                                exclude: 'password'
+                            }
+                        }
                         // include:{
                         //     model: Tag,
                         // }

@@ -10,14 +10,16 @@ const ConversationContainer = styled.div`
     padding: 8px 8px 8px 8px;
     line-height: 1.7em;
     border-radius: 16px;
-    background-color: ${({open}) => open ? `rgb(238,240,243)` : `#fff`}
+    // background-color: ${({open}) => open ? `rgb(238,240,243)` : `#fff`}
 `
 
 const ConversationImage = styled.div`
     width: 100px;
     height: 100%;
     clip-path: circle(40%);
-    background-image: url(https://picsum.photos/100)
+    // background-image: url(https://picsum.photos/100)
+    background-image: ${props => props.image ? `url(${props.image})` : 'url(https://picsum.photos/100)'};
+    background-size: contain;
 `
 
 const ConversationContent = styled.div`
@@ -48,7 +50,7 @@ const Chat = (props) => {
 
     return (
         <ConversationContainer open={props.open} onClick={onSelect}>
-            <ConversationImage />
+            <ConversationImage image={props.image}/>
             <ConversationContent>
                 <ConversationHeader>
                     {props.conversationTitle}

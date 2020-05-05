@@ -127,22 +127,7 @@ export class UserProvider extends React.Component {
                 conversationToUpdate.messages.unshift(newMessage);
                 this.setState({conversationData: this.state.conversationData})
             } else {
-                // fetch(`/api/conversations/${newMessage.conversationId}`, {
-                //     method: 'get',
-                //     headers: {
-                //         'Accept': 'application/json',
-                //         'Content-Type': 'application/json',
-                //         'Authorization': `Bearer ${this.state.jwt}`
-                //     }
-                // }).then(conversation => {
-                //     console.log(conversation)
-                //     conversation.json()
-                // }).then(parsedConversation => {
-                //     console.log(parsedConversation);
-                //     let newConversationData = [...this.state.conversationData];
-                //     newConversationData.push(parsedConversation);
-                //     this.setState({conversationData: newConversationData});
-                // })
+                
                 console.log('We need to call the server and find the conversation, then we will add it to the list.');
                 fetch(`/api/conversations/${newMessage.conversationId}`, {
                     method: 'get',
@@ -156,7 +141,7 @@ export class UserProvider extends React.Component {
                     let newConversationData = [...this.state.conversationData];
                     newConversationData.push(conversation);
                     this.setState({conversationData: newConversationData});
-                    window.location.reload();
+                    // window.location.reload();
                 }))
             }
 
@@ -216,9 +201,12 @@ export class UserProvider extends React.Component {
                 'Authorization': `Bearer ${jwt}`,
             }
         }).then(authenticated => {
+            console.log(authenticated)
             if(authenticated.status === 200){
                 this.setJwt(jwt);
             } else {
+                console.log('incorrect jwt.')
+                this.setState({authenticating: false});
                 sessionStorage.removeItem('instant-messenger-jwt');
             }
         })

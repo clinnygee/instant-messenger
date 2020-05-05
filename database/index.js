@@ -45,7 +45,7 @@ Conversation.belongsTo(User, {as: 'user2'});
 // Post.hasMany(PostTag);
 // PostTag.belongsTo(Post, {foreignKey: 'postId'});
 
-Post.hasMany(PostTag);
+Post.hasMany(PostTag, {onDelete: 'cascade', hooks: 'true'});
 PostTag.belongsTo(Post, {foreignKey: 'postId'});
 Tag.hasMany(PostTag);
 PostTag.belongsTo(Tag, {foreignKey: 'tagId'});

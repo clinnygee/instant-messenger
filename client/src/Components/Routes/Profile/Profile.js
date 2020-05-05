@@ -7,7 +7,7 @@ import { JsonWebTokenError } from 'jsonwebtoken';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 
 import styled from 'styled-components';
-import { faSignOutAlt } from '@fortawesome/free-solid-svg-icons';
+import { faSignOutAlt, faPaperPlane } from '@fortawesome/free-solid-svg-icons';
 import { useIsLoggedInUser, useIsUsersFriend, useHasSentFriendRequest, useReceivedFriendRequest } from '../../Hooks';
 
 import {Back} from '../../Reusable';
@@ -132,7 +132,8 @@ const UserProfile = props => {
             <React.Fragment>
                 <PostHeader>
                     <Back />
-                    {userData.username === context.userData.username ? <LogOut /> : null}
+                    {/* {userData.username === context.userData.username ? <LogOut /> : null} */}
+                    <MessageOrLogOut isCurrentUser={userData.username === context.userData.username} username={userData.username}/>
                     <PostHeaderImage width={`80px`} height={'80px'} url={userData.profileImgUrl} size={'100px 100px'}></PostHeaderImage>
                     <ProfileHeaderItem>
                         <ProfileTextBold>{userData.posts.length}</ProfileTextBold>
@@ -450,6 +451,36 @@ const LogOut = props => {
         </LogOutContainer>
     )
 
+};
+
+const MessageOrLogOut = props => {
+
+    return (
+        <React.Fragment>
+            {props.isCurrentUser ? 
+            <LogOut /> 
+            :
+            <MessageLink username={props.username}/>
+            }
+        </React.Fragment>
+    )
+};
+
+const MessageLink = props => {
+
+    return (
+        <LogOutContainer >
+            <Link to={{
+                pathname: `/conversations/${props.username}`,
+                search: props.username
+            }}>
+                <ChatLink submittable={true}>
+                    <FontAwesomeIcon icon={faPaperPlane} />
+                </ChatLink>
+            </Link>
+            
+        </LogOutContainer>
+    )
 }
 
 

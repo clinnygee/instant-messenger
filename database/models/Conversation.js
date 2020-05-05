@@ -60,7 +60,21 @@ Conversation.findAllConversations = (userId) => {
     },
     // include: [conn.models.message],
     include: [{model: conn.models.message,
-              include: conn.models.reaction}],
+              include: conn.models.reaction},
+            {
+              model: conn.models.user,
+              as: 'user1',
+              attributes: {
+                exclude: 'password'
+              }
+            },
+          {
+            model: conn.models.user,
+            as: 'user2',
+            attributes: {
+              exclude: 'password'
+            }
+          }],
 
     order: [[conn.models.message, 'createdAt', 'DESC']]
   }).then(conversations => {

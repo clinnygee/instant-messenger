@@ -109,17 +109,21 @@ const AuthenticationForm = (props) => {
     const [username, setUsername] = useState('');
     const [usernameError, setUsernameError] = useState(false);
     const [usernameErrorText, setUsernameErrorText] = useState(null);
+    const [passwordError, setPasswordError] = useState(false);
+    const [passwordErrorText, setPasswordErrorText] = useState(null);
     const context = useContext(UserContext);
 
     const updateUsername = (e) => {
         setUsernameError(false);
-        setUsernameErrorText(false);
+        setUsernameErrorText(null);
         setUsername(e.target.value);
         console.log(username);
 
     }
 
     const updatePassword = (e) => {
+        setPasswordError(false);
+        setPasswordErrorText(null);
         setPassword(e.target.value);
         console.log(password);
     }
@@ -138,6 +142,10 @@ const AuthenticationForm = (props) => {
             setUsernameError(true);
             
             setUsernameErrorText(await resJson);
+        } else if(response.status === 401) {
+            const resJson= response.json();
+            setPasswordError(true);
+            setPasswordErrorText(await resJson);
         } else {
             context.handleAuthentication(response, username);
         }
@@ -161,7 +169,8 @@ const AuthenticationForm = (props) => {
             </AuthFormText>
             <FormInput placeholder={'username'} name='username' required={true} onChange={updateUsername} error={usernameError}/>
             {usernameErrorText ? <ErrorLabel htmlFor={username}>{usernameErrorText.error}</ErrorLabel> : null}
-            <FormInput placeholder={'password'} type={'password'} required={true} onChange={updatePassword}/>
+            <FormInput placeholder={'password'} name='password' type={'password'} required={true} onChange={updatePassword} error={passwordError}/>
+            {passwordErrorText ? <ErrorLabel htmlFor={password}>{passwordErrorText.error}</ErrorLabel> : null}
             <FormSubmit placeholder={'Submit'} type={'submit'} onClick={onSubmit} />
             <AuthFormText onClick={toggle}>
                 {props.toggleText}

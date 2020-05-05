@@ -15,34 +15,11 @@ import PostLikes from './Likes';
 import Search from './Search';
 import {LoadingSymbol} from '../../Reusable';
 
-
-const FeedContainer = styled.div`
-    width: 100vw;
-    max-width: 600px;
-    margin: 0 auto;
-    height: 100vh;
-    display: flex;
-    flex-direction: column;
-    overflow-y: scroll;
-    padding: 5px;
-    background: rgb(250,250,250);
-    padding-top: 70px;
-
-    &::-webkit-scrollbar {
-        display: none;
-      }
-
-`
-const FeedNav = styled.nav`
-    width: 100vw;
-    height: 60px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: fixed;
-    top: 0;
-    background-color: #fff;
-`
+import {PostComment, PostCommentForm, Input, PostCommentButton, UserLink, 
+    NavItem, LikeItem, CommentContainer, Time, PostContainer, PostHeader, ConversationHeader,
+    PostHeaderImage, PostImageContainer, PostImage, ReactionContainer, Reacts, FeedContainer, FeedNav, ModalContainer,
+    ModalBox, ModalButton, OptionsContainer 
+} from './styled';
 
 
 const Feed = () => {
@@ -134,128 +111,7 @@ const FeedRoutes = ({DisplayPosts, posts}) => {
     )
 }
 
-const PostContainer = styled.div`
-    border-radius: 3px;
-    border: 1px solid rgb(219,219,219);
-    
-    margin: 0px 0px 60px 0px;
-    background-color: #fff;
-    line-height: 1.4em;
-`
 
-const PostHeader = styled.div`
-    height: 60px;
-    width: 100%;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    padding: 0px 16px;
-`
-
-const ConversationHeader = styled.h1`
-    font-weight: bold;
-    font-size: 14px;
-    padding: 0px 0px 0px 16px;
-`
-
-const PostHeaderImage = styled.div`
-    width: 30px;
-    height: 30px;
-    clip-path: circle(40%);
-    background-image: url(${({url}) => url ? `${url}` : 'https://picsum.photos/100'});
-    background-size: 30px 30px;    
-`
-
-const PostImageContainer = styled.div`
-    width: 100%;
-    height: 330px;
-`
-
-const PostImage = styled.img`
-    width: 100%;
-    height: 100%;
-`
-
-const ReactionContainer = styled.section`
-    padding: 0 16px;
-    height: 40px;
-`
-
-const Reacts = styled.section`
-    padding: 0 16px;
-`
-
-const Comments = styled.section`
-    padding: 0 16px;
-`
-
-const PostedTime = styled.div`
-    padding: 0 16px;
-`
-
-const PostComment = styled.section`
-    padding: 0 16px;
-    height: 55px;
-    display: flex;
-    border-top: 1px solid rgb(219,219,219);
-`
-
-const PostCommentForm = styled.form`
-    display: flex;
-    flex-direction: row;
-    
-    display: flex;
-    width: calc(100% - 32px);
-    
-    
-`
-
-const Input = styled.input`
-    opacity: 0.3;
-    border: none;
-    width: calc(100% - 33px);
-
-    &:focus {
-        outline: none;
-    }
-`
-
-const PostCommentButton = styled.button`
-    border: none;
-    background: #fff;
-    color: ${({active}) => active ? 'rgb(0,149,246)' : 'rgba(0,149,246,.3)'};
-    width: 33px;
-    margin: 16px 0px 0px 0px;
-    &:focus: {
-        outline: none;
-    }
-`
-
-const UserLink = styled.a`
-    font-weight: bold;
-`
-
-const NavItem = styled.div`
-    height: 100%;
-    width: 10%;
-    font-size: ${({fontSize}) => fontSize ? `${fontSize}` : '25px'};
-    color: ${({active}) => active ? 'black' : 'rgb(220,222,225)'};
-`
-
-const LikeItem = styled.div`
-    height: 100%;
-    width: 10%;
-    font-size: ${({fontSize}) => fontSize ? `${fontSize}` : '25px'};
-    color: ${({liked}) => liked ? 'red' : 'rgb(220,222,225)'};
-`
-
-const CommentContainer = styled.div`
-    margin: 0px 16px;
-`
-
-const Time = styled.time`
-    color: rgb(142,142,142);
-`
 
 export const Post = props => {
     const [comments, setComments] = useState([]);
@@ -345,7 +201,7 @@ export const Post = props => {
         return comments.map(comment => {
             return <Comment 
                 username={comment.user.username}
-                userId={comment.user.id}
+                id={comment.user.id}
                 text={comment.text}
                 key={comment.user.id}
             />
@@ -406,6 +262,8 @@ export const Post = props => {
 };
 
 const Comment = props => {
+    const context = useContext(UserContext);
+    const isUsers = useIsLoggedInUser(props.id);
 
 
     const createTags = () => {
@@ -430,9 +288,14 @@ const Comment = props => {
     const tags = props.tags && props.tags.length > 0 ? createTags() : null;
 
     return (
-        <React.Fragment>
-            <p><UserLink><span>{props.username}</span></UserLink> {props.text} {tags}</p>
-        </React.Fragment>
+        <div style={{position: 'relative'}}>
+            <p >
+                <UserLink>
+                `<span>{props.username}</span>
+                </UserLink> {props.text} {tags}
+            </p>
+            {isUsers ? <PostOptions id={props.id} style={{position: 'absolute', top:'0', right: '0', height:'100%'}}/> : null}
+        </div>
         
     )
 };
@@ -455,13 +318,7 @@ const Likes = ({likes, id}) => {
     )
 };
 
-const OptionsContainer = styled.div`
-    height: auto;
-    width: 50px;
-    margin-left: auto;
-    padding: 0px 8px;
-    
-`
+
 
 const PostOptions = props => {
     const [showModal, setShowModal] = useState(false);
@@ -479,11 +336,13 @@ const PostOptions = props => {
                 history.goBack();
             }
         });
-    }
+    };
+
+    
     return (
         <React.Fragment>
-            <PostModal toggleModal={toggleModal} open={showModal} onPostDelete={handleDeletePost}/>
-            <OptionsContainer>
+            <PostModal toggleModal={toggleModal} open={showModal} onPostDelete={handleDeletePost} />
+            <OptionsContainer style={props.style ? props.style : null}>
                 <NavItem fontSize={'30px'} onClick={toggleModal}>
                     <FontAwesomeIcon icon={faEllipsisH}/>
                 </NavItem>
@@ -516,55 +375,7 @@ const PostModal = ({toggleModal, open, onPostDelete}) => {
     )
 };
 
-const ModalContainer = styled.div`
-    width: 100vw;
-    height: 100vh;
-    background-color: rgba(0,0,0,.65);
-    position: absolute;
-    top: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-`
 
-const ModalBox = styled.div`
-    width: 100%;
-    max-width: 400px;
-    
-    background-color: #fff;
-    border-radius: 12px;
-
-    
-`
-
-const ModalButton = styled.button`
-    width: 100%;
-    border: none;
-    border-top: 1px solid rgb(219,219,219);
-    height: 39px;
-    background-color: #fff;
-
-    &:first-child{
-        border-top-left-radius: 12px;
-        border-top-right-radius: 12px;
-        border-top: none;
-    }
-
-    &:last-child{
-        border-bottom-right-radius: 12px;
-        border-bottom-left-radius: 12px;
-    }
-
-    &:focus{
-        outline:none;
-    }
-
-`
-
-const PostCreateForm = styled.form`
-    display: flex;
-    flex-direction: column;
-`
 
 
 const PostSingle = props => {
@@ -580,14 +391,16 @@ const PostSingle = props => {
                 setLoaded(true);
             })
         })
-    }, [])
+    }, []);
+
+    console.log(post);
     return (
         <React.Fragment>
         {loaded ? 
             <Post 
             key={post.id} id={post.id} imageUrl={post.contentUrl} 
             text={post.text} created={post.createdAt} user={post.user}
-            comments={post.comments}
+            comments={post.comments} likes={post.postlikes}
         />
         : <div>fetching...</div>
         }
