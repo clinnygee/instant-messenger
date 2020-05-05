@@ -1,7 +1,7 @@
 const Sequelize = require('sequelize');
 require('dotenv').config();
 
-const conn = null;
+let conn = null;
 
 
 if(process.env.NODE_ENV ==='production'){
