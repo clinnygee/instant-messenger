@@ -26,7 +26,7 @@ console.log(process.env.ACCESS_KEY_ID);
 
 
 
-const port = ( process.env.PORT || 8080);
+const port = (  8080);
 
 const PostsRouter = require('./routes/Posts/Posts');
 const ProfileRouter = require('./routes/Profile/Profile');
