@@ -155,6 +155,10 @@ const UserProfile = props => {
                     id={userData.id}
                     username={userData.username}
                 />
+                <MessageButton
+                    id={userData.id}
+                    username={userData.username}
+                />
                 <ThumbnailContainer>
                     {thumbnails}
                 </ThumbnailContainer>
@@ -187,6 +191,9 @@ const ProfileButton = props => {
     const handleFriendRequest = () => {
         makeFriendRequest(context.jwt, props.username).then(res => {
             console.log(res);
+            if(res.status ===200){
+                window.location.reload();
+            }
         })
     };
 
@@ -255,6 +262,35 @@ const ProfileButton = props => {
         </EditContainer>
     )
 };
+
+const MessageButton = props => {
+    const isCurrentUser = useIsLoggedInUser(props.id);
+
+    const renderButton = () => {
+        if(isCurrentUser){
+            return (
+                null
+            )
+        } else {
+            return(
+                <Link to={{
+                    pathname:`/conversations/${props.username}`,
+                    search: props.username
+                }} style={{width: '100%', display: 'flex'}}>
+                <EditButton>Message</EditButton>
+                </Link>
+            )
+        }
+    }
+
+    return (
+        <React.Fragment>
+            {renderButton()}
+        
+        
+        </React.Fragment>
+    )
+}
 
 const EditProfileHeader = styled.div`
     display: flex;

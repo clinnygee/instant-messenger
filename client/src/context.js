@@ -193,7 +193,7 @@ export class UserProvider extends React.Component {
 
     checkJwtToken = jwt => {
         console.log(jwt);
-        fetch('/api/user/checkToken', {
+        fetch('/api/auth/checkToken', {
             method: 'get',
             headers: {
                 'Accept': 'application/json',

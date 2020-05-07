@@ -8,7 +8,7 @@ import {faHeart, faCameraRetro, faEllipsisH} from '@fortawesome/free-solid-svg-i
 import {GlobalStyle} from '../../App/App';
 
 import  { uploadNewPost, getAllPosts, createPostComment, changePostLike, getSinglePost, deletePost } from '../../../API';
-import {useIsLoggedInUser, useHasUserLiked} from '../../Hooks';
+import {useIsLoggedInUser, useHasUserLiked, useTimeElapsed} from '../../Hooks';
 
 import CreatePost from './Create';
 import PostLikes from './Likes';
@@ -20,6 +20,8 @@ import {PostComment, PostCommentForm, Input, PostCommentButton, UserLink,
     PostHeaderImage, PostImageContainer, PostImage, ReactionContainer, Reacts, FeedContainer, FeedNav, ModalContainer,
     ModalBox, ModalButton, OptionsContainer 
 } from './styled';
+
+import moment from 'moment';
 
 
 const Feed = () => {
@@ -245,7 +247,7 @@ export const Post = props => {
                 {commentsComponents}
             </CommentContainer>
             <CommentContainer>
-                <Time>{time}</Time>
+                <TimeCalculator time={time}/>
             </CommentContainer>
             
             <PostComment>
@@ -260,6 +262,13 @@ export const Post = props => {
         </PostContainer>
     )
 };
+
+const TimeCalculator = ({time}) =>{
+    const elapsed = useTimeElapsed(time);
+    return (
+        <Time>{elapsed}</Time>
+    )
+}
 
 const Comment = props => {
     const context = useContext(UserContext);

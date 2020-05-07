@@ -1,7 +1,14 @@
-make a profile page, where you can view users profiles and send them a friend request.
 
-On Users profile page, they should be able to delete there posts.
 
-When they click on a post, it should take them to that posts page posts/:id
 
-here if user_id (which we now need to store somewhere === post.userId) they are shown the options to delete.
+make reactions display in chat
+
+when you send someone a request from their profile page, it should update the button.
+
+fix server.js so ALL of the routes are in their own route folders.
+
+create README.md
+
+set up a way so .env vars are on the ec2 instance
+
+fix context

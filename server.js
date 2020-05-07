@@ -11,12 +11,8 @@ const path = require('path');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 
-const jwt = require('jsonwebtoken');
 const withAuth = require('./middleware/auth');
 
-const bcrypt = require('bcrypt');
-const secret = (process.env.SECRET || 'instant-messenger');
-const saltRounds = (process.env.SALTROUNDS || 10);
 
 
 require('dotenv').config();
@@ -26,8 +22,9 @@ console.log(process.env.ACCESS_KEY_ID);
 
 
 
-const port = (  8080);
+const port = (8080);
 
+const AuthRouter = require('./routes/Auth/Auth');
 const PostsRouter = require('./routes/Posts/Posts');
 const ProfileRouter = require('./routes/Profile/Profile');
 const FriendsRouter = require('./routes/Friends/Friends');
@@ -46,6 +43,7 @@ app.use('/api/posts', PostsRouter);
 app.use('/api/profile', ProfileRouter);
 app.use('/api/friends', FriendsRouter);
 app.use('/api/search', SearchRouter);
+app.use('/api/auth', AuthRouter)
 
 const {Op} = Sequelize;
 
@@ -61,65 +59,7 @@ conn.sync({logging: false});
 
 
 
-app.post('/api/login', (req,res) => {
-    const {username, password} = req.body;
 
-    console.log(password);
-
-    User.findOne({where: {username: username}}).then(user => {
-        if(!user){
-            res.status(400).json({error: 'User does not exist'})
-        } else {
-            console.log(user);
-            bcrypt.compare(password, user.password, (err, result) => {
-                if(!result){
-                    res.status(401).json({error: 'Incorrect Password'})
-                } else {
-                    const payload = {username};
-                    const token = jwt.sign(payload, secret, {
-                        expiresIn: '24h',
-                    });
-                    res.cookie('jwt', token);
-                    res.json({token: token});
-                }
-                
-            })
-        }
-    });
-});
-
-app.post('/api/register', (req, res) => {
-    const {username, password} = req.body;
-
-    console.log(username, password);
-
-    console.log(User);
-    User.findOne({where: {username: username}}).then(user => {
-        if(user){
-            console.log('User Found');
-            res.status(400).json({error: 'User Already Exists'});
-        } else {
-            bcrypt.hash(password, saltRounds, (err, hash) => {
-                User.create({
-                    username: username,
-                    password: hash,
-                }).then((user) => {
-                    console.log(user);
-                    const payload = {username};
-                    const token = jwt.sign(payload, secret, {
-                        expiresIn: '24h'
-                    });
-                    console.log(token);
-                    res.cookie('jwt', token);
-                    res.json({token: token});
-                    // res.status(200).send('Success!')
-                })
-            });
-        }
-    })
-
-   
-});
 
 app.get('/api/user', withAuth, (req, res) => {
     User.findOne(
@@ -158,13 +98,6 @@ app.get('/api/user', withAuth, (req, res) => {
         });
 });
 
-app.get('/api/user/checkToken', withAuth, (req, res) => {
-    if(req.username){
-        res.status(200).send('User is authorized');
-    } else {
-        res.status(400).send('User is unauthorized')
-    };
-});
 
 app.get('/api/conversations/:id', withAuth, (req,res) => {
     Conversation.findOne({where: {_id: req.params.id}, include:[{model: Message}]}).then(conversation => {

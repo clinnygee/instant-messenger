@@ -9,42 +9,82 @@ const postPhotoUpload = upload.single('post-image');
 const PostsController = {
 
     findAll(req,res){
-        Post.findAll({include: [
-            {
-                model: User,
-                attributes: {
-                    exclude: 'password'
-                }
-            },
-            {
-                model: Comment,
-                include: {
+        User.findOne({where:{username: req.username},include: [{model: Friendship}]}).then(UserAndFriends=>{
+            let idArray = [UserAndFriends.id];
+            UserAndFriends.friendships.forEach(friend => idArray.push(friend.friendId));
+            console.log(idArray);
+            Post.findAll({where: {userId: idArray}, include: [
+                {
                     model: User,
                     attributes: {
                         exclude: 'password'
                     }
-                }
-            },
-            {
-                model: PostLike,
-                include: {
-                    model: User,
-                    attributes: {
-                        exclude: 'password'
+                },
+                {
+                    model: Comment,
+                    include: {
+                        model: User,
+                        attributes: {
+                            exclude: 'password'
+                        }
                     }
-                }
-            },
-            {
-                model: PostTag,
-                include: {
-                    model: Tag,
-                }
-            },
-            
-        ]}).then(posts => {
-            console.log(posts);
-            res.json(posts);
+                },
+                {
+                    model: PostLike,
+                    include: {
+                        model: User,
+                        attributes: {
+                            exclude: 'password'
+                        }
+                    }
+                },
+                {
+                    model: PostTag,
+                    include: {
+                        model: Tag,
+                    }
+                },
+            ]}).then(posts => {
+                // console.log(posts)
+                res.json(posts);
+            })
         })
+        // Post.findAll({include: [
+        //     {
+        //         model: User,
+        //         attributes: {
+        //             exclude: 'password'
+        //         }
+        //     },
+        //     {
+        //         model: Comment,
+        //         include: {
+        //             model: User,
+        //             attributes: {
+        //                 exclude: 'password'
+        //             }
+        //         }
+        //     },
+        //     {
+        //         model: PostLike,
+        //         include: {
+        //             model: User,
+        //             attributes: {
+        //                 exclude: 'password'
+        //             }
+        //         }
+        //     },
+        //     {
+        //         model: PostTag,
+        //         include: {
+        //             model: Tag,
+        //         }
+        //     },
+            
+        // ]}).then(posts => {
+        //     console.log(posts);
+        //     res.json(posts);
+        // })
     },
 
     async create(req,res){

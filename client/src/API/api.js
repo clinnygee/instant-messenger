@@ -1,5 +1,5 @@
 export const registerUser = (data) => {
-    return fetch('/api/register', {
+    return fetch('/api/auth/register', {
         method: 'post',
         body: JSON.stringify(data),
         headers: {
@@ -10,7 +10,7 @@ export const registerUser = (data) => {
 }
 
 export const logInUser = (data) => {
-    return fetch('/api/login', {
+    return fetch('/api/auth/login', {
         method: 'post',
         body: JSON.stringify(data),
         headers: {

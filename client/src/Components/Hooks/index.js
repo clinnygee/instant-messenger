@@ -1,5 +1,6 @@
 import React, { useContext, useState, useEffect } from 'react';
 import { UserContext } from '../../context';
+import moment from 'moment';
 
 const useIsLoggedInUser = dataId => {
     const context = useContext(UserContext)
@@ -81,4 +82,37 @@ const useReceivedFriendRequest = id => {
     return hasRequest;
 };
 
-export {useIsLoggedInUser, useHasUserLiked, useIsUsersFriend, useHasSentFriendRequest, useReceivedFriendRequest};
+const useTimeElapsed = dt => {
+    const [timeElapsed, setTimeElapsed] = useState('');
+
+    useEffect(() => {
+        
+        let date = moment(dt),
+        now = moment(),
+        minutes = now.diff(date, "minutes"),
+        hours = now.diff(date, "hours"),
+        days = now.diff(date, "days"),
+        weeks = now.diff(date, "weeks");
+
+        console.log(now)
+
+        let result = "";
+
+        if(weeks){
+            result += weeks + (weeks === 1 ? ' week' : ' weeks') + ' ago';
+        } else if(days){
+            result += days + (days === 1 ? ' day' : ' days') + ' ago';
+        } else if(hours){
+            result += hours + (hours === 1 ? ' hour' : ' hours') + ' ago';
+        } else{
+            result += minutes + (minutes === 1 ? ' minute' : ' minutes') + ' ago';
+        }
+        
+        
+        setTimeElapsed(result);
+    })
+
+    return timeElapsed;
+}
+
+export {useIsLoggedInUser, useHasUserLiked, useIsUsersFriend, useHasSentFriendRequest, useReceivedFriendRequest, useTimeElapsed};
