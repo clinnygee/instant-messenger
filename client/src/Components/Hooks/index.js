@@ -94,7 +94,7 @@ const useTimeElapsed = dt => {
         days = now.diff(date, "days"),
         weeks = now.diff(date, "weeks");
 
-        console.log(now)
+        
 
         let result = "";
 

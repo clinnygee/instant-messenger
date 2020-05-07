@@ -13,6 +13,7 @@ import {AppWrapper} from '../Styled/styled-components';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faComments, faUserFriends, faAddressCard, faHome, faExclamationCircle, faSearch} from '@fortawesome/free-solid-svg-icons';
 import { UserContext } from '../../context';
+import {LoadingSymbol} from '../Reusable';
 
 
 
@@ -49,10 +50,7 @@ const Container = (props) => {
 
         window.addEventListener('resize', checkMobile);
 
-        // context.initializeUserData().then(success => {
-            
-        //     setFetching(false);
-        // });
+        
 
         console.log('Calling Container Use Effect')
 
@@ -69,7 +67,7 @@ const Container = (props) => {
             )
         } else if (context.authenticating){
             return (
-                <div>Authenticating</div>
+                <LoadingSymbol/>
             )
         } else {
             return (

@@ -9,6 +9,7 @@ const postPhotoUpload = upload.single('post-image');
 const PostsController = {
 
     findAll(req,res){
+        console.log(req.headers);
         User.findOne({where:{username: req.username},include: [{model: Friendship}]}).then(UserAndFriends=>{
             let idArray = [UserAndFriends.id];
             UserAndFriends.friendships.forEach(friend => idArray.push(friend.friendId));

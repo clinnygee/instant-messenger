@@ -114,24 +114,25 @@ const FeedContainer = styled.div`
 // Show Chats by default, unless a reciever is selected
 
 const ConversationContainer = props => {
-    const [conversationsDisplay, setConversationsDisplay] = useState(true);
-    const [messageDisplay, setMessageDisplay] = useState(false);
+    // const [conversationsDisplay, setConversationsDisplay] = useState(true);
+    // const [messageDisplay, setMessageDisplay] = useState(false);
     const [receiver, setReceiver] = useState(null);
 
-    const displayMessage = () => {
-        setMessageDisplay(true);
-    };
+    // const displayMessage = () => {
+    //     setMessageDisplay(true);
+    // };
 
-    const selectMessageReceiver = (username) => {
-        setReceiver(username);
-        setMessageDisplay(true);
-    };
+    // const selectMessageReceiver = (username) => {
+    //     setReceiver(username);
+    //     setMessageDisplay(true);
+    // };
 
     const chatsDisplayRender = () => {
         console.log('chats display render')
         return (
             
-                 <Chats onSelect={selectMessageReceiver} mobile={true} createMessage={displayMessage}/> 
+                //  <Chats onSelect={selectMessageReceiver} mobile={true} createMessage={displayMessage}/> 
+                <Chats mobile={true}/>
             
             
             

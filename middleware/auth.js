@@ -18,7 +18,7 @@ const withAuth = (req, res, next) => {
 
     // comes through in the form of authorization: bearer ${token} ${username}
 
-    const token = req.headers.authorization ? req.headers.authorization.split(" ")[1] : null;
+    // const token = req.headers.authorization ? req.headers.authorization.split(" ")[1] : null;
 
     const username = req.header.authorization ? req.header.authorization.split(' ')[2] : null;
 
@@ -27,7 +27,7 @@ const withAuth = (req, res, next) => {
 
     // console.log(_token);
 
-    console.log(token);
+    // console.log(token);
     console.log(req.cookies.jwt);
 
     // if(!token) {
@@ -60,13 +60,18 @@ const withAuth = (req, res, next) => {
     //         }
     //     })
     // }
+    console.log(req.headers);
     if(!req.cookies.jwt) {
-        res.redirect('/');
+        // res.redirect('/');
+        console.log('valid cookie not recieved');
+        
+        res.status(403).json({error: 'Unauthorized: No Logged in user'})
         // res.status(401).send('Unauthorized: No Logged in user');
     } else {
         console.log('req.cookies.jwt recieved');
         jwt.verify(req.cookies.jwt, secret, function(err, decoded){
             if(err){
+                console.log('some error occured in jwt verify')
                 console.log(req.cookies.jwt);
                 res.status(401).send('Unauthorized: No Logged in user');
             } else {
@@ -81,7 +86,7 @@ const withAuth = (req, res, next) => {
                 User.findOne({where: {username: decoded.username}}).then(user=> {
                     if(user){
                         req.username = decoded.username;
-                        res.cookie('jwt', token);
+                        res.cookie('jwt', req.cookies.jwt);
                         next();
                     }else{
                         res.status(401).json({error: 'Unauthorized: Invalid token'});
@@ -89,13 +94,7 @@ const withAuth = (req, res, next) => {
                 })} else {
                     res.status(401).json({error: 'Expired JWT'});
                 }
-                // perhaps we also need to store the password in the jwt,
-
-                // console.log(decoded);
-                // req.username = decoded.username;
                 
-                // console.log(decoded);
-                // next();
             }
         })
     }

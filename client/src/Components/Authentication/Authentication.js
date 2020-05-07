@@ -160,7 +160,7 @@ const AuthenticationForm = (props) => {
         props.toggleForm();
     };
 
-    console.log(usernameErrorText)
+    
 
     return (
         <Form>

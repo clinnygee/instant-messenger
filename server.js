@@ -100,7 +100,23 @@ app.get('/api/user', withAuth, (req, res) => {
 
 
 app.get('/api/conversations/:id', withAuth, (req,res) => {
-    Conversation.findOne({where: {_id: req.params.id}, include:[{model: Message}]}).then(conversation => {
+    Conversation.findOne({where: {_id: req.params.id}, 
+        include:[
+            {model: Message},
+            {
+                model: User,
+                as: 'user1',
+                attributes: {
+                  exclude: 'password'
+                }
+              },
+            {
+              model: User,
+              as: 'user2',
+              attributes: {
+                exclude: 'password'
+              }}
+            ]}).then(conversation => {
         console.log(conversation)
         res.json(conversation);
     })
@@ -108,7 +124,7 @@ app.get('/api/conversations/:id', withAuth, (req,res) => {
 
 
 
-app.get('/api/conversations',withAuth, (req, res) => {
+app.get('/api/conversations', withAuth, (req, res) => {
     // console.log(req.headers.authorization);
     console.log('username: ------------------------------------')
     console.log(req.username);

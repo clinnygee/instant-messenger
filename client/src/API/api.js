@@ -26,8 +26,9 @@ export const fetchUserData = token => {
         method: 'get',
         headers: {
             'Accept': 'application/json',
+            credentials: 'include',
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`,
+            // 'Authorization': `Bearer ${token}`,
         }
     })
 };
@@ -50,8 +51,9 @@ export const makeFriendRequest = ( token, name) => {
         method: 'post',
         headers: {
             'Accept': 'application/json',
+            credentials: 'include',
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`,
+            // 'Authorization': `Bearer ${token}`,
         }
     })
 };
@@ -61,8 +63,9 @@ export const acceptFriendRequest = (token, id) => {
         method: 'post',
         headers: {
             'Accept': 'application/json',
+            credentials: 'include',
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`, 
+            // 'Authorization': `Bearer ${token}`, 
         }
     })
 };
@@ -72,8 +75,9 @@ export const deleteFriendship = (token, id) => {
         method: 'post',
         headers: {
             'Accept': 'application/json',
+            credentials: 'include',
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`,
+            // 'Authorization': `Bearer ${token}`,
         }
     })
 }
@@ -141,8 +145,9 @@ export const createPostComment = (token, comment, postId) => {
     return fetch(`/api/posts/${postId}/comments`, {
         method: 'POST',
         body: JSON.stringify(comment),
+        credentials: 'include',
         headers: {
-            'Authorization': `Bearer ${token}`,
+            // 'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json',
         },
         
@@ -153,8 +158,9 @@ export const changePostLike = (token, postId) => {
 
     return fetch(`/api/posts/${postId}/like`, {
         method: 'POST',
+        credentials: 'include',
         headers: {
-            'Authorization': `Bearer ${token}`,
+            // 'Authorization': `Bearer ${token}`,
             'Content-type': 'application/json',
         }
     })
@@ -163,8 +169,9 @@ export const changePostLike = (token, postId) => {
 export const getProfileData = (token, username) => {
     return fetch(`/api/profile/${username}`, {
         method: 'GET',
+        credentials: 'include',
         headers: {
-            'Authorization': `Bearer ${token}`,
+            // 'Authorization': `Bearer ${token}`,
             'Content-type': 'application/json',
         },
     })
@@ -173,8 +180,9 @@ export const getProfileData = (token, username) => {
 export const getSinglePost = (token, id) => {
     return fetch(`/api/posts/${id}`, {
         method: 'GET',
+        credentials: 'include',
         headers: {
-            'Authorization': `Bearer ${token}`,
+            // 'Authorization': `Bearer ${token}`,
             'Content-type': 'application/json',
         }
     })
@@ -183,8 +191,9 @@ export const getSinglePost = (token, id) => {
 export const getSearchResults = (token, searchTerm) => {
     return fetch(`/api/search/${searchTerm}`, {
         method: 'get',
+        credentials: 'include',
         headers: {
-            'Authorization': `Bearer ${token}`,
+            // 'Authorization': `Bearer ${token}`,
             'Content-type': 'application/json',
         }
     })
@@ -193,8 +202,9 @@ export const getSearchResults = (token, searchTerm) => {
 export const getTagSearchResults = (token, searchTerm) => {
     return fetch(`/api/search/tags/${searchTerm}`,{
         method: 'get',
+        credentials: 'include',
         headers: {
-            'Authorization': `Bearer ${token}`,
+            // 'Authorization': `Bearer ${token}`,
             'Content-type': 'application/json'
         }
     })

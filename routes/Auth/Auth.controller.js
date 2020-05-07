@@ -50,8 +50,8 @@ const AuthController = {
                                 expiresIn: '24h'
                             });
                             console.log(token);
-                            res.cookie('jwt', token);
-                            res.json({token: token});
+                            res.cookie('jwt', token).send();
+                            // res.json({token: token});
                         })
                         // console.log(user);
                         // const payload = {username};
@@ -85,16 +85,22 @@ const AuthController = {
                     const token = jwt.sign(payload, secret, {
                         expiresIn: '24h',
                     });
-                    res.cookie('jwt', token);
-                    res.json({token: token});
+                    res.cookie('jwt', token).send();
+                    // res.json({token: token});
                 }
                 
             })
         }
     });
     },
+    logOut(req,res){
+        res.clearCookie('io');
+        res.clearCookie('jwt').send();
+        
+    },
     checkToken(req,res){
-        console.log(req.username);
+        console.log('in check token')
+        console.log(req.headers);
         if(req.username){
             res.status(200).send('User is authorized');
         } else {

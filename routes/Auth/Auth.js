@@ -7,6 +7,8 @@ router.post('/login', AuthController.logIn);
 
 router.post('/register', AuthController.register);
 
+router.post('/logout', AuthController.logOut);
+
 router.get('/checkToken',withAuth, AuthController.checkToken);
 
 
