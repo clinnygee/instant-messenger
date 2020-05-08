@@ -142,6 +142,7 @@ export const FeedNav = styled.nav`
     position: fixed;
     top: 0;
     background-color: #fff;
+    z-index: 999;
 `
 
 export const ModalContainer = styled.div`

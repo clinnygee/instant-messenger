@@ -94,6 +94,7 @@ const MobileWrapper = styled.div`
     background-color: #fff;
     display: flex;
     flex-direction: column;
+    
 `
 
 const View = (props) => {
@@ -140,7 +141,7 @@ const View = (props) => {
 const NavWrapper = styled.div`
     width: 100%;
     height: 50px;
-    position: absolute;
+    position: fixed;
     bottom: 0;
     box-shadow: 0px -1px 3px 0px rgba(117,116,117,0.5);
     display: flex;
