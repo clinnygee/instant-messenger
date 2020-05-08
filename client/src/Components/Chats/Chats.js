@@ -150,6 +150,8 @@ const Chats = props => {
 
     const Chats = context.conversationData.length > 0 ? chatCreator(context.conversationData) : null;
 
+    console.log('in chats!')
+
     return (
         <ConversationListContainer mobile={props.mobile}>
             <Header>

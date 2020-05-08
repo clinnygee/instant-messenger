@@ -3,12 +3,8 @@
 
 make reactions display in chat
 
-when you send someone a request from their profile page, it should update the button.
-
 fix server.js so ALL of the routes are in their own route folders.
 
 create README.md
 
 set up a way so .env vars are on the ec2 instance
-
-fix context

@@ -246,7 +246,7 @@ export const Post = props => {
                 <Comment text={body} username={user.username} tags={props.tags}/>
                 {commentsComponents}
             </CommentContainer>
-            <CommentContainer>
+            <CommentContainer style={{margin: '8px 24px'}}>
                 <TimeCalculator time={time}/>
             </CommentContainer>
             

@@ -31,8 +31,8 @@ export const PostCommentButton = styled.button`
     border: none;
     background: #fff;
     color: ${({active}) => active ? 'rgb(0,149,246)' : 'rgba(0,149,246,.3)'};
-    width: 33px;
-    margin: 16px 0px 0px 0px;
+    // width: 33px;
+    // margin: 16px 0px 0px 0px;
     &:focus: {
         outline: none;
     }
@@ -119,13 +119,14 @@ export const FeedContainer = styled.div`
     width: 100vw;
     max-width: 600px;
     margin: 0 auto;
-    height: 100vh;
+    height: calc(100vh - 40px);
     display: flex;
     flex-direction: column;
     overflow-y: scroll;
     padding: 5px;
     background: rgb(250,250,250);
     padding-top: 70px;
+    padding-bottom: 70px;
 
     &::-webkit-scrollbar {
         display: none;
