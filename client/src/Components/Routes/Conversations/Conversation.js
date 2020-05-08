@@ -128,31 +128,19 @@ const ConversationContainer = props => {
     //     setMessageDisplay(true);
     // };
 
-    const chatsDisplayRender = () => {
-        console.log('chats display render')
-        return (
-            
-                //  <Chats onSelect={selectMessageReceiver} mobile={true} createMessage={displayMessage}/> 
-                <Chats mobile={true}/>
-            
-            
-            
-            )
-    };
-    const conversationsDisplayRender = () => {
-        
-        return (            
-                <Conversation />                
-        )
-    };
+    
 
     return (
         <FeedContainer>
-            <Switch>
-                <Route exact path='/conversations' render={() => {return (chatsDisplayRender())}} />
-                <Route path='/conversations/:username' render={() => {return(conversationsDisplayRender())}} />
+            <Switch>               
+                
+                <Route path='/conversations/:username' 
+                    render={() => <Conversation />} />
+                <Route exact path='/conversations' 
+                    render={() => <Chats />} />
+
             </Switch>
-            {/* {messageDisplay ? conversationsDisplayRender() : chatsDisplayRender()} */}
+            
         </FeedContainer>
         
     )
