@@ -1,9 +1,9 @@
 import React, {useState, useContext, useEffect, useRef} from 'react';
 import styled from 'styled-components';
 import Message from './Message.view';
-import Chats from '../Chats';
-import {Back} from '../Reusable'
-import {UserContext} from '../../context';
+import Chats from './Chats';
+import {Back} from '../../Reusable'
+import {UserContext} from '../../../context';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faPaperPlane} from '@fortawesome/free-solid-svg-icons';
 import { Switch, Route, useHistory } from 'react-router-dom';
@@ -41,7 +41,7 @@ const IconContainer = styled.div`
     height: 50px;
     font-size: 40px;
     margin-left: 8px;
-    color: ${({active}) => active ? 'rgb(0,149,246)' : `rgb(220, 222, 225)`}
+    color: ${({active}) => active ? 'rgb(0,149,246)' : `rgb(220, 222, 225)`};
 
 `
 

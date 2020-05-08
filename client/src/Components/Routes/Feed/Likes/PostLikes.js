@@ -2,7 +2,7 @@ import * as React from 'react';
 import {useEffect, useState} from 'react';
 import styled from 'styled-components';
 import {Back} from '../../../Reusable';
-import {SearchResult} from '../../../People/People';
+import {SearchResult} from '../../People/People';
 import {useParams} from 'react-router-dom';
 
 const PostLikes = ({posts}) => {

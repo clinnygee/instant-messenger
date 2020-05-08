@@ -3,7 +3,7 @@ import styled from 'styled-components';
 
 import { Route, Link, NavLink, useHistory, useParams} from 'react-router-dom';
 
-import{ PeopleSearch} from '../../People/People';
+import{ PeopleSearch} from '../People/People';
 
 
 const Search = props => {

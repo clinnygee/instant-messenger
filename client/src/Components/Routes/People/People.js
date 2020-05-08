@@ -1,10 +1,10 @@
 import React, {useContext, useState, } from 'react';
-import {UserContext} from '../../context'; 
+import {UserContext} from '../../../context'; 
 import styled from 'styled-components';
 
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {  faSearch, faExclamationCircle} from '@fortawesome/free-solid-svg-icons';
-import { getSearchResults, getTagSearchResults} from '../../API';
+import { getSearchResults, getTagSearchResults} from '../../../API';
 import { Route, Link, NavLink} from 'react-router-dom';
 
 // const Wrapper = styled.div`

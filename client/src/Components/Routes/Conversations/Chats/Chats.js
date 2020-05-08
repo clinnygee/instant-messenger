@@ -1,9 +1,9 @@
 import React, { useContext, useState } from 'react';
 import styled from 'styled-components';
-import {UserContext} from '../../context';
+import {UserContext} from '../../../../context';
 
 import Chat from './Chats.view';
-import {PeopleSearch} from '../People/People'
+import {PeopleSearch} from '../../People/People'
 import {Link, useHistory} from 'react-router-dom';
 
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';

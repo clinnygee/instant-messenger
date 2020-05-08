@@ -5,9 +5,9 @@ import styled from 'styled-components';
 import Authentication from '../Authentication';
 import Feed from '../Routes/Feed'
 
-import People from '../People';
+import People from '../Routes/People';
 import Profile from '../Routes/Profile';
-import ConversationDisplay from '../Conversation';
+import ConversationContainer from '../Routes/Conversations';
 import Search from '../Routes/Search';
 import {AppWrapper} from '../Styled/styled-components';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
@@ -111,7 +111,7 @@ const View = (props) => {
                 />
                     
                 <Route path='/conversations' render={
-                    () => <ConversationDisplay />
+                    () => <ConversationContainer />
                 }/>
                     
                 <Route path='/friends' 

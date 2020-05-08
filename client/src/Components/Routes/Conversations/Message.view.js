@@ -1,5 +1,5 @@
 import React, {useState, useContext} from 'react';
-import {UserContext} from '../../context';
+import {UserContext} from '../../../context';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faSmile, faReply, faEllipsisH, faHeart, faThumbsUp, faThumbsDown, faSadCry, faLaugh} from '@fortawesome/free-solid-svg-icons';
 
