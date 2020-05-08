@@ -10,7 +10,8 @@ import styled from 'styled-components';
 import { faSignOutAlt, faPaperPlane } from '@fortawesome/free-solid-svg-icons';
 import { useIsLoggedInUser, useIsUsersFriend, useHasSentFriendRequest, useReceivedFriendRequest } from '../../Hooks';
 
-import {Back} from '../../Reusable';
+import {Back, LoadingSymbol} from '../../Reusable';
+
 const Profile = props => {
 
 
@@ -36,6 +37,7 @@ const FeedContainer = styled.div`
     padding: 5px;
     background: rgb(250,250,250);
     padding-top: 70px;
+    padding-bottom: 60px;
 
     &::-webkit-scrollbar {
         display: none;
@@ -304,6 +306,7 @@ const Input = styled.input`
     width: calc(100% - 33px);
     margin: 8px 8px;
     border-bottom: 1px solid rgb(219,219,219);
+    font-size: 25px;
 
     &:focus {
         outline: none;
@@ -314,6 +317,7 @@ const Input = styled.input`
 const ProfileForm = styled.form`
     width: 100%;
     display: flex;
+    align-items: center;
     flex-direction: column;
 `
 
@@ -328,9 +332,10 @@ const PostImage = styled.img`
 `
 const PostCommentButton = styled.button`
     border: none;
-    background: #fff;
+    background: inherit;
     color: ${({active}) => active ? 'rgb(0,149,246)' : 'rgba(0,149,246,.3)'};
-    width: 50px;
+   
+    font-size: 30px;
     margin: 16px 0px 0px 0px;
     &:focus: {
         outline: none;
@@ -343,6 +348,7 @@ const ProfileEdit = props => {
     const context = useContext(UserContext);
     const [about, setAbout] = useState(null);
     const [submittable, setSubmittable] = useState(false);
+    const [sending, setSending] = useState(false);
     const history = useHistory();
 
     
@@ -364,16 +370,19 @@ const ProfileEdit = props => {
         const formData = new FormData();
 
         formData.append('profile-image', file);
-        formData.append('profile-about', about)
-        setTimeout(() => {
-            console.log(formData.entries());
-        })
-        console.log(formData);
+        formData.append('profile-about', about);
+
+
+        
+        // console.log(formData);
+        setSending(true);
         uploadProfilePhoto(context.jwt, formData).then(res => {
             res.json().then(parsedJson => {
                 console.log(parsedJson);
                 context.initializeUserData();
-                history.push(`/profile/${context.userData.username}`)
+                setSending(false);
+                history.push(`/profile/${context.userData.username}`);
+                
             })
         })
     };
@@ -387,6 +396,8 @@ const ProfileEdit = props => {
 
     return (
         <React.Fragment>
+            {sending ? <LoadingSymbol /> :
+            <React.Fragment>
             <EditProfileHeader>
                 <Back />
                 <PostHeaderImage width={`100px`} height={'100px'} url={context.userData.profileImgUrl} size={'120px 120px'}></PostHeaderImage>
@@ -400,6 +411,8 @@ const ProfileEdit = props => {
                 <input type='file' onChange={handleFileChange} />
                 <PostCommentButton active={submittable} onClick={onPhotoUpload} disabled={!submittable}>Submit</PostCommentButton>
             </ProfileForm>
+            </React.Fragment >
+            }
         </React.Fragment>
     )
 }
