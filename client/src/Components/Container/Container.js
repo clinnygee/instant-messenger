@@ -38,7 +38,7 @@ const Container = (props) => {
         width <= 1600 ? mobile = true : mobile = false;
 
         setScreenWidth(width);
-
+        console.log(screenWidth)
         
 
         setMobileView(mobile);
@@ -200,7 +200,7 @@ const Nav = props => {
                 </NavItem>
             </NavLink>
             
-            <NavLink to='/friends'
+            <NavLink to='/friends/friendships'
                 activeStyle={{
                     color: 'rgb(0,149,246)'
                 }}

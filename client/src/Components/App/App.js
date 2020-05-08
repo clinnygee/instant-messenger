@@ -40,7 +40,7 @@ export const GlobalStyle = createGlobalStyle`
 `
 
 const AppWrapper = styled.div`
-  height: ${(props) => props.vh ? `calc(${props.vh * 100})` : '100vh'};
+  height: ${(props) => props.vh ? `${props.vh * 100}px` : '100vh'};
   width: 100vw;
   background-color: blue;
   display: flex;
@@ -53,13 +53,15 @@ function App() {
 
   useEffect(() => {
     setVh(window.innerHeight * .01);
+    console.log(vh)
     window.addEventListener('resize', () => {
       setVh(window.innerHeight * .01);
+      console.log(vh)
     });
     return () => {
       window.removeEventListener('resize')
     }
-  }, [])
+  }, []);
 
   return (
     <Router>
