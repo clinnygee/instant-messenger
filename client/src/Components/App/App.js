@@ -53,15 +53,20 @@ function App() {
 
   useEffect(() => {
     setVh(window.innerHeight * .01);
-    console.log(vh)
-    window.addEventListener('resize', () => {
-      setVh(window.innerHeight * .01);
-      console.log(vh)
-    });
+    // console.log(vh)
+    window.addEventListener('resize', checkVh);
     return () => {
       window.removeEventListener('resize')
     }
   }, []);
+
+  const checkVh = () => {
+    setVh(window.innerHeight * .01);
+    
+  };
+  // console.log(vh * 100);
+  // console.log(window.innerHeight)
+  // console.log(vh)
 
   return (
     <Router>

@@ -300,7 +300,7 @@ const Comment = props => {
         <div style={{position: 'relative'}}>
             <p >
                 <UserLink>
-                `<span>{props.username}</span>
+                <span>{props.username}</span>
                 </UserLink> {props.text} {tags}
             </p>
             {isUsers ? <PostOptions id={props.id} style={{position: 'absolute', top:'0', right: '0', height:'100%'}}/> : null}

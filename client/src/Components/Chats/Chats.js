@@ -128,14 +128,18 @@ const Chats = props => {
         const username = context.userData.username;
         let chats = conversations.map(conversation => {
             return (
+                
                 <Link to={{
                     pathname: `/conversations/${conversation.user1Username === username ? conversation.user2Username : conversation.user1Username}`,
                     search: `${conversation.user1Username === username ? conversation.user2Username : conversation.user1Username}`}}
-                    style={{width: '100%'}}    
+                    style={{width: '100%'}}
+                    key={conversation.id}
+                        
                 >
                     <Chat conversationTitle={conversation.user1Username === username ? conversation.user2Username : conversation.user1Username} 
                         image={conversation.user1Username === username ? conversation.user2.profileImgUrl : conversation.user1.profileImgUrl}
                         conversationPreview={conversation.messages[0].text }
+                        key={conversation.id}
                         // onSelect={props.onSelect}
                     />
                 </Link>

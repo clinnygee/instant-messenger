@@ -48,7 +48,7 @@ export class UserProvider extends React.Component {
     };
 
     getConversationData =  () => {
-        console.log(this.state.jwt)
+        
         return fetchConversationData( this.state.jwt)
         .then(res => res.json())
         .then(parsedJSON => this.setState({conversationData: parsedJSON}));
@@ -65,7 +65,7 @@ export class UserProvider extends React.Component {
     initializeUserData = () => {
         console.log(this.state.jwt);
         return fetchUserData(this.state.jwt).then(res => {
-            console.log(res.cookie);
+            
              res.json().then(parsedJson => {
                  this.setState({userData: parsedJson})
             })
@@ -74,7 +74,7 @@ export class UserProvider extends React.Component {
 
     initializeWsClient = () => {
         console.log('in initalizeWsClient')
-        console.log(window.location)
+        // console.log(window.location)
 
         const socket = openSocket(window.location.host + '/connection');
 
@@ -174,7 +174,7 @@ export class UserProvider extends React.Component {
                 'Content-Type': 'application/json',
             }
         }).then(async authenticated => {
-            console.log(authenticated)
+            
             if(authenticated.status === 200){  
                 console.log('check cookie jwt is legit')              
                 await this.initializeUserData();
@@ -183,7 +183,7 @@ export class UserProvider extends React.Component {
                 this.changeAuthenticated();
                 this.changeAuthenticating();
             } else {
-                console.log('incorrect jwt.')
+                
                 this.setState({authenticating: false});
                 sessionStorage.removeItem('instant-messenger-jwt');
             }

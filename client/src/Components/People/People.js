@@ -1,4 +1,4 @@
-import React, {useContext, useState, useEffect} from 'react';
+import React, {useContext, useState, } from 'react';
 import {UserContext} from '../../context'; 
 import styled from 'styled-components';
 
@@ -7,43 +7,43 @@ import {  faSearch, faExclamationCircle} from '@fortawesome/free-solid-svg-icons
 import { getSearchResults, getTagSearchResults} from '../../API';
 import { Route, Link, NavLink} from 'react-router-dom';
 
-const Wrapper = styled.div`
-    width: ${({mobile}) => mobile ? `100vw` : `30%`};
-    height: ${({mobile}) => mobile ? `85%` : `100%`};
-    background-color: #fff;
-`
+// const Wrapper = styled.div`
+//     width: ${({mobile}) => mobile ? `100vw` : `30%`};
+//     height: ${({mobile}) => mobile ? `85%` : `100%`};
+//     background-color: #fff;
+// `
 
-const IconContainer = styled.div`
-    margin-left: auto;
-    display: flex;
-    flex-direction: row;
-`
+// const IconContainer = styled.div`
+//     margin-left: auto;
+//     display: flex;
+//     flex-direction: row;
+// `
 
 
 
-const Header = styled.div`
-    min-height: 100px;
-    max-height: 20%;
-    width: 100%;
-    display: flex;
-    flex-direction: row;
-    padding: 16px 16px 16px 16px;
-    align-items: center;
-    box-shadow: 0px 1px 3px 0px rgba(117,116,117,0.5);
-    z-index: 100;
-`
+// const Header = styled.div`
+//     min-height: 100px;
+//     max-height: 20%;
+//     width: 100%;
+//     display: flex;
+//     flex-direction: row;
+//     padding: 16px 16px 16px 16px;
+//     align-items: center;
+//     box-shadow: 0px 1px 3px 0px rgba(117,116,117,0.5);
+//     z-index: 100;
+// `
 
-const ConversationImage = styled.div`
-    width: ${({people}) => people ? `50px` : '100px'};
-    height: ${({people}) => people ? `50px` : '100px'};
-    clip-path: circle(40%);
-    background-image: url(${({url}) => url ? url : `https://picsum.photos/100`})
-`
+// const ConversationImage = styled.div`
+//     width: ${({people}) => people ? `50px` : '100px'};
+//     height: ${({people}) => people ? `50px` : '100px'};
+//     clip-path: circle(40%);
+//     background-image: url(${({url}) => url ? url : `https://picsum.photos/100`})
+// `
 
-const ConversationHeader = styled.h1`
-    font-size: 35px;
-    padding: 0px 0px 0px 16px;
-`
+// const ConversationHeader = styled.h1`
+//     font-size: 35px;
+//     padding: 0px 0px 0px 16px;
+// `
 
 const ChatLink = styled.div`
     height: 40px;
@@ -101,36 +101,36 @@ const Notification = styled.div`
     font-size: 8px;
 `
 const People = props => {
-    const [submittable, setSubmittable] = useState(false);
-    const [searchTerm, setSearchTerm] = useState('');
+    // const [submittable, setSubmittable] = useState(false);
+    // const [searchTerm, setSearchTerm] = useState('');
     const context = useContext(UserContext);
-    const [results, setResults] = useState(null);
+    // const [results, setResults] = useState(null);
 
-    const handleSearchChange = (e) => {
-        setSearchTerm(e.target.value)
-        // handleSearch();
-        checkSubmittable();
-        if(submittable){
-            handleSearch()
-        }
-    };
+    // const handleSearchChange = (e) => {
+    //     setSearchTerm(e.target.value)
+    //     // handleSearch();
+    //     checkSubmittable();
+    //     if(submittable){
+    //         handleSearch()
+    //     }
+    // };
 
-    const checkSubmittable = () => {
-        searchTerm.length > 0 ? setSubmittable(true) : setSubmittable(false);
-    }
+    // const checkSubmittable = () => {
+    //     searchTerm.length > 0 ? setSubmittable(true) : setSubmittable(false);
+    // }
 
-    const handleSearch = () => {
-        getSearchResults(context.jwt, searchTerm).then(res => res.json()).then(parsedResponse => setResults(parsedResponse))
-    };
+    // const handleSearch = () => {
+    //     getSearchResults(context.jwt, searchTerm).then(res => res.json()).then(parsedResponse => setResults(parsedResponse))
+    // };
 
-    const createResults =() => {
-        return results.map(result => {
-            return <SearchResult 
-                username={result.username}
-                image={result.profileImgUrl}
-            />
-        })
-    }
+    // const createResults =() => {
+    //     return results.map(result => {
+    //         return <SearchResult 
+    //             username={result.username}
+    //             image={result.profileImgUrl}
+    //         />
+    //     })
+    // }
 
     // const searchResults = results ? createResults(): null;
 
@@ -194,7 +194,7 @@ export const PeopleSearch = props => {
     }
 
     const handleSearch = () => {
-        console.log(props.tags)
+        
         if(props.tags){
             getTagSearchResults(context.jwt, searchTerm).then(res => res.json())
             .then(parsedResponse => {setResults(parsedResponse)})
@@ -279,7 +279,7 @@ export const SearchResult = props => {
 
 
     return(
-        <Link exact to={{pathname: `${props.link}/${props.username}`, search: props.search}}>
+        <Link  to={{pathname: `${props.link}/${props.username}`, search: props.search}}>
             <SearchResultContainer>
                 <UserImage src={props.image} />
                 <h1>{props.username}</h1>            

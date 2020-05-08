@@ -117,7 +117,7 @@ const FeedContainer = styled.div`
 const ConversationContainer = props => {
     // const [conversationsDisplay, setConversationsDisplay] = useState(true);
     // const [messageDisplay, setMessageDisplay] = useState(false);
-    const [receiver, setReceiver] = useState(null);
+    // const [receiver, setReceiver] = useState(null);
 
     // const displayMessage = () => {
     //     setMessageDisplay(true);
@@ -142,7 +142,7 @@ const ConversationContainer = props => {
     const conversationsDisplayRender = () => {
         
         return (            
-                <Conversation receiver={receiver}/>                
+                <Conversation />                
         )
     };
 
