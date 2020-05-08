@@ -79,7 +79,7 @@ const FeedContainer = styled.div`
     width: 100vw;
     max-width: 600px;
     margin: 0 auto;
-    height: 100vh;
+    height: 100%;
     display: flex;
     flex-direction: column;
     overflow-y: scroll;

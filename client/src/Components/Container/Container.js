@@ -90,7 +90,7 @@ const Container = (props) => {
 
 const MobileWrapper = styled.div`
     width: 100vw;
-    height: 100vh;
+    height: 100%;
     background-color: #fff;
     display: flex;
     flex-direction: column;

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import styled, {createGlobalStyle} from 'styled-components';
 import Authentication from '../Authentication';
 
@@ -40,7 +40,7 @@ export const GlobalStyle = createGlobalStyle`
 `
 
 const AppWrapper = styled.div`
-  height: 100vh;
+  height: ${(props) => props.vh ? `calc(${props.vh * 100})` : '100vh'};
   width: 100vw;
   background-color: blue;
   display: flex;
@@ -49,6 +49,17 @@ const AppWrapper = styled.div`
 
 
 function App() {
+  const [vh, setVh] = useState(null);
+
+  useEffect(() => {
+    setVh(window.innerHeight * .01);
+    window.addEventListener('resize', () => {
+      setVh(window.innerHeight * .01);
+    });
+    return () => {
+      window.removeEventListener('resize')
+    }
+  }, [])
 
   return (
     <Router>
@@ -56,7 +67,7 @@ function App() {
         {/* <Route path='/'> */}
         <UserConsumer>{
           value => (
-            <AppWrapper>
+            <AppWrapper vh={vh}>
               <GlobalStyle />
               {/* {value.authenticated ? <Container /> : <Authentication />} */}
               

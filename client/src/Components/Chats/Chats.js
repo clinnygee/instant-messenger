@@ -13,7 +13,8 @@ const ConversationListContainer = styled.div`
     
     width: 100%;
     
-    height: ${({mobile}) => mobile ? '85%' : '100%'};
+    // height: ${({mobile}) => mobile ? '85%' : '100%'};
+    height: 100%;
 `
 
 const Header = styled.div`
@@ -32,7 +33,7 @@ const ConversationImage = styled.div`
     width: 100px;
     height: 100px;
     clip-path: circle(40%);
-    background-image: url(https://picsum.photos/100)
+    background-image: url(https://picsum.photos/100);
     background-size: 100px 100px;
 `
 

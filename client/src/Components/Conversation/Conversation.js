@@ -58,7 +58,8 @@ const ConversationImage = styled.div`
     width: 100px;
     height: 100px;
     clip-path: circle(40%);
-    background-image: url(https://instant-messenger.s3-ap-southeast-2.amazonaws.com/1586585138915.jpeg)
+    background-image: ${(props) => props.image ? `url(${props.image})` : 'url(https://instant-messenger.s3-ap-southeast-2.amazonaws.com/1586585138915.jpeg)'};
+    background-size: contain; 
 `
 
 const ConversationHeader = styled.h1`
@@ -95,13 +96,13 @@ const FeedContainer = styled.div`
     width: 100vw;
     max-width: 600px;
     margin: 0 auto;
-    height: 100vh;
+    height: 100%;
     display: flex;
     flex-direction: column;
     overflow-y: scroll;
     padding: 5px;
     background: rgb(250,250,250);
-    padding-top: 70px;
+    padding-top: 35px;
 
     &::-webkit-scrollbar {
         display: none;
@@ -164,6 +165,7 @@ const Conversation = props => {
     const context = useContext(UserContext);
     const [messages, setMessages] = useState(null);
     const history = useHistory();
+    const [image, setImage] = useState(null);
     // const [newConversation, setNewConversation] = useState(false);
     // const [update, setUpdate] = useState(false);
     // console.log(history.location.search);
@@ -187,7 +189,7 @@ const Conversation = props => {
     const findConversationMessages = (receiverUsername) => {
 
         console.log(context.conversationData);
-        console.log(receiver)
+        console.log(receiver);
         const conversation = context.conversationData.find(conversation => {
             return (conversation.user1Username === receiverUsername || conversation.user2Username === receiverUsername)
         });
@@ -195,6 +197,7 @@ const Conversation = props => {
         if(conversation) {
             console.log(conversation.messages)
             setMessages(conversation.messages);
+            setImage(conversation.user1.username === receiverUsername ? conversation.user1.profileImgUrl : conversation.user2.profileImgUrl)
             // setNewConversation(false);
         } 
 
@@ -229,7 +232,7 @@ const Conversation = props => {
     },[context.conversationData]);
 
 
-
+    console.log(props);
     
     const messagesDisplay = messages ? createMessages() : null;
 
@@ -238,7 +241,7 @@ const Conversation = props => {
             <Header>
                 <Back />
                 {receiver ? 
-                    <Recipient receiver={receiver} />
+                    <Recipient receiver={receiver} image={image}/>
                 :
                     <RecipientSelect onSubmit={updateReceiver} />
                 }
@@ -258,7 +261,7 @@ const Conversation = props => {
 const Recipient = props => {
     return (
         <React.Fragment>
-            <ConversationImage>
+            <ConversationImage image={props.image}>
             </ConversationImage>
             <ConversationSummary>
                 <ConversationHeader>
