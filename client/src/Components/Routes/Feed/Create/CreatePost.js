@@ -36,9 +36,14 @@ const CreatePost = props => {
 
     const handleTagInput = e => {
         setTag(e.target.value);
-        console.log(tag);
+        
         if(e.target.value === ' '){
             tagInputRef.current.value = null;
+        }
+        const regExpTest = /([A-Z]|[a-z])\w+\s/        
+        if(regExpTest.test(e.target.value) && tag.length > 0){
+            console.log('space hit')
+            createTag()
         }
     };
 
@@ -53,14 +58,17 @@ const CreatePost = props => {
 
     }
 
-    const handleTagKeypress = e => {
-        if(e.key === ' ' && tag.length > 0){
-            console.log('space hit')
-            createTag()
-        }
-    }
+    // const handleTagKeypress = e => {
+    //     const regExpTest = /([A-Z]|[a-z])\w+\s/
+    //     console.log(e);
+    //     if(regExpTest.test(e.target.value) && tag.length > 0){
+    //         console.log('space hit')
+    //         createTag()
+    //     }
+    // }
 
     const onPostUpload = e => {
+        console.log('onPostUpload called')
         e.preventDefault();
 
         const post = new FormData();
@@ -84,15 +92,24 @@ const CreatePost = props => {
 
     const createTagButtons = () => {
 
-        return tags.map(tag => {
+        return tags.map((tag, index )=> {
             return (
                 
-                    <TagButton >
-                        {tag}
-                    </TagButton>
+                    <Tag key={index} tag={tag} handleTagRemove={handleTagRemove} index={index}/>
                 
             )
         })
+    };
+
+    const handleTagRemove = (index) => {
+
+        
+
+        let newTags = tags.slice();
+
+        newTags.splice(index, 1);
+
+        setTags(newTags);
     }
 
     const tagButtons = tags ? createTagButtons() : null;
@@ -109,12 +126,29 @@ const CreatePost = props => {
                 {tagButtons}
                 </TagContainer>
                 
-                <Input placeholder='Enter some tags' onKeyPress={handleTagKeypress} onChange={handleTagInput} ref={tagInputRef}/>
+                <Input placeholder='Enter some tags'  onChange={handleTagInput} ref={tagInputRef}/>
                 <PostCommentButton type='submit' disabled={!submittable} active={submittable} onClick={onPostUpload}>POST</PostCommentButton>
             </PostCreateForm>
         </PostContainer>
     )
 };
+
+const Tag = ({tag, handleTagRemove, index}) => {
+
+    console.log(tag);
+    console.log(index);
+
+    const onTagRemove = (e) => {
+        e.preventDefault()
+        handleTagRemove(index);
+    }
+
+    return (
+        <TagButton onClick={onTagRemove}>
+            {tag}
+        </TagButton>
+    )
+}
 
 const PostContainer = styled.div`
     border-radius: 3px;
