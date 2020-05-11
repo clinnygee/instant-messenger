@@ -45,7 +45,11 @@ const PostsController = {
                         model: Tag,
                     }
                 },
-            ]}).then(posts => {
+            ],
+                order: [
+                    ['createdAt', 'DESC']
+                ]    
+            }).then(posts => {
                 // console.log(posts)
                 res.json(posts);
             })

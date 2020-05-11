@@ -4,6 +4,7 @@ import {  useHistory} from 'react-router-dom';
 
 import {UserContext} from '../../../../context';
 import {uploadNewPost} from '../../../../API';
+import {LoadingSymbol} from '../../../Reusable';
 
 const CreatePost = props => {
     const [file, setFile] = useState(null);
@@ -14,6 +15,7 @@ const CreatePost = props => {
     const [tags, setTags] = useState([]);
     const context = useContext(UserContext);
     const history = useHistory();
+    const [awaiting, setAwaiting] = useState(false);
 
     const tagInputRef = createRef();
 
@@ -77,13 +79,15 @@ const CreatePost = props => {
         post.append('post-body', postBody);
         if(tags.length > 0){
             post.append('tags', tags);
-        }
+        };
+        setAwaiting(true);
         
 
         console.log(post.entries());
 
         uploadNewPost(context.jwt, post).then(res => {
             if(res.status === 200){
+                setAwaiting(false);
                 history.push('/posts');
             }
             // console.log(res);
@@ -115,21 +119,26 @@ const CreatePost = props => {
     const tagButtons = tags ? createTagButtons() : null;
 
     return (
-        <PostContainer>
-            <PostImageContainer>
-                <PostImage src={fileUrl ? fileUrl : null}/>
-            </PostImageContainer>
-            <PostCreateForm>
-                <input type='file' onChange={handleFileChange} />
-                <Input placeholder='Add a description' onChange={handleBodyInput} />
-                <TagContainer>
-                {tagButtons}
-                </TagContainer>
-                
-                <Input placeholder='Enter some tags'  onChange={handleTagInput} ref={tagInputRef}/>
-                <PostCommentButton type='submit' disabled={!submittable} active={submittable} onClick={onPostUpload}>POST</PostCommentButton>
-            </PostCreateForm>
-        </PostContainer>
+        <React.Fragment>
+            {awaiting ? <LoadingSymbol /> :
+            <PostContainer>
+                <PostImageContainer>
+                    <PostImage src={fileUrl ? fileUrl : null}/>
+                </PostImageContainer>
+                <PostCreateForm>
+                    <input type='file' onChange={handleFileChange} />
+                    <Input placeholder='Add a description' onChange={handleBodyInput} />
+                    <TagContainer>
+                    {tagButtons}
+                    </TagContainer>
+                    
+                    <Input placeholder='Enter some tags'  onChange={handleTagInput} ref={tagInputRef}/>
+                    <PostCommentButton type='submit' disabled={!submittable} active={submittable} onClick={onPostUpload}>POST</PostCommentButton>
+                </PostCreateForm>
+            </PostContainer>            
+            }
+        </React.Fragment>
+        
     )
 };
 

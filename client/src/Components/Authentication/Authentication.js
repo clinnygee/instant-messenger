@@ -10,12 +10,12 @@ const AuthWrapper = styled.div`
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    background-color: #1877f2;
+    background-color: rgb(250,250,250);
 `
 const AuthHeader = styled.h1`
     text-align: center;
-    font-size: 50px;
-    color: #fff;
+    font-size: 40px;
+    color: rgba(0,149,246,0.7);
 `
 
 const AuthFormText = styled.p`
@@ -28,6 +28,7 @@ const AuthFormText = styled.p`
 const FormWrapper = styled.div`
     margin: 20px;
     width: 300px;
+    border: 1px solid rgb(219,219,219);
     
     background-color: #fff;
     display: flex;
@@ -39,17 +40,20 @@ const FormWrapper = styled.div`
 const Form = styled.form`
     width: 75%;
     height: 100%;
+    margin: 30px 20px;
 `
 
 const FormInput = styled.input`
     box-sizing: border-box;
     margin: 8px 0px 8px 0px;
     width: 100%;
-    height: 50px;
-    background-color: rgb(238,240,243);
-    border-radius: 50px;
-    padding: 0 16px 0 16px;
-    border: ${props => props.error ? '1px solid red' : 'none'};
+    height: 36px;
+    background-color: rgb(250,250,250);
+    border-radius: 1px;
+    
+    padding: 9px 8px 7px 16px;
+    border: ${props => props.error ? '1px solid red' : '1px solid rgb(219,219,219)'};
+    font-size: 14px;
     
     color: rgb(0,0,0);
 
@@ -62,9 +66,13 @@ const FormInput = styled.input`
 
 const FormSubmit = styled.input`
     width: 100%;
-    height: 50px;
-    background-color: rgb(220, 222, 225);
+    height: 28px;
+    padding: 5px 9px;
+    background-color: ${(props => props.submittable ? 'rgb(0,149,246)' : 'rgba(0, 149, 246, 0.3)')};
     text-align: center;
+    border-radius: 2px;
+    border: none;
+    color: #fff;
 `
 
 const ErrorLabel= styled.label`
@@ -92,13 +100,13 @@ const Authentication = (props) => {
             <AuthHeader>
                 Instant-Messenger
             </AuthHeader>
-            <FormWrapper>
+            
                 {register ? 
-                <AuthenticationForm header={'Register'} toggleText={'Already Registered? Log In'} toggleForm={toggleForm} apiCall={registerUser}/> 
+                <AuthenticationForm header={'Register'} toggleText={'Already Registered?'} toggleButtonText={'Log In'}toggleForm={toggleForm} apiCall={registerUser}/> 
                 :
-                 <AuthenticationForm header={'Log In'} toggleText={'Not Registered? Create an Account!'} toggleForm={toggleForm} apiCall={logInUser}/>}
+                 <AuthenticationForm header={'Log In'} toggleText={"Don't have an account?"} toggleButtonText={'Sign Up'}toggleForm={toggleForm} apiCall={logInUser}/>}
                 
-            </FormWrapper>
+            
             
         </AuthWrapper>
     )
@@ -107,6 +115,7 @@ const Authentication = (props) => {
 const AuthenticationForm = (props) => {
     const [password, setPassword] = useState('');
     const [username, setUsername] = useState('');
+    const [submittable, setSubmittable] = useState(false);
     const [usernameError, setUsernameError] = useState(false);
     const [usernameErrorText, setUsernameErrorText] = useState(null);
     const [passwordError, setPasswordError] = useState(false);
@@ -117,15 +126,25 @@ const AuthenticationForm = (props) => {
         setUsernameError(false);
         setUsernameErrorText(null);
         setUsername(e.target.value);
+        checkSubmittable();
         console.log(username);
 
-    }
+    };
 
     const updatePassword = (e) => {
         setPasswordError(false);
         setPasswordErrorText(null);
         setPassword(e.target.value);
+        checkSubmittable()
         console.log(password);
+    };
+
+    const checkSubmittable = () => {
+        if(password.length > 1 && username.length > 1){
+            setSubmittable(true);
+        } else {
+            setSubmittable(false);
+        }
     }
 
     const  onSubmit = async (e) => {
@@ -163,19 +182,27 @@ const AuthenticationForm = (props) => {
     
 
     return (
-        <Form>
-            <AuthFormText>
-                {props.header}
-            </AuthFormText>
-            <FormInput placeholder={'username'} name='username' required={true} onChange={updateUsername} error={usernameError}/>
-            {usernameErrorText ? <ErrorLabel htmlFor={username}>{usernameErrorText.error}</ErrorLabel> : null}
-            <FormInput placeholder={'password'} name='password' type={'password'} required={true} onChange={updatePassword} error={passwordError}/>
-            {passwordErrorText ? <ErrorLabel htmlFor={password}>{passwordErrorText.error}</ErrorLabel> : null}
-            <FormSubmit placeholder={'Submit'} type={'submit'} onClick={onSubmit} />
-            <AuthFormText onClick={toggle}>
-                {props.toggleText}
-            </AuthFormText>
-        </Form>
+        <React.Fragment>
+            <FormWrapper>
+                <Form>
+                    <AuthFormText>
+                        {props.header}
+                    </AuthFormText>
+                    <FormInput placeholder={'username'} name='username' required={true} onChange={updateUsername} error={usernameError}/>
+                    {usernameErrorText ? <ErrorLabel htmlFor={username}>{usernameErrorText.error}</ErrorLabel> : null}
+                    <FormInput placeholder={'password'} name='password' type={'password'} required={true} onChange={updatePassword} error={passwordError}/>
+                    {passwordErrorText ? <ErrorLabel htmlFor={password}>{passwordErrorText.error}</ErrorLabel> : null}
+                    <FormSubmit placeholder={'Submit'} type={'submit'} onClick={onSubmit} submittable={submittable}/>
+
+                </Form>
+            </FormWrapper>
+            <FormWrapper>
+                <p style={{margin: '20px'}}>{props.toggleText} <span style={{color:'rgb(0,149,246)'}} onClick={toggle}>{props.toggleButtonText}</span></p>
+                {/* <AuthFormText onClick={toggle}>
+                    {props.toggleText}
+                </AuthFormText> */}
+            </FormWrapper>
+        </React.Fragment>
     )
 
 
