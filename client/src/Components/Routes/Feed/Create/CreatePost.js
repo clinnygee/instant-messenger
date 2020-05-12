@@ -6,6 +6,13 @@ import {UserContext} from '../../../../context';
 import {uploadNewPost} from '../../../../API';
 import {LoadingSymbol} from '../../../Reusable';
 
+import { Input, PostCommentButton,  
+    PostContainer, 
+     PostImageContainer, PostImage,
+     TagContainer, TagButton, PostCreateForm
+    
+} from '../styled';
+
 const CreatePost = props => {
     const [file, setFile] = useState(null);
     const [fileUrl, setFileUrl] = useState(null);
@@ -60,14 +67,7 @@ const CreatePost = props => {
 
     }
 
-    // const handleTagKeypress = e => {
-    //     const regExpTest = /([A-Z]|[a-z])\w+\s/
-    //     console.log(e);
-    //     if(regExpTest.test(e.target.value) && tag.length > 0){
-    //         console.log('space hit')
-    //         createTag()
-    //     }
-    // }
+    
 
     const onPostUpload = e => {
         console.log('onPostUpload called')
@@ -142,7 +142,7 @@ const CreatePost = props => {
     )
 };
 
-const Tag = ({tag, handleTagRemove, index}) => {
+export const Tag = ({tag, handleTagRemove, index}) => {
 
     console.log(tag);
     console.log(index);
@@ -159,70 +159,11 @@ const Tag = ({tag, handleTagRemove, index}) => {
     )
 }
 
-const PostContainer = styled.div`
-    border-radius: 3px;
-    border: 1px solid rgb(219,219,219);
-    
-    margin: 0px 0px 60px 0px;
-    background-color: #fff;
-    line-height: 1.4em;
-`
-const TagContainer = styled.div`
-    width: 100%;
-    display: flex;
-    margin: 8px;
-`
-const TagButton = styled.button`
-    border-radius: 8px;
-    background-color: rgba(0, 149,246,.3);
-    color: rgb(0,149,246);
-    border: none;
-    height: 20px;
-    font-size: 15px;
-    margin-right: 8px;
-    &:focus{
-        outline: none;
-    }
-    
-`
 
-const PostImageContainer = styled.div`
-    width: 100%;
-    height: 330px;
-`
 
-const PostImage = styled.img`
-    width: 100%;
-    height: 100%;
-`
 
-const PostCreateForm = styled.form`
-    display: flex;
-    flex-direction: column;
-`
 
-const Input = styled.input`
-    opacity: 0.3;
-    border: none;
-    width: calc(100% - 33px);
-    margin: 8px 8px;
-    border-bottom: 1px solid rgb(219,219,219);
 
-    &:focus {
-        outline: none;
-    }
 
-`
-
-const PostCommentButton = styled.button`
-    border: none;
-    background: #fff;
-    color: ${({active}) => active ? 'rgb(0,149,246)' : 'rgba(0,149,246,.3)'};
-    width: 33px;
-    margin: 16px 0px 0px 0px;
-    &:focus: {
-        outline: none;
-    }
-`
 
 export default CreatePost;

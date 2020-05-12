@@ -20,9 +20,7 @@ router.delete('/:id', withAuth, PostsController.deleteById);
 
 
 
-router.put('/:id', withAuth, (req, res) => {
-    // for editing post
-});
+router.put('/edit/:id', withAuth, PostsController.edit );
 
 router.post('/:id/comments', withAuth, PostsController.createComment);
 
@@ -32,9 +30,7 @@ router.post('/:id/like', withAuth, PostsController.createLike);
 
 
 
-router.delete('/:id/comment/:commentId', (req,res) => {
-    
-})
+router.delete('/comment/:commentId', withAuth, PostsController.deleteComment);
 
 router.put('/:id/comment/:commentId', (req, res) => {
 

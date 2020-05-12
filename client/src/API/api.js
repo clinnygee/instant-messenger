@@ -138,6 +138,16 @@ export const deletePost = (token, postId) => {
         },
         // body: JSON.stringify(postId),
     })
+};
+
+export const deleteComment = (commentId) => {
+    return fetch(`/api/posts/comment/${commentId}`,{
+        method: 'DELETE',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+        },
+    });
 }
 
 export const createPostComment = (token, comment, postId) => {
@@ -200,6 +210,7 @@ export const getSearchResults = (token, searchTerm) => {
 };
 
 export const getTagSearchResults = (token, searchTerm) => {
+    console.log(searchTerm);
     return fetch(`/api/search/tags/${searchTerm}`,{
         method: 'get',
         credentials: 'include',

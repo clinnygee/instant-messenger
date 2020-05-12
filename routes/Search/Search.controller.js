@@ -24,7 +24,7 @@ const  SearchController = {
     },
 
     tags(req,res){
-        console.log('in tags search')
+        console.log('in tags search');
         Tag.findAll({where:{
             tag: {
                 [Op.like]: `%${req.params.searchTerm}%`

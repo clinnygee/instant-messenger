@@ -197,3 +197,30 @@ export const OptionsContainer = styled.div`
     padding: 0px 8px;
     
 `
+
+// FOR CREATE AND EDIT
+
+export const TagContainer = styled.div`
+    width: 100%;
+    display: flex;
+    margin: 8px;
+`
+export const TagButton = styled.button`
+    border-radius: 8px;
+    background-color: rgba(0, 149,246,.3);
+    color: rgb(0,149,246);
+    border: none;
+    height: 20px;
+    font-size: 15px;
+    margin-right: 8px;
+    &:focus{
+        outline: none;
+    }
+    
+`
+
+
+export const PostCreateForm = styled.form`
+    display: flex;
+    flex-direction: column;
+`

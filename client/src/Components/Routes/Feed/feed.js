@@ -7,12 +7,13 @@ import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faHeart, faCameraRetro, faEllipsisH} from '@fortawesome/free-solid-svg-icons';
 import {GlobalStyle} from '../../App/App';
 
-import  { uploadNewPost, getAllPosts, createPostComment, changePostLike, getSinglePost, deletePost } from '../../../API';
+import  { uploadNewPost, getAllPosts, createPostComment, changePostLike, getSinglePost, deletePost, deleteComment } from '../../../API';
 import {useIsLoggedInUser, useHasUserLiked, useTimeElapsed} from '../../Hooks';
 
 import CreatePost from './Create';
 import PostLikes from './Likes';
 import Search from './Search';
+import EditPost from './Edit';
 import {LoadingSymbol} from '../../Reusable';
 
 import {PostComment, PostCommentForm, Input, PostCommentButton, UserLink, 
@@ -103,12 +104,16 @@ const FeedRoutes = ({DisplayPosts, posts}) => {
             <Route path='/posts/search/:tag'>
                 <Search />
             </Route>
+            <Route path='/posts/edit/*'>
+                <EditPost posts={posts} />
+            </Route>
             <Route path='/posts/:id/likes'>
                 <PostLikes posts={posts}/>
             </Route>
             <Route path='/posts/:id'>
                 <PostSingle />
             </Route>
+            
         </Switch>
     )
 }
@@ -205,7 +210,8 @@ export const Post = props => {
                 username={comment.user.username}
                 id={comment.user.id}
                 text={comment.text}
-                key={comment.user.id}
+                key={comment.createdAt}
+                commentId={comment.id}
             />
         })
     };
@@ -228,7 +234,7 @@ export const Post = props => {
                         <ConversationHeader>{user.username}</ConversationHeader>
                     </Link>
                 {/* </UserLink> */}
-                {isUsers ? <PostOptions id={props.id}/> : null}
+                {isUsers ? <PostOptions id={props.id} post={true}/> : null}
                 
             </PostHeader>
             <PostImageContainer onClick={tapLike}>
@@ -286,7 +292,7 @@ const Comment = props => {
                 style={{
                     textDecoration: 'underline',
                 }}
-                >
+                key={tag.id}>
                     <span>{` #${tag.tag.tag} `}</span>
                 </Link>
             
@@ -303,7 +309,7 @@ const Comment = props => {
                 <span>{props.username}</span>
                 </UserLink> {props.text} {tags}
             </p>
-            {isUsers ? <PostOptions id={props.id} style={{position: 'absolute', top:'0', right: '0', height:'100%'}}/> : null}
+            {isUsers ? <PostOptions id={props.commentId} style={{position: 'absolute', top:'0', right: '0', height:'100%'}}/> : null}
         </div>
         
     )
@@ -338,19 +344,37 @@ const PostOptions = props => {
         setShowModal(!showModal);
     };
 
-    const handleDeletePost = () => {
-        deletePost(context.jwt, props.id).then(res => {
-            console.log(res);
-            if(res.status === 200){
-                history.goBack();
-            }
-        });
+    const handleDelete = () => {
+        if(props.post){
+            deletePost(context.jwt, props.id).then(res => {
+                console.log(res);
+                if(res.status === 200){
+                    window.location.reload();
+                }
+            });
+        }else{
+            deleteComment(props.id).then(res => {
+                if(res.status === 200)
+                window.location.reload();
+            })
+        }
+        
     };
+
+    const handlePostEditClick = () => {
+        console.log('handle post edit click');
+        console.log(history.location);
+        // history.push(`/posts/edit/${props.id}`)
+        history.push({pathname: '/posts/edit/', search: props.id});
+        
+    }
+
+    
 
     
     return (
         <React.Fragment>
-            <PostModal toggleModal={toggleModal} open={showModal} onPostDelete={handleDeletePost} />
+            <PostModal toggleModal={toggleModal} open={showModal} onPostDelete={handleDelete} onPostEditClick={handlePostEditClick} post={props.post || false}/>
             <OptionsContainer style={props.style ? props.style : null}>
                 <NavItem fontSize={'30px'} onClick={toggleModal}>
                     <FontAwesomeIcon icon={faEllipsisH}/>
@@ -360,7 +384,7 @@ const PostOptions = props => {
     )
 };
 
-const PostModal = ({toggleModal, open, onPostDelete}) => {
+const PostModal = ({toggleModal, open, onPostDelete, onPostEditClick, post}) => {
 
     return (
         <React.Fragment>
@@ -371,8 +395,7 @@ const PostModal = ({toggleModal, open, onPostDelete}) => {
                         
                         <ModalBox onClick={(e) => e.stopPropagation()}>
                             <ModalButton onClick={onPostDelete}>Delete</ModalButton>
-                            <ModalButton>Edit</ModalButton>
-                            <ModalButton>Copy Link</ModalButton>
+                            {post ? <ModalButton onClick={onPostEditClick}>Edit</ModalButton> :null}
                             <ModalButton onClick={toggleModal}>Cancel</ModalButton>
                         </ModalBox>
                     </ModalContainer>                    

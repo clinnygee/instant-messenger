@@ -11,6 +11,7 @@ import { faSignOutAlt, faPaperPlane } from '@fortawesome/free-solid-svg-icons';
 import { useIsLoggedInUser, useIsUsersFriend, useHasSentFriendRequest, useReceivedFriendRequest } from '../../Hooks';
 
 import {Back, LoadingSymbol} from '../../Reusable';
+import Friends from './Friends'
 
 const Profile = props => {
 
@@ -21,6 +22,7 @@ const Profile = props => {
             <Route path='/profile/:username'>
                 <UserProfile />
             </Route>
+            
             
         </Switch>
     )
@@ -141,10 +143,12 @@ const UserProfile = props => {
                         <ProfileTextBold>{userData.posts.length}</ProfileTextBold>
                         <ProfileText>Posts</ProfileText>                        
                     </ProfileHeaderItem>
+                    <Link to={`/profile/${userData.username}/friends`}>
                     <ProfileHeaderItem>
                         <ProfileTextBold>{userData.friendships.length}</ProfileTextBold>
                         <ProfileText>Friends</ProfileText>                        
                     </ProfileHeaderItem>
+                    </Link>
                 </PostHeader>
                 <ProfileAbout>
                     <ProfileTextBold>{userData.username}</ProfileTextBold>
@@ -170,6 +174,10 @@ const UserProfile = props => {
                 </Route>
                 <Route path={'/profile/:username/edit'}>
                     <ProfileEdit />
+                </Route>
+                <Route path={'/profile/:username/friends'}>
+                    {loaded ? <Friends friendships={userData.friendships}/>: null}
+                    
                 </Route>
             </Switch>
             

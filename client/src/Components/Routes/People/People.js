@@ -196,6 +196,7 @@ export const PeopleSearch = props => {
     const handleSearch = () => {
         
         if(props.tags){
+            console.log('in tags search')
             getTagSearchResults(context.jwt, searchTerm).then(res => res.json())
             .then(parsedResponse => {setResults(parsedResponse)})
         }else{
@@ -279,7 +280,7 @@ export const SearchResult = props => {
 
 
     return(
-        <Link  to={{pathname: `${props.link}/${props.username}`, search: props.search}}>
+        <Link  to={{pathname: `${props.link}/${props.username}`, search: props.search}} style={{width: '100%'}}>
             <SearchResultContainer>
                 <UserImage src={props.image} />
                 <h1>{props.username}</h1>            

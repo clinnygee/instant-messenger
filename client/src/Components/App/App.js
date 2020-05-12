@@ -56,7 +56,7 @@ function App() {
     // console.log(vh)
     window.addEventListener('resize', checkVh);
     return () => {
-      window.removeEventListener('resize')
+      window.removeEventListener('resize', checkVh)
     }
   }, []);
 

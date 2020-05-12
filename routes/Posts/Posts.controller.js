@@ -54,42 +54,7 @@ const PostsController = {
                 res.json(posts);
             })
         })
-        // Post.findAll({include: [
-        //     {
-        //         model: User,
-        //         attributes: {
-        //             exclude: 'password'
-        //         }
-        //     },
-        //     {
-        //         model: Comment,
-        //         include: {
-        //             model: User,
-        //             attributes: {
-        //                 exclude: 'password'
-        //             }
-        //         }
-        //     },
-        //     {
-        //         model: PostLike,
-        //         include: {
-        //             model: User,
-        //             attributes: {
-        //                 exclude: 'password'
-        //             }
-        //         }
-        //     },
-        //     {
-        //         model: PostTag,
-        //         include: {
-        //             model: Tag,
-        //         }
-        //     },
-            
-        // ]}).then(posts => {
-        //     console.log(posts);
-        //     res.json(posts);
-        // })
+        
     },
 
     async create(req,res){
@@ -129,6 +94,41 @@ const PostsController = {
 
             });        
           });
+    },
+    async edit(req,res){
+        
+        User.findOne({where: {username: req.username}}).then(user => {
+            Post.findOne({where: {id: req.params.id}, include:[{model: PostTag, include:[{model: Tag}]}]}).then(async post => {
+                if(user.id !== post.userId){
+                    console.log('Not the same user')
+                    res.status(403).send('You cannot edit a post that you did not create!');
+                } else {
+                    console.log(post)
+                    // delete all old post tags
+                    post.posttags.forEach(posttag => {
+                        
+                        posttag.destroy();
+                    });
+                    if(req.body.tags.length > 0){
+                    let tagDbArray = [];
+                    let tags = req.body.tags;
+                        await tags.forEach( async (tag) => {
+                            let tagToPush = await Tag.findOneOrCreate(tag);
+                            console.log(await tagToPush);
+                            let postTag = await PostTag.create({postId: post.id, tagId: tagToPush.dataValues.id});
+                            console.log(await tagToPush);
+                            console.log(await postTag);
+                            tagDbArray.push(tagToPush);
+                        });}
+                        post.text = req.body.postBody;
+
+                        post.save();
+
+                        res.status(200).send('Post updated successfully!')
+                    
+                }
+            })
+        })
     },
 
     findById(req,res){
@@ -197,6 +197,17 @@ const PostsController = {
                     res.status(200).send('Comment Added Successfully!')
                 })
             })
+        })
+    },
+
+    deleteComment(req, res){
+        Comment.findOne({where: {id: req.params.commentId}}).then(comment => {
+            if(comment){
+                comment.destroy();
+                res.status(200).send('Comment Destroyed');
+            } else {
+                res.status(400).send('Failed to destroy comment');
+            }
         })
     },
 

@@ -8,6 +8,7 @@ const Container = styled.div`
     position: absolute;
     left: 8px;
     top: 8px;
+    z-index: 999;
 `
 const ChatLink = styled.div`
     height: 40px;
