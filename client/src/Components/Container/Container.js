@@ -79,17 +79,19 @@ const Container = (props) => {
     // console.log(context.userData);
 
     return (
-        <AppWrapper>
+        <React.Fragment>
+            {renderView()}
+        </React.Fragment>
             
-                {renderView()}
+                
                        
-        </AppWrapper>           
+                   
         
     )
 };
 
 const MobileWrapper = styled.div`
-    width: 100vw;
+    width: 100%;
     height: 100%;
     background-color: #fff;
     display: flex;

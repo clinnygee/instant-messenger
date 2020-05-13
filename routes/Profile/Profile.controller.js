@@ -23,6 +23,14 @@ const ProfileController = {
             });        
           });
     },
+    uploadAbout(req,res){
+        console.log('upload about----------------------------------------------------------')
+        User.findOne({where: {username: req.username}}).then(user =>{
+            user.update({about: req.body.about}).then(updatedUser => {
+                res.status(200).send('Success! uploaded new about');
+            })
+        })
+    },
 
     getUserByUsername(req,res){
         User.findOne(

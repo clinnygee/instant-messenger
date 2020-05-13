@@ -87,6 +87,7 @@ const CreatePost = props => {
 
         uploadNewPost(context.jwt, post).then(res => {
             if(res.status === 200){
+                props.requestUpdate();
                 setAwaiting(false);
                 history.push('/posts');
             }

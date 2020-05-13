@@ -64,7 +64,7 @@ const ChatLink = styled.div`
 `
 
 const FeedContainer = styled.div`
-    width: 100vw;
+    width: 100%;
     max-width: 600px;
     margin: 0 auto;
     height: 100%;

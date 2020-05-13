@@ -41,7 +41,7 @@ export const GlobalStyle = createGlobalStyle`
 
 const AppWrapper = styled.div`
   height: ${(props) => props.vh ? `${props.vh * 100}px` : '100vh'};
-  width: 100vw;
+  width: ${(props) => props.vw ? `${props.vw * 100}px` : '100vw'};
   background-color: blue;
   display: flex;
   flex-direction: row;
@@ -50,9 +50,11 @@ const AppWrapper = styled.div`
 
 function App() {
   const [vh, setVh] = useState(null);
+  const[vw, setVw] = useState(null);
 
   useEffect(() => {
     setVh(window.innerHeight * .01);
+    setVw(window.innerWidth * .01);
     // console.log(vh)
     window.addEventListener('resize', checkVh);
     return () => {
@@ -62,6 +64,7 @@ function App() {
 
   const checkVh = () => {
     setVh(window.innerHeight * .01);
+    setVw(window.innerWidth * .01);
     
   };
   // console.log(vh * 100);
@@ -74,7 +77,7 @@ function App() {
         {/* <Route path='/'> */}
         <UserConsumer>{
           value => (
-            <AppWrapper vh={vh}>
+            <AppWrapper vh={vh} vw={vw}>
               <GlobalStyle />
               {/* {value.authenticated ? <Container /> : <Authentication />} */}
               

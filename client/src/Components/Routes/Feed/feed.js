@@ -31,6 +31,8 @@ const Feed = () => {
     const [posts, setPosts] = useState([]);
     const history = useHistory();
     const [loading, setLoading] = useState(true);
+    const [update, setUpdate] = useState(false);
+    const [numberOfPostsLoaded, setNumberOfPostsLoaded] = useState(10);
     
 
     useEffect(() => {
@@ -44,7 +46,7 @@ const Feed = () => {
                 setLoading(false);
             })
         });
-    }, []);
+    }, [update]);
 
 
     
@@ -59,6 +61,10 @@ const Feed = () => {
                     />
         })
     };
+
+    const requestUpdate = () => {
+        setUpdate(!update);
+    }
 
     const DisplayPosts = posts.length > 0 ? createPosts() : null;
 
@@ -82,7 +88,7 @@ const Feed = () => {
                 <LoadingSymbol />
             
             :
-                <FeedRoutes DisplayPosts={DisplayPosts} posts={posts}/>
+                <FeedRoutes DisplayPosts={DisplayPosts} posts={posts} requestUpdate={requestUpdate}/>
             }
             
             
@@ -91,7 +97,7 @@ const Feed = () => {
     );
 };
 
-const FeedRoutes = ({DisplayPosts, posts}) => {
+const FeedRoutes = ({DisplayPosts, posts, requestUpdate}) => {
 
     return (
         <Switch>
@@ -99,7 +105,7 @@ const FeedRoutes = ({DisplayPosts, posts}) => {
                 {DisplayPosts}
             </Route>
             <Route path='/posts/create'>
-                <CreatePost />
+                <CreatePost requestUpdate={requestUpdate}/>
             </Route>
             <Route path='/posts/search/:tag'>
                 <Search />

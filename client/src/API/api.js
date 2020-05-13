@@ -106,6 +106,17 @@ export const uploadProfilePhoto = (token, formData) => {
     })
 };
 
+export const uploadProfileAbout = data =>{
+    return fetch('/api/profile/about',{
+        method: 'POST',
+        headers: {
+            'Accept': 'application/json',
+            'Content-type': 'application/json',
+        },
+        body: JSON.stringify(data),
+    })
+}
+
 export const uploadNewPost = (token, formData) => {
     return fetch('/api/posts/create', {
         method: 'POST',

@@ -116,7 +116,7 @@ export const Reacts = styled.section`
 `
 
 export const FeedContainer = styled.div`
-    width: 100vw;
+    width: 100%;
     max-width: 600px;
     margin: 0 auto;
     height: calc(100vh - 40px);
@@ -134,7 +134,7 @@ export const FeedContainer = styled.div`
 
 `
 export const FeedNav = styled.nav`
-    width: 100vw;
+    width: 100%;
     height: 60px;
     display: flex;
     align-items: center;

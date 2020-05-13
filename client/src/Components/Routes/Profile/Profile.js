@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Route, Switch, Link, NavLink, Redirect, useParams, useHistory} from 'react-router-dom';
-import {uploadProfilePhoto, getProfileData, makeFriendRequest, acceptFriendRequest, deleteFriendship} from '../../../API';
+import {uploadProfilePhoto, uploadProfileAbout, getProfileData, makeFriendRequest, acceptFriendRequest, deleteFriendship} from '../../../API';
 import { useContext } from 'react';
 import { UserContext } from '../../../context';
 import { JsonWebTokenError } from 'jsonwebtoken';
@@ -29,7 +29,7 @@ const Profile = props => {
 };
 
 const FeedContainer = styled.div`
-    width: 100vw;
+    width: 100%;
     max-width: 600px;
     margin: 0 auto;
     height: 100%;
@@ -48,7 +48,7 @@ const FeedContainer = styled.div`
 `
 
 const FeedNav = styled.nav`
-    width: 100vw;
+    width: 100%;
     height: 60px;
     display: flex;
     align-items: center;
@@ -354,15 +354,18 @@ const ProfileEdit = props => {
     const [file, setFile] = useState(null);
     const [fileUrl, setFileUrl] = useState(null);
     const context = useContext(UserContext);
-    const [about, setAbout] = useState(null);
+    const [about, setAbout] = useState(context.userData.about);
     const [submittable, setSubmittable] = useState(false);
     const [sending, setSending] = useState(false);
     const history = useHistory();
 
-    
+    useEffect(() => {
+        checkSubmittable();
+    }, [file]);
 
     const checkSubmittable = () => {
-        setSubmittable(file && about);
+        console.log(file);
+        setSubmittable((file || context.userData.profileImgUrl !== 'https://picsum.photos/100') || (about !== context.userData.about));
     }
 
     const handleAboutInput = e => {
@@ -371,9 +374,27 @@ const ProfileEdit = props => {
 
     };
 
+    const onUpload = e => {
+        e.preventDefault();
+
+        if(file){
+            onPhotoUpload()
+        }else{
+            onAboutUpload();
+        }
+    };
+
+    const onAboutUpload = () => {
+        uploadProfileAbout({about: about}).then(res => {
+            if(res.status === 200){
+                history.push(`/profile/${context.userData.username}`)
+            }
+        })
+    }
+
     const onPhotoUpload = (e) => {
         console.log(file);
-        e.preventDefault();
+        
 
         const formData = new FormData();
 
@@ -398,7 +419,7 @@ const ProfileEdit = props => {
     const handleFileChange = (e) => {
         setFile(e.target.files[0]);
         setFileUrl(URL.createObjectURL(e.target.files[0]));
-        checkSubmittable();
+        // checkSubmittable();
         
     };
 
@@ -412,12 +433,15 @@ const ProfileEdit = props => {
             </EditProfileHeader>
             <ProfileForm>
                 <label for='about'></label>
-                <Input placeholder={context.userData.about.length > 1 ? context.userData.about : 'Enter an about'} onChange={handleAboutInput} id={'about'}/>
+                <Input 
+                    placeholder={context.userData.about.length > 1 ? context.userData.about : 'Enter an about'}
+                    value={context.userData.about.length > 1 ? context.userData.about : null}
+                    onChange={handleAboutInput} id={'about'}/>
                 <PostImageContainer>
                     <PostImage src={fileUrl ? fileUrl : context.userData.profileImgUrl}/>
                 </PostImageContainer>
                 <input type='file' onChange={handleFileChange} />
-                <PostCommentButton active={submittable} onClick={onPhotoUpload} disabled={!submittable}>Submit</PostCommentButton>
+                <PostCommentButton active={submittable} onClick={onUpload} disabled={!submittable}>Submit</PostCommentButton>
             </ProfileForm>
             </React.Fragment >
             }
