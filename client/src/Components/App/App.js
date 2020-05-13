@@ -63,8 +63,10 @@ function App() {
   }, []);
 
   const checkVh = () => {
-    setVh(window.innerHeight * .01);
-    setVw(window.innerWidth * .01);
+    console.log(window.innerHeight * 0.01);
+    console.log(window.innerWidth * 0.01)
+    setVh(window.innerHeight * 0.01);
+    setVw(window.innerWidth * 0.01);
     
   };
   // console.log(vh * 100);
