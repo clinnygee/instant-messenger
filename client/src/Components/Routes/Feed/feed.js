@@ -145,19 +145,7 @@ export const Post = props => {
     const context = useContext(UserContext);
 
     useEffect(() => {
-        let img = new Image(props.imageUrl);
-        img.src = props.imageUrl;
-        img.onload = () => {
-            let maxWidth = window.innerWidth > 600 ? 580 : window.innerWidth - 100;
-
-                // now find what % the width of the image has to change
-            let reductionPercent = maxWidth / image.width;
-
-            console.log(reductionPercent)
-
-            setImageHeight(image.height * reductionPercent);
-            setImageWidth(image.width * reductionPercent);
-        }
+        
         setComments(props.comments);
         setUser(props.user);
         setImage(props.imageUrl);
