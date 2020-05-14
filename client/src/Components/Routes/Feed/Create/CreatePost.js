@@ -18,8 +18,6 @@ import ReactCrop from 'react-image-crop';
 import 'react-image-crop/dist/ReactCrop.css';
 
 const CreatePost = props => {
-    const [file, setFile] = useState(null);
-    const [fileUrl, setFileUrl] = useState(null);
     const [postBody, setPostBody] = useState(null);
     const [submittable, setSubmittable] = useState(false);
     const [tag, setTag] = useState('');
