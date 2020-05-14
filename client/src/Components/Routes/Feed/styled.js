@@ -98,12 +98,14 @@ export const PostHeaderImage = styled.div`
 
 export const PostImageContainer = styled.div`
     width: 100%;
-    height: 330px;
+    height: auto;
+    display: flex;
+    justify-content: center;
 `
 
 export const PostImage = styled.img`
-    width: 100%;
-    height: 100%;
+    width: ${(props) => props.width};
+    height: ${(props) => props.height};
 `
 
 export const ReactionContainer = styled.section`

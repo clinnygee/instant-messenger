@@ -130,6 +130,8 @@ export const Post = props => {
     const [comments, setComments] = useState([]);
     const [user, setUser] = useState({});
     const [image, setImage] = useState({});
+    const [imageHeight, setImageHeight] = useState();
+    const [imageWidth, setImageWidth] = useState();
     const [body, setBody] = useState('');
     const [time, setTime] = useState(null);
 
@@ -143,6 +145,19 @@ export const Post = props => {
     const context = useContext(UserContext);
 
     useEffect(() => {
+        let img = new Image(props.imageUrl);
+        img.src = props.imageUrl;
+        img.onload = () => {
+            let maxWidth = window.innerWidth > 600 ? 580 : window.innerWidth - 100;
+
+                // now find what % the width of the image has to change
+            let reductionPercent = maxWidth / image.width;
+
+            console.log(reductionPercent)
+
+            setImageHeight(image.height * reductionPercent);
+            setImageWidth(image.width * reductionPercent);
+        }
         setComments(props.comments);
         setUser(props.user);
         setImage(props.imageUrl);
@@ -150,6 +165,19 @@ export const Post = props => {
         setTime(props.created);
         setLikes(props.likes);
     }, []);
+
+    const adjustImageSize=(e)=>{
+        console.log(e.target.width)
+            let maxWidth = window.innerWidth > 600 ? 585 : window.innerWidth - 15;
+
+                // now find what % the width of the image has to change
+            let reductionPercent = maxWidth / e.target.width;
+
+            console.log(reductionPercent)
+
+            setImageHeight(e.target.height * reductionPercent);
+            setImageWidth(e.target.width * reductionPercent);
+    }
 
     const handleCommentInput = (e) => {
         console.log(e.target.value);
@@ -243,8 +271,11 @@ export const Post = props => {
                 {isUsers ? <PostOptions id={props.id} post={true}/> : null}
                 
             </PostHeader>
-            <PostImageContainer onClick={tapLike}>
-                <PostImage src={image}/>
+            <PostImageContainer onClick={tapLike} >
+                <PostImage src={image} width={imageWidth ? `${imageWidth}` : 'auto'} 
+                    height={imageHeight ? `${imageHeight}px`: 'auto'}
+                    onLoad={adjustImageSize}
+                />
             </PostImageContainer>
             <ReactionContainer>
                 <LikeItem onClick={handlePostLike} liked={userHasLiked}>
