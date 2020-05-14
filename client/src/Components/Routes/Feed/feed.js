@@ -130,7 +130,7 @@ export const Post = props => {
     const [comments, setComments] = useState([]);
     const [user, setUser] = useState({});
     const [image, setImage] = useState({});
-    const [imageHeight, setImageHeight] = useState();
+    // const [imageHeight, setImageHeight] = useState();
     const [imageWidth, setImageWidth] = useState();
     const [body, setBody] = useState('');
     const [time, setTime] = useState(null);
@@ -261,7 +261,7 @@ export const Post = props => {
             </PostHeader>
             <PostImageContainer onClick={tapLike} >
                 <PostImage src={image} width={imageWidth ? `${imageWidth}` : 'auto'} 
-                    height={imageHeight ? `${imageHeight}px`: 'auto'}
+                    // height={imageHeight ? `${imageHeight}px`: 'auto'}
                     onLoad={adjustImageSize}
                 />
             </PostImageContainer>

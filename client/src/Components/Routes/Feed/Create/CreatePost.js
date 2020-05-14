@@ -73,7 +73,7 @@ const CreatePost = props => {
     const [croppedImg, setCroppedImg] = useState();
     const [croppedImgFile, setCroppedImgFile] = useState();
     const[width, setWidth] = useState(null);
-    const [height, setHeight] = useState(null);
+    // const [height, setHeight] = useState(null);
 
     const onSelectFile = e => {
         if (e.target.files && e.target.files.length > 0) {
@@ -91,7 +91,7 @@ const CreatePost = props => {
 
                 console.log(reductionPercent)
 
-                setHeight(image.height * reductionPercent);
+                // setHeight(image.height * reductionPercent);
                 setWidth(image.width * reductionPercent);
                 console.log(image.height);
                 console.log(image.width);
@@ -219,7 +219,7 @@ const CreatePost = props => {
                         onComplete={makeImageCrop}
                         imageStyle={{
                             width: `${width ? `${width}px` : 'auto'}`,
-                            height: `${height ? `${height}px` : 'auto'}`
+                            
                         }}
                     />
                     <Input placeholder='Add a description' onChange={handleBodyInput} />
