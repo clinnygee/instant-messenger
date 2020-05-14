@@ -64,9 +64,12 @@ function App() {
 
   const checkVh = () => {
     console.log(window.innerHeight * 0.01);
-    console.log(window.innerWidth * 0.01)
-    setVh(window.innerHeight * 0.01);
-    setVw(window.innerWidth * 0.01);
+    console.log(window.innerWidth * 0.01);
+    setTimeout(() => {
+      setVh(window.innerHeight * 0.01);
+      setVw(window.innerWidth * 0.01);
+    }, 500)
+    
     
   };
   // console.log(vh * 100);
