@@ -163,7 +163,7 @@ export const Post = props => {
 
             console.log(reductionPercent)
 
-            setImageHeight(e.target.height * reductionPercent);
+            // setImageHeight(e.target.height * reductionPercent);
             setImageWidth(e.target.width * reductionPercent);
     }
 
