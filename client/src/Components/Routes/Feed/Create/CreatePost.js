@@ -28,12 +28,6 @@ const CreatePost = props => {
 
     const tagInputRef = createRef();
 
-    // const handleFileChange = (e) => {
-    //     setFile(e.target.files[0]);
-    //     setFileUrl(URL.createObjectURL(e.target.files[0]));
-    //     checkSubmittable();        
-    // };
-
     const checkSubmittable = () => {
         setSubmittable(croppedImgFile && postBody);
     }

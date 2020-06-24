@@ -18,16 +18,20 @@ export const PostCommentForm = styled.form`
 `
 
 export const Input = styled.input`
+    height: 30px;
     opacity: 0.3;
     border: none;
-    width: calc(100% - 33px);
+    // width: calc(100% - 33px);
+    width: 100%;
 
     &:focus {
         outline: none;
+        opacity: 1;
     }
 `
 
 export const PostCommentButton = styled.button`
+    margin: 16px;
     border: none;
     background: #fff;
     color: ${({active}) => active ? 'rgb(0,149,246)' : 'rgba(0,149,246,.3)'};
@@ -35,6 +39,9 @@ export const PostCommentButton = styled.button`
     // margin: 16px 0px 0px 0px;
     &:focus: {
         outline: none;
+    }
+    &:hover:{
+        cursor: pointer;
     }
 `
 
@@ -225,4 +232,5 @@ export const TagButton = styled.button`
 export const PostCreateForm = styled.form`
     display: flex;
     flex-direction: column;
+    align-items: center;
 `

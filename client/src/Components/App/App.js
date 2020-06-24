@@ -42,7 +42,7 @@ export const GlobalStyle = createGlobalStyle`
 const AppWrapper = styled.div`
   height: ${(props) => props.vh ? `${props.vh * 100}px` : '100vh'};
   width: ${(props) => props.vw ? `${props.vw * 100}px` : '100vw'};
-  background-color: blue;
+  background-color: white;
   display: flex;
   flex-direction: row;
 `

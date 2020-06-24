@@ -1,3 +1,5 @@
+
+// const s3 = require('./aws-config');
 const multer = require('multer');
 const multerS3 = require('multer-s3');
 const aws = require('aws-sdk');
@@ -14,7 +16,9 @@ aws.config.update({
     accessKeyId: process.env.ACCESS_KEY_ID,
     region: 'us-east-1' // region of your bucket
 });
-
+// 
+// 
+// import s3 from './aws-config';
 const s3 = new aws.S3();
 
 
