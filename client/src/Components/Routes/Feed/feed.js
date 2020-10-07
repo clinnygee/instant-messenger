@@ -130,7 +130,7 @@ export const Post = props => {
     const [comments, setComments] = useState([]);
     const [user, setUser] = useState({});
     const [image, setImage] = useState({});
-    // const [imageHeight, setImageHeight] = useState();
+    const [imageHeight, setImageHeight] = useState();
     const [imageWidth, setImageWidth] = useState();
     const [body, setBody] = useState('');
     const [time, setTime] = useState(null);
@@ -156,6 +156,10 @@ export const Post = props => {
 
     const adjustImageSize=(e)=>{
         console.log(e.target.width)
+        console.log(e.target.height)
+        console.log(e.target.naturalHeight);
+        console.log(e.target.naturalWidth);
+        console.log(window.innerWidth);
             let maxWidth = window.innerWidth > 600 ? 585 : window.innerWidth - 15;
 
                 // now find what % the width of the image has to change
@@ -163,7 +167,7 @@ export const Post = props => {
 
             console.log(reductionPercent)
 
-            // setImageHeight(e.target.height * reductionPercent);
+            setImageHeight(e.target.height * reductionPercent);
             setImageWidth(e.target.width * reductionPercent);
     }
 
@@ -260,8 +264,10 @@ export const Post = props => {
                 
             </PostHeader>
             <PostImageContainer onClick={tapLike} >
-                <PostImage src={image} width={imageWidth ? `${imageWidth}` : 'auto'} 
-                    // height={imageHeight ? `${imageHeight}px`: 'auto'}
+                <PostImage src={image}
+                    style={{width: imageWidth ? `${imageWidth}px` : 'auto', height: imageHeight ? `${imageHeight}px`: 'auto' }}
+                    // width={} 
+                    // height={}
                     onLoad={adjustImageSize}
                 />
             </PostImageContainer>

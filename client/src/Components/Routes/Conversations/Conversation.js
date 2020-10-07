@@ -11,7 +11,7 @@ import { Switch, Route, useHistory } from 'react-router-dom';
 
 const _ConversationContainer = styled.div`
     width: 100%;
-    height: 85%;
+    height: 100%;
 `
 
 const ConversationSummary = styled.div`
@@ -26,7 +26,7 @@ const ConversationSecondary = styled.p`
 `
 
 const ChatContainer = styled.div`
-    height: calc(100% - 200px);
+    height: calc(100% - 164px);
     width: 100%;
     max-width: 600px;
     margin: 0 auto;
@@ -319,10 +319,11 @@ const RecipientSelect = props => {
 
 const MessageCreateContainer = styled.div`
     width: 100%;
-    height: 100px;
-    padding: 16px 16px 16px 16px;
+    padding: 8px;
     display: flex;
     flex-direction: row;
+    justify-content: center;
+    align-items: center;
 `
 
 const MessageCreate = props => {

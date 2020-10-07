@@ -2,6 +2,8 @@ import React, { useState, useContext } from 'react';
 import styled from 'styled-components';
 import {registerUser, logInUser} from '../../API';
 import {UserContext} from '../../context';
+import InsteadGram from '../../Assets/insteadgram.png';
+import InsteadGramText from '../../Assets/insteadgram-text.png';
 
 const AuthWrapper = styled.div`
     width: 100%;
@@ -12,6 +14,19 @@ const AuthWrapper = styled.div`
     align-items: center;
     background-color: rgb(250,250,250);
 `
+
+const AuthContainer = styled.div`
+    display: flex;
+    flex-direction: row;
+`
+
+const LogInContainer = styled.div`
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+`
+
 const AuthHeader = styled.h1`
     text-align: center;
     font-size: 40px;
@@ -73,6 +88,7 @@ const FormSubmit = styled.input`
     border-radius: 2px;
     border: none;
     color: #fff;
+    cursor: pointer;
 `
 
 const ErrorLabel= styled.label`
@@ -80,6 +96,24 @@ const ErrorLabel= styled.label`
     color: red;
     font-size: 10px;
     `
+
+const Footer = styled.div`
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+`
+const FooterContent = styled.div`
+text-align: center;
+    margin: 16px 0px;
+`
+
+const ImageContainer = styled.div`
+    @media (max-width: 1200px){
+        display: none;
+    }
+`
 
 const Authentication = (props) => {
     const [register, setRegister] = useState(false);
@@ -92,23 +126,44 @@ const Authentication = (props) => {
         console.log(register);
     };
 
+    const demoAccountLogin = async () => {
+        let username = 'Heart';
+        let password = 'clinton2';
+
+        const response = await logInUser({username: username, password: password});
+        if(response.status === 200){
+            context.handleAuthentication(response, username);
+        }
+    }
+
     console.log(register)
 
 
     return(
+        <>
         <AuthWrapper>
-            <AuthHeader>
-                Instant-Messenger
-            </AuthHeader>
-            
-                {register ? 
-                <AuthenticationForm header={'Register'} toggleText={'Already Registered?'} toggleButtonText={'Log In'}toggleForm={toggleForm} apiCall={registerUser}/> 
-                :
-                 <AuthenticationForm header={'Log In'} toggleText={"Don't have an account?"} toggleButtonText={'Sign Up'}toggleForm={toggleForm} apiCall={logInUser}/>}
+            <AuthContainer>
+                <ImageContainer>
+                    <img src={InsteadGram} alt='logo'></img>
+                </ImageContainer>
+                    
                 
+                <LogInContainer>
+
+                    {register ? 
+                    <AuthenticationForm header={'Register'} toggleText={'Already Registered?'} toggleButtonText={'Log In'}toggleForm={toggleForm} apiCall={registerUser}/> 
+                    :
+                     <AuthenticationForm header={'Log In'} toggleText={"Don't have an account?"} toggleButtonText={'Sign Up'}toggleForm={toggleForm} apiCall={logInUser}/>}
+                </LogInContainer>
             
-            
+            </AuthContainer>
         </AuthWrapper>
+        <Footer>
+            <FooterContent>
+                <p>Hey! If you're just here to test it out, click <span style={{color:'rgb(0,149,246)', cursor: 'pointer'}} onClick={demoAccountLogin}>HERE</span> to log in with a demo account.</p>
+            </FooterContent>
+        </Footer>
+        </>
     )
 };
 
@@ -185,6 +240,9 @@ const AuthenticationForm = (props) => {
         <React.Fragment>
             <FormWrapper>
                 <Form>
+                    <div>
+                        <img src={InsteadGramText} alt='InsteadGram' style={{width: '230px'}}></img>
+                    </div>
                     <AuthFormText>
                         {props.header}
                     </AuthFormText>
@@ -197,7 +255,7 @@ const AuthenticationForm = (props) => {
                 </Form>
             </FormWrapper>
             <FormWrapper>
-                <p style={{margin: '20px'}}>{props.toggleText} <span style={{color:'rgb(0,149,246)'}} onClick={toggle}>{props.toggleButtonText}</span></p>
+                <p style={{margin: '20px'}}>{props.toggleText} <span style={{color:'rgb(0,149,246)', cursor: 'pointer'}} onClick={toggle}>{props.toggleButtonText}</span></p>
                 {/* <AuthFormText onClick={toggle}>
                     {props.toggleText}
                 </AuthFormText> */}
